@@ -1,0 +1,51 @@
+{% extends "layout.html" %}{% import "_icons.html" as ic %}{% block title %}Analyzing — Medora AI{% endblock %}{% block content %}
+<div class="max-w-xl mx-auto">
+<div class="bg-white rounded-3xl border border-slate-200 shadow-lg p-8 md:p-10 text-center">
+  <div class="flex items-center justify-center gap-2 mb-6 text-[12px] font-bold">
+    <span class="step-dot bg-emerald-500 text-white">✓</span><span class="text-slate-700">Upload Completed</span><span class="w-6 h-px bg-slate-200"></span>
+    <span class="step-dot bg-emerald-500 text-white">✓</span><span class="text-slate-700">Review &amp; Organize Completed</span><span class="w-6 h-px bg-slate-200"></span>
+    <span class="step-dot bg-blue-600 text-white" id="stepDot">3</span><span class="text-slate-700" id="stepLbl">AI Analysis In Progress</span>
+  </div>
+  <div class="w-16 h-16 rounded-2xl bg-blue-600 text-white flex items-center justify-center mx-auto mb-4">{{ ic.stethoscope('w-8 h-8') }}</div>
+  <h1 class="font-display font-extrabold text-xl">Analysis in Progress</h1>
+  <p class="text-xs text-slate-500 mb-4">Scanning {{ report.file_name }} • <span id="elapsed">0s</span> elapsed</p>
+  <div class="relative w-32 h-32 mx-auto mb-2">
+    <svg class="w-32 h-32 -rotate-90" viewBox="0 0 120 120"><circle cx="60" cy="60" r="52" fill="none" stroke="#eef2f7" stroke-width="12"/><circle id="donut" cx="60" cy="60" r="52" fill="none" stroke="#2563eb" stroke-width="12" stroke-linecap="round" stroke-dasharray="326.7" stroke-dashoffset="326.7"/></svg>
+    <p class="absolute inset-0 flex items-center justify-center text-blue-600 font-extrabold text-2xl"><span id="pct">{{ report.progress }}</span>%</p>
+  </div>
+  <div class="h-2.5 bg-slate-100 rounded-full overflow-hidden my-4"><div id="bar" class="h-full bg-blue-600 rounded-full transition-all" style="width:{{ report.progress }}%"></div></div>
+  <div class="text-left space-y-2.5 text-sm font-semibold max-w-sm mx-auto" id="steps">
+    <p data-th="14">✓ Patient Identification</p>
+    <p data-th="55">✓ Optical Character Recognition</p>
+    <p data-th="68" id="s3" class="text-slate-400">… Specialist AI Consultation (Gemini)</p>
+    <p data-th="100" id="s4" class="text-slate-400">… Report Assembly</p>
+  </div>
+  <div class="mt-5 p-4 rounded-2xl bg-blue-50/70 border border-blue-100 text-left">
+    <p class="font-bold text-[13.5px]">Your data is secure</p>
+    <p class="text-[12.5px] text-slate-500">Files are encrypted in transit &amp; at rest. <span class="pill st-done ml-1">It will be waiting on your dashboard</span></p>
+  </div>
+  <p class="text-[12px] text-slate-400 mt-4">You can close this page — track progress anytime from Medical History.</p>
+  <p id="slowMsg" class="hidden text-[12px] text-amber-600 font-semibold mt-2">Taking longer than usual (&gt;90s) — still working. Please keep this tab open.</p>
+  <div class="flex gap-2 justify-center mt-4">
+    <a href="/dashboard" class="px-4 py-2 rounded-xl bg-white border text-sm font-bold">Go to dashboard</a>
+    <button id="retryBtn" class="hidden px-4 py-2 rounded-xl bg-blue-600 text-white text-sm font-bold" onclick="location.reload()">Retry</button>
+  </div>
+</div>
+</div>{% endblock %}{% block scripts %}<script>
+const id={{ report.id }};const t0=Date.now();
+const CIRC=326.7;
+function paint(p){
+document.getElementById('pct').textContent=p;
+document.getElementById('bar').style.width=p+'%';
+document.getElementById('donut').style.strokeDashoffset=(CIRC*(1-p/100)).toFixed(1);
+document.getElementById('elapsed').textContent=Math.round((Date.now()-t0)/1000)+'s';
+document.querySelectorAll('#steps p').forEach(el=>{
+const th=+el.dataset.th;
+if(p>=th){el.classList.remove('text-slate-400');if(!el.textContent.startsWith('✓'))el.textContent='✓ '+el.textContent.replace(/^… /,'');}
+});}
+paint({{ report.progress }});
+const t=setInterval(async()=>{try{const r=await fetch('/api/report_status/'+id);const j=await r.json();paint(j.progress);
+if(Math.round((Date.now()-t0)/1000)>90&&j.status==='processing'){document.getElementById('slowMsg').classList.remove('hidden');}
+if(j.status==='completed'){clearInterval(t);document.getElementById('stepLbl').textContent='AI Analysis Completed';location.href=j.redirect;}
+if(j.status==='failed'){clearInterval(t);document.getElementById('stepLbl').textContent='Analysis failed';document.getElementById('retryBtn').classList.remove('hidden');alert('Analysis failed: '+(j.error||'unknown error')+' — you will be sent to the dashboard.');location.href='/dashboard';}}catch(e){}},1500);
+</script>{% endblock %}

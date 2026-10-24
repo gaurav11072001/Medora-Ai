@@ -1,0 +1,19 @@
+{% import "_icons.html" as ic %}<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>Admin Console — Medora AI</title>
+<script src="https://cdn.tailwindcss.com"></script><link rel="stylesheet" href="{{ url_for('static', filename='css/light-theme.css') }}"></head>
+<body class="min-h-screen bg-slate-900 flex items-center justify-center p-4 relative overflow-hidden">
+<div class="absolute -top-24 -left-24 w-96 h-96 rounded-full bg-blue-600/20 blur-3xl"></div>
+<div class="absolute -bottom-24 -right-24 w-96 h-96 rounded-full bg-blue-500/10 blur-3xl"></div>
+<div class="relative w-full max-w-sm bg-white rounded-2xl p-8 shadow-2xl">
+  <div class="w-14 h-14 rounded-2xl bg-slate-900 text-white flex items-center justify-center mx-auto mb-4">{{ ic.shield_check('w-7 h-7') }}</div>
+  <h1 class="font-bold text-xl text-center">Admin Console</h1>
+  <p class="text-[10.5px] tracking-widest text-slate-400 font-bold text-center mt-1 mb-5">RESTRICTED ACCESS AUTHORIZATION</p>
+  {% with msgs=get_flashed_messages(with_categories=true) %}{% if msgs %}{% for c,m in msgs %}<div class="mb-4 p-3 rounded-xl text-[13px] bg-rose-50 text-rose-700 border border-rose-200">{{ m }}</div>{% endfor %}{% endif %}{% endwith %}
+  <form method="POST" class="space-y-3" onsubmit="document.getElementById('goBtn').disabled=true;document.getElementById('goBtn').textContent='Verifying…'">
+    <div><label class="text-[12.5px] font-bold text-slate-600">Administrator ID</label><input name="email" type="email" required autofocus placeholder="admin@medinsight.in" class="mt-1.5 w-full border border-slate-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-500"/></div>
+    <div><label class="text-[12.5px] font-bold text-slate-600">Security Key</label><input name="password" type="password" required placeholder="••••••••" class="mt-1.5 w-full border border-slate-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-500"/></div>
+    <button id="goBtn" class="w-full py-3.5 rounded-xl bg-slate-900 text-white font-bold text-sm hover:bg-slate-800">Authenticate Access →</button>
+  </form>
+  <p class="text-center text-[11px] text-slate-400 mt-5">Unauthorized access is monitored and logged.</p>
+</div>
+</body></html>

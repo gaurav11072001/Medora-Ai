@@ -1,0 +1,84 @@
+/* Medora AI — light theme: charcoal (#1F2328) + a single blue (#2563EB), no gradients. */
+
+html:not(.dark) .medical-gradient,
+html:not(.dark) .btn-brand,
+html:not(.dark) .btn-go {
+  background: #2563eb !important;
+  background-image: none !important;
+  box-shadow: 0 10px 24px -16px rgba(31, 35, 40, .55) !important;
+}
+html:not(.dark) .btn-shine::after { display: none !important; }
+html:not(.dark) .hl-grad {
+  background: none !important;
+  background-image: none !important;
+  color: #2563eb !important;
+  -webkit-text-fill-color: #2563eb !important;
+}
+html:not(.dark) .hl-mark::before { display: none !important; }
+html:not(.dark) .cta-section {
+  background: #f6f7f8 !important;
+  background-image: none !important;
+}
+html:not(.dark) .dropzone { background: #f7f8f9 !important; }
+html:not(.dark) .auth-card { box-shadow: 0 28px 70px -28px rgba(31, 35, 40, .18) !important; }
+
+/* Charcoal typography */
+html:not(.dark) .text-slate-900,
+html:not(.dark) .text-slate-800,
+html:not(.dark) .text-slate-700,
+html:not(.dark) .text-gray-900,
+html:not(.dark) .text-gray-800 { color: #1f2328 !important; }
+html:not(.dark) .text-slate-600,
+html:not(.dark) .text-slate-500,
+html:not(.dark) .text-gray-700,
+html:not(.dark) .text-gray-600 { color: #3e444c !important; }
+html:not(.dark) .text-slate-400,
+html:not(.dark) .text-gray-500,
+html:not(.dark) .text-gray-400 { color: #666d76 !important; }
+html:not(.dark) .text-blue-600,
+html:not(.dark) .text-blue-700,
+html:not(.dark) .text-blue-500 { color: #2563eb !important; }
+
+/* Neutral surfaces (strip the blue-gray cast) */
+html:not(.dark) .bg-slate-50,
+html:not(.dark) .bg-slate-50\/50,
+html:not(.dark) .bg-slate-50\/60,
+html:not(.dark) .bg-slate-50\/70 { background-color: #f7f8f9 !important; }
+html:not(.dark) .bg-slate-100 { background-color: #f1f2f4 !important; }
+html:not(.dark) .bg-blue-50,
+html:not(.dark) .bg-blue-50\/40,
+html:not(.dark) .bg-blue-50\/60 { background-color: #f3f4f6 !important; }
+html:not(.dark) .bg-blue-100,
+html:not(.dark) .bg-blue-100\/30 { background-color: #e9ebee !important; }
+html:not(.dark) .border-blue-100,
+html:not(.dark) .border-blue-200 { border-color: #e3e5e8 !important; }
+html:not(.dark) .shadow-blue-100,
+html:not(.dark) .shadow-blue-200,
+html:not(.dark) .shadow-blue-500\/30 { --tw-shadow-color: rgba(31, 35, 40, .18) !important; }
+
+/* Keep muted copy readable on intentionally dark panels (sidebars, dark CTA/footer) */
+html:not(.dark) .bg-slate-900 .text-slate-400,
+html:not(.dark) .bg-slate-900 .text-slate-500,
+html:not(.dark) .bg-slate-950 .text-slate-400,
+html:not(.dark) .bg-slate-950 .text-slate-500,
+html:not(.dark) .bg-\[\#111418\] .text-slate-400,
+html:not(.dark) .bg-\[\#111418\] .text-slate-500 { color: #9aa4b2 !important; }
+
+/* Marketing pages: collapse every decorative accent to the same two colours */
+html:not(.dark) .mk .text-emerald-600,
+html:not(.dark) .mk .text-emerald-700,
+html:not(.dark) .mk .text-emerald-500,
+html:not(.dark) .mk .text-amber-600,
+html:not(.dark) .mk .text-amber-500,
+html:not(.dark) .mk .text-amber-400 { color: #2563eb !important; }
+html:not(.dark) .mk .bg-emerald-50,
+html:not(.dark) .mk .bg-emerald-100,
+html:not(.dark) .mk .bg-amber-50,
+html:not(.dark) .mk .bg-amber-100 { background-color: #eff1f4 !important; }
+html:not(.dark) .mk .bg-emerald-500,
+html:not(.dark) .mk .bg-emerald-600,
+html:not(.dark) .mk .bg-purple-600,
+html:not(.dark) .mk .bg-amber-500 { background-color: #2563eb !important; }
+html:not(.dark) .mk .border-emerald-200,
+html:not(.dark) .mk .border-amber-100,
+html:not(.dark) .mk .border-emerald-100 { border-color: #e3e5e8 !important; }

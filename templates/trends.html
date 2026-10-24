@@ -1,0 +1,29 @@
+{% extends "layout.html" %}{% set active='trends' %}{% block title %}Health Trends — Medora AI{% endblock %}{% block head %}<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>{% endblock %}{% block content %}
+<div class="flex flex-wrap items-end justify-between gap-3 mb-5">
+  <div><h1 class="font-display font-extrabold text-[26px] md:text-[30px] tracking-tight">Health Trends</h1>
+  <p class="text-slate-500 text-[13.5px] mt-1">How your measurements have moved over time, taken from the dates printed on your reports.</p></div>
+  <div class="flex gap-2 items-center">
+    <div class="seg flex bg-slate-100 rounded-xl p-1 text-[12.5px] font-bold"><button id="tabC" class="on px-4 py-2 rounded-lg" onclick="setTab('c')">Charts</button><button id="tabT" class="px-4 py-2 rounded-lg text-slate-500" onclick="setTab('t')">Table</button></div>
+    <button onclick="window.print()" class="btn-ghost px-4 py-2.5 text-[13px]">Summary for my doctor</button>
+  </div>
+</div>
+{% if points %}
+<div id="paneC" class="grid lg:grid-cols-3 gap-4">
+  <div class="lg:col-span-2 card p-6"><p class="eyebrow mb-4">AI Confidence over time • {{ points|length }} readings</p><canvas id="c" height="140"></canvas></div>
+  <div class="card p-6"><p class="eyebrow mb-4">Recent Activity</p>{% for p in points[-5:]|reverse %}<p class="text-sm py-2 border-b last:border-0"><b>{{ p.file[:26] }}</b><br/><span class="text-xs text-slate-400">{{ p.date }} — {{ p.confidence }}%</span></p>{% endfor %}</div>
+</div>
+<div id="paneT" class="hidden card overflow-hidden">
+  <table class="grid-table min-w-[640px]"><thead><tr><th>Test</th><th>Readings</th><th>First</th><th>Latest</th><th>Status</th></tr></thead>
+  <tbody><tr><td class="font-semibold">AI Confidence</td><td>{{ points|length }} readings</td><td>{{ points[0].date }} · {{ points[0].confidence }}%</td><td>{{ points[-1].date }} · {{ points[-1].confidence }}%</td><td>{% if points[-1].confidence>=points[0].confidence %}Improving{% else %}Changed{% endif %}</td></tr></tbody></table>
+</div>
+<p class="text-[11.5px] text-slate-400 mt-4">Trends are read from your reports for guidance only — not a substitute for professional advice.</p>
+{% else %}
+<div class="card p-12 text-center"><h2 class="font-display font-bold text-[19px]">No trends yet</h2><p class="text-slate-500 text-[13.5px] mt-2 max-w-md mx-auto">A trend needs the same test measured at least twice. Upload another report to start tracking.</p><a href="/upload" class="btn-brand inline-block px-7 py-3 mt-5 text-[13.5px]">Upload a document</a></div>
+{% endif %}
+{% endblock %}{% block scripts %}<script>
+function setTab(w){document.getElementById('paneC').classList.toggle('hidden',w!=='c');document.getElementById('paneT').classList.toggle('hidden',w!=='t');
+document.getElementById('tabC').classList.toggle('on',w==='c');document.getElementById('tabT').classList.toggle('on',w==='t');}
+{% if points %}
+new Chart(document.getElementById('c'),{type:'line',data:{labels:{{ points|map(attribute='date')|list|tojson }},datasets:[{label:'Confidence %',data:{{ points|map(attribute='confidence')|list|tojson }},borderColor:'#2563eb',backgroundColor:'rgba(37,99,235,.12)',fill:true,tension:.45,pointRadius:4}]},options:{plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.parsed.y+'%'}}},scales:{y:{min:0,max:100}}}});
+{% endif %}
+</script>{% endblock %}

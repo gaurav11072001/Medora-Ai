@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en" id="htmlRoot">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>{% block title %}Medora AI — Care Portal{% endblock %}</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>tailwind.config={darkMode:'class',theme:{extend:{fontFamily:{display:['"Plus Jakarta Sans"','Inter','sans-serif'],sans:['Inter','sans-serif']},boxShadow:{card:'0 1px 2px rgba(16,24,40,.05),0 1px 3px rgba(16,24,40,.08)',pop:'0 12px 32px -8px rgba(37,99,235,.25)'}}}}}</script>
+<style>
+/* ─── Design tokens ─────────────────────────────────────────────────────── */
+:root{
+  --bg:#f6f7f8;--card:#fff;--card2:#f7f8f9;--ink:#1f2328;--ink2:#3e444c;
+  --mut:#666d76;--line:#e5e7ea;--line2:#eef0f2;--brand:#2563eb;--brand2:#2563eb;
+  --brand-bg:#f1f2f4;--brand-line:#dfe3e8;
+  --nav-bg:rgba(255,255,255,.90);--nav-border:rgba(229,231,234,.85);
+  --nav-shadow:0 8px 28px -18px rgba(31,35,40,.35);
+  --sidebar-bg:#fff;--sidebar-border:rgba(229,231,234,.85);
+  --search-bg:#f1f2f4;--search-border:transparent;
+  --badge-ok-bg:#e9f9f0;--badge-ok-fg:#0e9f6e;--badge-ok-border:#b8e6cd;
+  --badge-warn-bg:#fff7e6;--badge-warn-fg:#b7791f;--badge-warn-border:#f5d98b;
+  --badge-fail-bg:#fdecec;--badge-fail-fg:#e02424;--badge-fail-border:#f5b5b5;
+  --table-head:#f7f8f9;--table-row2:#fafbfc;
+  --drop-bg:#f7f8f9;--drop-border:#d5d8dd;
+  --chip-bg:#f1f3f5;--chip-border:#e1e3e6;--chip-fg:#2563eb;
+}
+html.dark{
+  --bg:#0d1117;--card:#161b22;--card2:#21262d;--ink:#e6edf3;--ink2:#cdd9e5;
+  --mut:#8b949e;--line:#30363d;--line2:#21262d;--brand:#58a6ff;--brand2:#79c0ff;
+  --brand-bg:#1c2d46;--brand-line:#1f4068;
+  --nav-bg:rgba(22,27,34,.88);--nav-border:rgba(48,54,61,.8);
+  --nav-shadow:0 8px 28px -10px rgba(0,0,0,.45);
+  --sidebar-bg:#161b22;--sidebar-border:rgba(48,54,61,.8);
+  --search-bg:#21262d;--search-border:transparent;
+  --badge-ok-bg:#1a3a2a;--badge-ok-fg:#3fb950;--badge-ok-border:#2ea043;
+  --badge-warn-bg:#3a2a10;--badge-warn-fg:#e3b341;--badge-warn-border:#9e6a03;
+  --badge-fail-bg:#3a1010;--badge-fail-fg:#f85149;--badge-fail-border:#da3633;
+  --table-head:#21262d;--table-row2:#1c2128;
+  --drop-bg:linear-gradient(180deg,#21262d,#1c2128);--drop-border:#30363d;
+  --chip-bg:#1c2d46;--chip-border:#1f4068;--chip-fg:#79c0ff;
+}
+
+/* ─── Base ───────────────────────────────────────────────────────────────── */
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;transition:background .2s,color .2s}
+.font-display{font-family:'Plus Jakarta Sans',sans-serif}
+.eyebrow{font-size:11px;letter-spacing:.14em;font-weight:700;color:var(--mut);text-transform:uppercase}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:0 1px 2px rgba(16,24,40,.05)}
+.btn-brand{background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;font-weight:700;border-radius:14px;box-shadow:0 10px 24px -8px rgba(30,94,255,.4);transition:.18s}
+.btn-brand:hover{transform:translateY(-1px);filter:brightness(1.03)}
+.btn-ghost{background:var(--card);border:1px solid var(--line);border-radius:14px;font-weight:600;color:var(--ink);transition:.18s}
+.btn-ghost:hover{border-color:var(--brand-line);box-shadow:0 1px 2px rgba(16,24,40,.08)}
+.navlink{position:relative;display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:12px;color:var(--mut);font-weight:500;font-size:14.5px;transition:.15s}
+.navlink:hover{background:var(--brand-bg);color:var(--brand)}
+.navlink.active{background:var(--brand-bg);color:var(--brand);font-weight:700}
+.navlink.active::before{content:'';position:absolute;left:-14px;top:8px;bottom:8px;width:4px;border-radius:99px;background:var(--brand)}
+.pill{font-size:11.5px;font-weight:700;padding:4px 10px;border-radius:99px}
+.st-done{background:var(--badge-ok-bg);color:var(--badge-ok-fg);border:1px solid var(--badge-ok-border)}
+.st-proc{background:var(--badge-warn-bg);color:var(--badge-warn-fg);border:1px solid var(--badge-warn-border)}
+.st-fail{background:var(--badge-fail-bg);color:var(--badge-fail-fg);border:1px solid var(--badge-fail-border)}
+.searchbox{background:var(--search-bg);border:1px solid var(--search-border);border-radius:12px;transition:.15s;color:var(--ink)}
+.searchbox:focus-within{background:var(--card);border-color:var(--brand-line);box-shadow:0 0 0 3px rgba(30,94,255,.12)}
+.searchbox input{background:transparent;color:var(--ink)}
+.searchbox input::placeholder{color:var(--mut)}
+.stat-delta{font-size:11px;font-weight:700;padding:3px 8px;border-radius:99px}
+table.grid-table{width:100%;border-collapse:separate;border-spacing:0}
+table.grid-table th{font-size:11px;letter-spacing:.1em;color:var(--mut);text-transform:uppercase;font-weight:700;text-align:left;padding:12px 16px;border-bottom:1px solid var(--line);background:var(--table-head)}
+table.grid-table td{padding:14px 16px;border-bottom:1px solid var(--line2);font-size:14px;vertical-align:middle;color:var(--ink)}
+table.grid-table tr:last-child td{border-bottom:none}
+table.grid-table tr:hover td{background:var(--card2)}
+.timeline-dot{width:9px;height:9px;border-radius:99px;margin-top:6px;flex-shrink:0}
+.step-dot{width:28px;height:28px;border-radius:99px;display:flex;align-items:center;justify-content:center;font-size:12.5px;font-weight:800}
+.dropzone{border:1.5px dashed var(--drop-border);border-radius:18px;background:var(--drop-bg);transition:.18s}
+.dropzone.drag{border-color:var(--brand);background:var(--brand-bg);transform:scale(1.005)}
+.chip{display:inline-flex;align-items:center;gap:8px;background:var(--chip-bg);border:1px solid var(--chip-border);color:var(--chip-fg);font-size:12.5px;font-weight:600;padding:7px 10px;border-radius:10px}
+
+/* ─── Dark mode toggle button ─────────────────────────────────────────── */
+#darkToggle{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;border:1px solid var(--line);background:var(--card);transition:.18s;flex-shrink:0}
+#darkToggle:hover{border-color:var(--brand-line);background:var(--brand-bg)}
+#darkToggle svg{transition:transform .35s cubic-bezier(.34,1.56,.64,1)}
+html.dark #darkToggle .icon-moon{display:none}
+html:not(.dark) #darkToggle .icon-sun{display:none}
+
+/* ─── Sidebar ────────────────────────────────────────────────────────────── */
+aside{background:var(--sidebar-bg)!important;border-color:var(--sidebar-border)!important}
+aside p.font-extrabold{color:var(--ink)!important}
+
+/* ─── Nav (floating pill) ─────────────────────────────────────────────── */
+header.floating-nav{
+  background:var(--nav-bg)!important;
+  border-color:var(--nav-border)!important;
+  box-shadow:var(--nav-shadow)!important;
+}
+.mobile-nav{background:var(--nav-bg)!important;border-color:var(--nav-border)!important}
+
+/* ─── Motion system ─────────────────────────────────────────────────────── */
+@keyframes pageIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes popIn{from{opacity:0;transform:translateY(14px) scale(.99)}to{opacity:1;transform:none}}
+main{animation:pageIn .45s cubic-bezier(.22,.8,.32,1) both}
+.card{transition:transform .22s ease,box-shadow .22s ease,border-color .22s ease}
+.card.hoverable:hover{transform:translateY(-3px);box-shadow:0 12px 28px -12px rgba(15,35,90,.18);border-color:var(--brand-line)}
+.btn-brand:active{transform:scale(.97)}
+.btn-ghost:active{transform:scale(.97)}
+.navlink:active{transform:scale(.98)}
+.reveal{opacity:0;transform:translateY(16px);transition:opacity .55s cubic-bezier(.22,.8,.32,1),transform .55s cubic-bezier(.22,.8,.32,1)}
+.reveal.shown{opacity:1;transform:none}
+.confbar{transition:width 1.1s cubic-bezier(.22,.8,.32,1)}
+.spin{width:16px;height:16px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:99px;animation:rot .7s linear infinite;display:inline-block;vertical-align:-3px}
+@keyframes rot{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){main{animation:none}.reveal{opacity:1;transform:none;transition:none}.card{transition:none}}
+
+/* ─── Misc dark fixes ────────────────────────────────────────────────────── */
+html.dark .bg-white{background:var(--card)!important}
+html.dark .bg-slate-50,html.dark .bg-slate-100{background:var(--card2)!important}
+html.dark .text-slate-900,html.dark .text-slate-800{color:var(--ink)!important}
+html.dark .text-slate-600,html.dark .text-slate-500,html.dark .text-slate-400{color:var(--mut)!important}
+html.dark .border-slate-200,html.dark .border-slate-100{border-color:var(--line)!important}
+html.dark .shadow-lg{box-shadow:0 8px 32px rgba(0,0,0,.5)!important}
+html.dark kbd{background:var(--card2)!important;border-color:var(--line)!important;color:var(--mut)!important}
+html.dark select,html.dark input,html.dark textarea{background:var(--card2)!important;color:var(--ink)!important;border-color:var(--line)!important}
+html.dark .bg-emerald-50{background:#1a3a2a!important}html.dark .text-emerald-700{color:#3fb950!important}
+html.dark .bg-rose-50{background:#3a1010!important}html.dark .text-rose-700{color:#f85149!important}
+html.dark .bg-amber-50{background:#3a2a10!important}html.dark .text-amber-700{color:#e3b341!important}
+</style>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/light-theme.css') }}">
+{% block head %}{% endblock %}
+</head>
+<body>
+<!-- ─── Dark mode: apply before paint ──────────────────────────────────── -->
+<script>(function(){if(localStorage.getItem('mi-dark')==='1')document.getElementById('htmlRoot').classList.add('dark');})();</script>
+
+<div class="flex min-h-screen">
+<!-- SIDEBAR -->
+<aside class="w-[268px] shrink-0 border-r hidden lg:flex flex-col sticky top-0 h-screen" style="background:var(--sidebar-bg);border-color:var(--sidebar-border)">
+  <div class="px-6 pt-6 pb-2 flex items-center gap-3">
+    <span class="w-10 h-10 rounded-2xl flex items-center justify-center text-white shadow-pop" style="background:#2563eb">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24"><path stroke-linecap="round" d="M6 3v5a4 4 0 008 0V3"/><path stroke-linecap="round" d="M10 15v1a5 5 0 0010 0v-3"/><circle cx="20" cy="10" r="1.6"/></svg>
+    </span>
+    <div class="leading-none"><p class="font-display font-extrabold text-[19px] tracking-tight" style="color:var(--ink)">Medora AI</p><p class="text-[11px] font-semibold tracking-widest mt-1" style="color:var(--mut)">CARE PORTAL</p></div>
+  </div>
+  <div class="px-6 mt-5"><p class="eyebrow mb-2">Menu</p>
+  <nav class="space-y-1">
+    <a href="/dashboard" class="navlink {% if active=='dashboard' %}active{% endif %}"><svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg>Dashboard</a>
+    <a href="/upload" class="navlink {% if active=='upload' %}active{% endif %}"><svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 16V6m0 0l-3.5 3.5M12 6l3.5 3.5M4 20h16"/></svg>Upload New</a>
+    <a href="/history" class="navlink {% if active=='history' %}active{% endif %}"><svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" d="M3 12a9 9 0 109-9M3 5v4h4M12 8v4l3 2"/></svg>Medical History</a>
+    <a href="/trends" class="navlink {% if active=='trends' %}active{% endif %}"><svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12h4l2.5 7 4-15 2.5 8H21"/></svg>Health Trends</a>
+  </nav></div>
+  <div class="px-6 mt-6"><p class="eyebrow mb-2">Account</p>
+  <nav class="space-y-1">
+    <a href="/settings" class="navlink {% if active=='settings' %}active{% endif %}"><svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9L17 7M7 17l-2.1 2.1"/></svg>Settings</a>
+    {% if current_user.role=='admin' %}<a href="/adminpanel/dashboard" class="navlink"><span class="w-2 h-2 rounded-full bg-blue-600"></span>Admin console</a>{% endif %}
+  </nav></div>
+  <div class="mt-auto p-4">
+    <div class="card p-4 flex items-center gap-3">
+      <span class="relative"><img src="https://api.dicebear.com/7.x/personas/svg?seed={{ current_user.email }}&backgroundColor=eef4ff" class="w-10 h-10 rounded-full border" alt=""/><span class="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-blue-600 border-2" style="border-color:var(--card)"></span></span>
+      <div class="min-w-0 flex-1"><p class="font-bold text-[13.5px] truncate" style="color:var(--ink)">{{ current_user.name }}</p><p class="text-[11.5px] font-medium truncate" style="color:var(--mut)">{{ current_user.email }}</p></div>
+      <a href="/logout" title="Sign out" class="p-2" style="color:var(--mut)"><svg class="w-5 h-5 hover:text-rose-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12H4m0 0l4-4m-4 4l4 4M10 4H6a2 2 0 00-2 2v12a2 2 0 002 2h4"/></svg></a>
+    </div>
+    <p class="text-center text-[11px] mt-3" style="color:var(--mut)">PHI encrypted • v2.4</p>
+  </div>
+</aside>
+
+<div class="flex-1 min-w-0 px-4 md:px-8 pt-4">
+<header class="floating-nav backdrop-blur border rounded-full sticky top-4 z-30 max-w-[1240px] mx-auto" style="background:var(--nav-bg);border-color:var(--nav-border);box-shadow:var(--nav-shadow)">
+  <div class="flex items-center gap-3 px-4 md:px-6 h-[68px]">
+    <a href="/dashboard" class="lg:hidden font-display font-extrabold" style="color:var(--ink)">Medora AI</a>
+    <nav class="hidden md:flex items-center gap-2 text-[13px] font-medium" style="color:var(--mut)"><a href="/dashboard" class="hover:text-slate-700">Home</a><span>/</span><span class="font-semibold capitalize" style="color:var(--ink)">{{ active or 'overview' }}</span></nav>
+    <form action="/dashboard" method="GET" class="hidden sm:block flex-1 max-w-[420px] ml-4">
+      <div class="searchbox flex items-center gap-2.5 px-4 py-2.5">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="color:var(--mut)"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        <input name="q" value="{{ request.args.get('q','') }}" placeholder="Search reports, patients…" class="bg-transparent outline-none w-full text-[13.5px]"/>
+        <kbd class="hidden md:inline text-[10.5px] border rounded-md px-1.5 py-0.5 font-bold" style="background:var(--card2);border-color:var(--line);color:var(--mut)">/</kbd>
+      </div>
+    </form>
+    <div class="ml-auto flex items-center gap-2">
+      <span class="hidden md:inline-flex items-center gap-1.5 text-[12px] font-semibold rounded-full px-3 py-1.5" style="color:var(--mut);background:var(--card2)">{{ now_day or '' }}</span>
+      <!-- 🌙 Dark mode toggle -->
+      <button id="darkToggle" title="Toggle dark mode" aria-label="Toggle dark mode">
+        <!-- Sun icon (shown in dark mode) -->
+        <svg class="icon-sun w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="color:var(--brand)"><circle cx="12" cy="12" r="5"/><path stroke-linecap="round" d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+        <!-- Moon icon (shown in light mode) -->
+        <svg class="icon-moon w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="color:var(--mut)"><path stroke-linecap="round" d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+      </button>
+      <div class="relative">
+        <button id="bellBtn" class="w-10 h-10 rounded-xl btn-ghost flex items-center justify-center relative">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" style="color:var(--mut)"><path stroke-linecap="round" stroke-linejoin="round" d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 01-3.4 0"/></svg>
+          {% if pending_count %}<span class="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full text-white text-[10px] font-bold flex items-center justify-center" style="background:var(--brand)">{{ pending_count }}</span>{% endif %}
+        </button>
+        <div id="bellPop" class="hidden absolute right-0 mt-2 w-72 card p-4 text-sm z-50"><p class="font-bold mb-1">Notifications</p><p class="text-[13px]" style="color:var(--mut)">{% if pending_count %}{{ pending_count }} analysis in progress.{% else %}No notifications yet.{% endif %}</p></div>
+      </div>
+      <div class="relative">
+        <button id="profBtn" class="flex items-center gap-2.5 pl-1.5 pr-2 py-1.5 rounded-xl transition" style="border:1px solid transparent">
+          <img src="https://api.dicebear.com/7.x/personas/svg?seed={{ current_user.email }}&backgroundColor=eef4ff" class="w-9 h-9 rounded-full border" alt=""/>
+          <span class="text-left hidden sm:block leading-tight"><span class="block font-bold text-[13px] max-w-[140px] truncate" style="color:var(--ink)">{{ current_user.name }}</span><span class="block text-[10.5px] tracking-widest font-bold" style="color:var(--mut)">PATIENT PORTAL</span></span>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="color:var(--mut)"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div id="profPop" class="hidden absolute right-0 mt-2 w-48 card p-2 text-sm z-50">
+          <a href="/settings" class="block px-3 py-2 rounded-lg hover:opacity-75" style="color:var(--ink)">Profile settings</a>
+          <a href="/history" class="block px-3 py-2 rounded-lg hover:opacity-75" style="color:var(--ink)">My records</a>
+          <a href="/logout" class="block px-3 py-2 rounded-lg font-semibold" style="color:#e02424">Sign out</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+  <div class="lg:hidden flex gap-2 mt-3 px-3 py-2 overflow-x-auto text-[13px] font-medium max-w-[1240px] mx-auto rounded-full" style="background:var(--nav-bg);border:1px solid var(--nav-border);box-shadow:var(--nav-shadow)">
+    <a href="/dashboard" class="px-3.5 py-2 rounded-full" style="background:var(--card2);color:var(--ink)">Overview</a>
+    <a href="/upload" class="px-3.5 py-2 rounded-full" style="background:var(--card2);color:var(--ink)">New analysis</a>
+    <a href="/history" class="px-3.5 py-2 rounded-full" style="background:var(--card2);color:var(--ink)">Records</a>
+    <a href="/trends" class="px-3.5 py-2 rounded-full" style="background:var(--card2);color:var(--ink)">Trends</a>
+    <a href="/settings" class="px-3.5 py-2 rounded-full" style="background:var(--card2);color:var(--ink)">Settings</a>
+  </div>
+<main class="py-6 md:py-8 max-w-[1240px] mx-auto">
+{% with msgs=get_flashed_messages(with_categories=true) %}{% if msgs %}{% for c,m in msgs %}<div class="mb-4 p-4 rounded-2xl text-[13.5px] {% if c=='error' %}st-fail{% else %}st-done{% endif %}" style="{% if c=='error' %}background:var(--badge-fail-bg);color:var(--badge-fail-fg);border:1px solid var(--badge-fail-border){% else %}background:var(--badge-ok-bg);color:var(--badge-ok-fg);border:1px solid var(--badge-ok-border){% endif %}">{{ m }}</div>{% endfor %}{% endif %}{% endwith %}
+{% block content %}{% endblock %}
+<p class="text-center text-[11.5px] mt-10" style="color:var(--mut)">Protected health information • Encrypted in transit &amp; at rest • AI-assisted, not a diagnosis</p>
+</main>
+</div>
+</div>
+
+<script>
+// ─── Dark mode toggle ──────────────────────────────────────────────────────
+(function(){
+  const root=document.getElementById('htmlRoot');
+  const btn=document.getElementById('darkToggle');
+  function applyDark(on){root.classList.toggle('dark',on);localStorage.setItem('mi-dark',on?'1':'0');}
+  // Apply on load (before paint, already done inline above)
+  if(localStorage.getItem('mi-dark')==='1')root.classList.add('dark');
+  if(btn)btn.onclick=()=>applyDark(!root.classList.contains('dark'));
+})();
+
+// ─── Popover menus ──────────────────────────────────────────────────────────
+const bb=document.getElementById('bellBtn'),bp=document.getElementById('bellPop'),pb=document.getElementById('profBtn'),pp=document.getElementById('profPop');
+if(bb)bb.onclick=e=>{e.stopPropagation();bp.classList.toggle('hidden');pp.classList.add('hidden')};
+if(pb)pb.onclick=e=>{e.stopPropagation();pp.classList.toggle('hidden');bp.classList.add('hidden')};
+document.addEventListener('click',()=>{bp&&bp.classList.add('hidden');pp&&pp.classList.add('hidden')});
+document.addEventListener('keydown',e=>{if(e.key==='/'){const i=document.querySelector('input[name=q]');if(i&&document.activeElement!==i){e.preventDefault();i.focus();}}});
+
+// ─── Scroll-reveal ─────────────────────────────────────────────────────────
+(function(){const els=document.querySelectorAll('.reveal');if(!('IntersectionObserver' in window)){els.forEach(e=>e.classList.add('shown'));return;}
+const io=new IntersectionObserver(es=>es.forEach((en,ix)=>{if(en.isIntersecting){en.target.style.transitionDelay=Math.min(ix*60,300)+'ms';en.target.classList.add('shown');io.unobserve(en.target);}}),{threshold:.08});
+els.forEach(e=>io.observe(e));})();
+
+// ─── Confidence bars + count-ups ───────────────────────────────────────────
+(function(){document.querySelectorAll('[data-confbar]').forEach(el=>{requestAnimationFrame(()=>requestAnimationFrame(()=>{el.style.width=(parseFloat(el.dataset.confbar)||0)+'%';}));});
+document.querySelectorAll('[data-countup]').forEach(el=>{const t=parseFloat(el.dataset.countup)||0;const suf=el.dataset.suffix||'';const st=performance.now();const step=n=>{const p=Math.min((n-st)/900,1);el.textContent=Math.round(t*(1-Math.pow(1-p,3)))+suf;if(p<1)requestAnimationFrame(step);};requestAnimationFrame(step);});})();
+</script>
+{% block scripts %}{% endblock %}
+</body></html>

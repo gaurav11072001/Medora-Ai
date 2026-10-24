@@ -1,0 +1,5 @@
+{% import "_icons.html" as ic %}<!DOCTYPE html><html><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>Link expired — Medora AI</title><script src="https://cdn.tailwindcss.com"></script><link rel="stylesheet" href="{{ url_for('static', filename='css/light-theme.css') }}"></head>
+<body class="bg-slate-50 p-4"><div class="max-w-md mx-auto bg-white rounded-2xl border p-8 text-center mt-16">
+<div class="w-14 h-14 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center mx-auto mb-3">{{ ic.lock('w-7 h-7') }}</div><h1 class="font-bold text-xl">This shared link is no longer active</h1>
+<p class="text-sm text-slate-500 mt-2">It expired or was revoked by the patient. Please ask them for a fresh link.</p>
+</div></body></html>

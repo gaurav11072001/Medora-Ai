@@ -1,0 +1,418 @@
+{% import "_icons.html" as ic %}<!DOCTYPE html>
+<html lang="en" class="antialiased" id="htmlRoot">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Sign in — Medora AI</title>
+<meta name="description" content="Sign in or create your free Medora AI account to start analysing medical reports with AI."/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>tailwind.config={darkMode:'class',theme:{extend:{fontFamily:{display:['"Plus Jakarta Sans"','Inter','sans-serif'],sans:['Inter','sans-serif']}}}}</script>
+<style>
+  /* ─── Tokens ───────────────────────────────────────────────────────── */
+  :root{
+    --lp-bg:#fff;--lp-fg:#1f2328;
+    --lp-sub:#3e444c;--lp-muted:#666d76;
+    --lp-nav:rgba(255,255,255,.90);--lp-nav-border:#e6e8eb;
+    --lp-card:#fff;--lp-card-border:#e6e8eb;--lp-card2:#f7f8f9;
+    --lp-field:#f7f8f9;--lp-field-border:#e1e3e6;
+    --lp-grid-line:#e8eaed;
+    --lp-seg:#f1f3f5;--lp-seg-active:#fff;
+    --lp-badge-bg:#fff;--lp-badge-fg:#2563eb;--lp-badge-border:rgba(37,99,235,.28);
+    --lp-orb1:transparent;--lp-orb2:transparent;
+    --lp-trust-border:#fff;
+  }
+  html.dark{
+    color-scheme:dark;
+    --lp-bg:#0d1117;--lp-fg:#e6edf3;
+    --lp-sub:#9aa4b2;--lp-muted:#7d8590;
+    --lp-nav:rgba(22,27,34,.86);--lp-nav-border:#30363d;
+    --lp-card:#161b22;--lp-card-border:#30363d;--lp-card2:#21262d;
+    --lp-field:#1b2028;--lp-field-border:#30363d;
+    --lp-grid-line:#1b2431;
+    --lp-seg:#21262d;--lp-seg-active:#30363d;
+    --lp-badge-bg:#12233c;--lp-badge-fg:#58a6ff;--lp-badge-border:#1f4068;
+    --lp-orb1:rgba(37,99,235,.16);--lp-orb2:rgba(30,58,138,.14);
+    --lp-trust-border:#161b22;
+  }
+
+  /* ─── Base ─────────────────────────────────────────────────────────── */
+  html{scroll-behavior:smooth}
+  body{font-family:'Inter',sans-serif;background:var(--lp-bg);color:var(--lp-fg);min-height:100vh;transition:background .3s,color .3s}
+  .font-display{font-family:'Plus Jakarta Sans',sans-serif}
+  .t-ink{color:var(--lp-fg)}
+  .t-sub{color:var(--lp-sub)}
+  .t-muted{color:var(--lp-muted)}
+  .grid-bg{background-image:linear-gradient(to right,var(--lp-grid-line) 1px,transparent 1px),linear-gradient(to bottom,var(--lp-grid-line) 1px,transparent 1px);background-size:48px 48px;mask-image:radial-gradient(ellipse 80% 60% at 50% 40%,#000 30%,transparent 75%);-webkit-mask-image:radial-gradient(ellipse 80% 60% at 50% 40%,#000 30%,transparent 75%)}
+  .hl-grad{background:linear-gradient(100deg,#3b82f6 10%,#93c5fd 55%,#3b82f6 90%);-webkit-background-clip:text;background-clip:text;color:transparent;white-space:nowrap}
+  html:not(.dark) .hl-grad{background:none;color:#2563eb;-webkit-text-fill-color:#2563eb}
+  html.dark .hl-grad{background:linear-gradient(100deg,#60a5fa 10%,#dbeafe 55%,#60a5fa 90%);-webkit-background-clip:text;background-clip:text}
+  .hl-mark{position:relative;white-space:nowrap;z-index:0}
+  .hl-mark::before{content:'';position:absolute;left:-2%;right:-2%;bottom:6%;height:34%;z-index:-1;border-radius:6px;background:linear-gradient(100deg,rgba(30,94,255,.22),rgba(109,155,255,.28));transform:skew(-8deg) rotate(-1deg)}
+  html:not(.dark) .hl-mark::before{display:none}
+  html.dark .hl-mark::before{background:linear-gradient(100deg,rgba(59,130,246,.32),rgba(147,197,253,.18))}
+  .medical-gradient{background:linear-gradient(135deg,#2563eb 0%,#3b82f6 100%)}
+  html:not(.dark) .medical-gradient{background:#2563eb}
+  html:not(.dark) .btn-shine::after{display:none}
+  .btn-shine{position:relative;overflow:hidden}
+  .btn-shine::after{content:'';position:absolute;top:0;left:-60%;width:40%;height:100%;background:linear-gradient(120deg,transparent,rgba(255,255,255,.4),transparent);transform:skewX(-20deg);transition:left .6s}
+  .btn-shine:hover::after{left:120%}
+  .hero-orb1{background:var(--lp-orb1)}
+  .hero-orb2{background:var(--lp-orb2)}
+
+  /* ─── Navbar (floating pill) ───────────────────────────────────────── */
+  .lp-nav{background:var(--lp-nav);border-color:var(--lp-nav-border)}
+  html.dark .lp-nav{box-shadow:0 12px 40px -12px rgba(0,0,0,.75)}
+  html.dark .lp-nav .text-slate-900{color:#e6edf3}
+  html.dark .lp-nav .text-slate-600{color:#9aa4b2}
+  html.dark .lp-nav .hover\:text-blue-600:hover{color:#79c0ff}
+  html.dark .shadow-blue-200{--tw-shadow-color:rgba(0,0,0,.55)}
+  html:not(.dark) .lp-nav{box-shadow:0 10px 30px -18px rgba(31,35,40,.30)}
+  html:not(.dark) .lp-nav .text-slate-900{color:#1f2328}
+  html:not(.dark) .lp-nav .text-slate-600{color:#3e444c}
+  html:not(.dark) .lp-nav .hover\:text-blue-600:hover{color:#2563eb}
+  html:not(.dark) .shadow-blue-200{--tw-shadow-color:rgba(31,35,40,.20)}
+  html:not(.dark) .ggl path{fill:#2563eb}
+  .dm-toggle{
+    width:38px;height:38px;border-radius:10px;padding:0;
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;transition:.2s;flex-shrink:0;
+    border:1.5px solid var(--lp-nav-border);
+    background:var(--lp-card2);color:var(--lp-sub);
+  }
+  .dm-toggle:hover{border-color:#2563eb;background:rgba(37,99,235,.08)}
+  html.dark .dm-toggle{border-color:#30363d;background:rgba(22,27,34,.85)}
+  html.dark .dm-toggle:hover{border-color:#58a6ff;background:#1c2d46}
+  html.dark .dm-toggle .icon-sun{color:#f0b429!important}
+  html.dark .dm-toggle .icon-moon{display:none!important}
+  html:not(.dark) .dm-toggle .icon-sun{display:none!important}
+
+  /* ─── Hero badge ───────────────────────────────────────────────────── */
+  .hero-badge{display:inline-flex;align-items:center;gap:.5rem;padding:.5rem 1rem;border-radius:999px;background:var(--lp-badge-bg);color:var(--lp-badge-fg);border:1px solid var(--lp-badge-border);font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+
+  /* ─── Checklist ────────────────────────────────────────────────────── */
+  .tick{width:22px;height:22px;border-radius:999px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;background:rgba(16,185,129,.12);color:#059669}
+  html:not(.dark) .tick{background:rgba(37,99,235,.10);color:#2563eb}
+  html.dark .tick{background:#123326;color:#3fb950}
+  .trust-ring{border:2px solid var(--lp-trust-border);box-shadow:0 0 0 2px rgba(37,99,235,.10)}
+  html.dark .trust-ring{box-shadow:0 0 0 2px rgba(88,166,255,.16)}
+
+  /* ─── Auth card ────────────────────────────────────────────────────── */
+  .auth-card{background:var(--lp-card);border:1px solid var(--lp-card-border);border-radius:26px;box-shadow:0 28px 70px -28px rgba(31,35,40,.18)}
+  html.dark .auth-card{box-shadow:0 32px 80px -24px rgba(0,0,0,.75)}
+  @keyframes pageIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  .card-in{animation:pageIn .5s cubic-bezier(.22,.8,.32,1) both}
+
+  /* ─── Form controls ────────────────────────────────────────────────── */
+  .field{width:100%;border:1.5px solid var(--lp-field-border);border-radius:13px;padding:12px 16px;font-size:14px;outline:none;transition:.18s;background:var(--lp-field);color:var(--lp-fg);font-family:'Inter',sans-serif}
+  .field::placeholder{color:var(--lp-muted)}
+  .field:focus{border-color:var(--lp-badge-fg);background:var(--lp-card);box-shadow:0 0 0 3px rgba(37,99,235,.14)}
+  html.dark .field:focus{box-shadow:0 0 0 3px rgba(88,166,255,.16)}
+  .field-label{font-size:12.5px;font-weight:700;color:var(--lp-fg)}
+  .btn-go{width:100%;background:linear-gradient(135deg,#2563eb 0%,#3b82f6 100%);color:#fff;font-weight:700;border-radius:13px;box-shadow:0 12px 26px -10px rgba(37,99,235,.55);transition:.18s;border:none;cursor:pointer}
+  html:not(.dark) .btn-go{background:#2563eb;box-shadow:0 10px 22px -12px rgba(31,35,40,.45)}
+  html:not(.dark) .btn-go:hover{box-shadow:0 14px 26px -12px rgba(31,35,40,.5)}
+  .btn-go:hover{transform:translateY(-1px);box-shadow:0 16px 30px -10px rgba(37,99,235,.65)}
+  .btn-go:active{transform:scale(.985)}
+  .seg{display:flex;border-radius:13px;padding:4px;gap:4px;background:var(--lp-seg);border:1px solid var(--lp-card-border)}
+  .seg button{flex:1;padding:9px;border-radius:9px;font-size:13px;font-weight:700;color:var(--lp-sub);background:transparent;border:none;cursor:pointer;transition:.18s;font-family:'Inter',sans-serif}
+  .seg button.on{background:var(--lp-seg-active);color:var(--lp-badge-fg);box-shadow:0 2px 8px rgba(15,23,42,.10)}
+  .btn-sso{display:flex;align-items:center;justify-content:flex-start;gap:12px;width:100%;border-radius:13px;padding:10px 14px;font-size:13px;font-weight:600;cursor:pointer;transition:.18s;border:1.5px solid var(--lp-card-border);background:var(--lp-card2);color:var(--lp-fg);font-family:'Inter',sans-serif;text-align:left}
+  .btn-sso:hover{border-color:var(--lp-badge-fg);background:var(--lp-badge-bg);transform:translateY(-1px)}
+  .btn-sso:active{transform:scale(.99)}
+  .sso-ic{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:var(--lp-card);border:1px solid var(--lp-card-border);color:var(--lp-badge-fg)}
+  html.dark .sso-ic{background:#1b2028}
+  .sso-label{display:block;font-size:13.5px;font-weight:700;line-height:1.25;color:var(--lp-fg);letter-spacing:-.01em}
+  .sso-sub{display:block;font-size:11px;font-weight:500;line-height:1.35;color:var(--lp-muted);margin-top:2px}
+  .sso-chev{margin-left:auto;color:var(--lp-muted);transition:transform .18s,color .18s;flex-shrink:0}
+  .btn-sso:hover .sso-chev{transform:translateX(2px);color:var(--lp-badge-fg)}
+  .divider{display:flex;align-items:center;gap:12px;margin:18px 0}
+  .divider-line{flex:1;height:1px;background:var(--lp-card-border)}
+  .divider-text{font-size:10.5px;font-weight:700;letter-spacing:.14em;color:var(--lp-muted);text-transform:uppercase}
+  .auth-foot{border-radius:11px;padding:10px 6px;display:inline-flex;align-items:center;justify-content:center;gap:6px;font-size:11px;font-weight:700;color:var(--lp-muted);background:var(--lp-card2)}
+  .flash{border-radius:12px;padding:12px 14px;font-size:13px;font-weight:600;margin-bottom:14px}
+  .flash-error{background:#fef2f2;color:#b91c1c;border:1px solid #fecaca}
+  html.dark .flash-error{background:#2a1416;color:#f85149;border-color:#5c2328}
+  .flash-ok{background:#ecfdf5;color:#047857;border:1px solid #a7f3d0}
+  html.dark .flash-ok{background:#10281d;color:#3fb950;border-color:#1c4530}
+  .terms-note{font-size:11.5px;line-height:1.6;color:var(--lp-muted)}
+  .terms-note a{color:var(--lp-badge-fg);font-weight:600;text-decoration:underline}
+</style>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/light-theme.css') }}">
+</head>
+<body>
+<!-- Apply dark before paint to avoid flash -->
+<script>(function(){if(localStorage.getItem('mi-dark')==='1')document.getElementById('htmlRoot').classList.add('dark');})();</script>
+
+<!-- NAV — floating rounded pill -->
+<div class="fixed top-4 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-7xl z-50">
+  <nav class="lp-nav h-16 sm:h-20 backdrop-blur-md rounded-full border shadow-[0_8px_32px_-8px_rgba(15,35,90,0.18)] px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+    <a href="/" class="flex items-center gap-2 text-blue-600">
+      <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+      <span class="font-display text-2xl font-bold text-slate-900 tracking-tight">Medora <span class="text-blue-600">AI</span></span>
+    </a>
+    <div class="hidden md:flex items-center gap-5">
+      <a href="/#features" class="text-sm font-medium text-slate-600 hover:text-blue-600 transition-colors">Features</a>
+      <a href="/security" class="text-sm font-medium text-slate-600 hover:text-blue-600 transition-colors">Security</a>
+      <button id="dmToggle" class="dm-toggle" title="Toggle dark mode" aria-label="Toggle dark mode">
+        <svg class="icon-sun w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="color:#2563eb"><circle cx="12" cy="12" r="5"/><path stroke-linecap="round" d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+        <svg class="icon-moon w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="color:#64748b"><path stroke-linecap="round" d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+      </button>
+      <a href="#authCard" id="navCta" class="px-7 py-3 rounded-full medical-gradient text-white text-sm font-bold shadow-lg shadow-blue-200 hover:shadow-blue-400 hover:-translate-y-0.5 active:scale-95 transition-all btn-shine">Create account</a>
+    </div>
+    <div class="md:hidden flex items-center gap-2">
+      <button id="dmToggleMobile" class="dm-toggle" style="width:36px;height:36px;border-radius:9px" title="Toggle dark mode" aria-label="Toggle dark mode">
+        <svg class="icon-sun w-[16px] h-[16px]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="color:#2563eb"><circle cx="12" cy="12" r="5"/><path stroke-linecap="round" d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+        <svg class="icon-moon w-[16px] h-[16px]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="color:#64748b"><path stroke-linecap="round" d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+      </button>
+      <a href="/" class="px-4 py-2.5 rounded-full medical-gradient text-white text-[13px] font-bold">Home</a>
+    </div>
+  </nav>
+</div>
+
+<!-- AUTH HERO -->
+<main class="relative overflow-hidden pt-28 sm:pt-40 pb-14 sm:pb-20 px-4 sm:px-6">
+  <div aria-hidden="true" class="absolute inset-0 z-0 grid-bg"></div>
+  <div aria-hidden="true" class="hero-orb1 absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 w-[800px] h-[800px] rounded-full blur-3xl z-0"></div>
+  <div aria-hidden="true" class="hero-orb2 absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full blur-3xl z-0"></div>
+
+  <div class="relative z-10 max-w-7xl mx-auto grid lg:grid-cols-2 gap-10 sm:gap-14 items-center">
+
+    <!-- ─── Left: hero pitch ─────────────────────────────────────────── -->
+    <div class="space-y-6 sm:space-y-7 text-center lg:text-left">
+      <div class="hero-badge">
+        <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        Secure Patient Portal
+      </div>
+
+      <h1 class="font-display font-bold text-[2.1rem] leading-[1.1] sm:text-5xl xl:text-6xl t-ink">
+        Your reports,<br class="hidden sm:block"/>
+        <span class="hl-grad">decoded</span> with <span class="hl-mark">care.</span>
+      </h1>
+
+      <p class="text-base sm:text-lg t-sub leading-relaxed max-w-xl mx-auto lg:mx-0">
+        Upload labs &amp; scans, get grounded AI summaries you can actually discuss with your doctor — private, encrypted, and ready in seconds.
+      </p>
+
+      <ul class="space-y-3 text-[14px] font-medium t-sub max-w-md mx-auto lg:mx-0 text-left">
+        <li class="flex items-center gap-3"><span class="tick">{{ ic.check('w-3.5 h-3.5') }}</span>Local AI + medical retrieval (RAG)</li>
+        <li class="flex items-center gap-3"><span class="tick">{{ ic.check('w-3.5 h-3.5') }}</span>Private vault with revocable share links</li>
+        <li class="flex items-center gap-3"><span class="tick">{{ ic.check('w-3.5 h-3.5') }}</span>Exportable clinical PDF reports</li>
+        <li class="flex items-center gap-3"><span class="tick">{{ ic.check('w-3.5 h-3.5') }}</span>Sign in with email, magic link, or Google</li>
+      </ul>
+
+      <div class="flex flex-col items-center lg:items-start sm:flex-row sm:items-center gap-3 sm:gap-5 pt-1">
+        <div class="flex -space-x-3.5">
+          <img src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=100&h=100&fit=crop" class="trust-ring w-10 h-10 rounded-full object-cover" alt="Doctor" />
+          <img src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=100&h=100&fit=crop" class="trust-ring w-10 h-10 rounded-full object-cover" alt="Physician" />
+          <img src="https://images.unsplash.com/photo-1537368910025-700350fe46c7?w=100&h=100&fit=crop" class="trust-ring w-10 h-10 rounded-full object-cover" alt="Patient" />
+          <img src="https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=100&h=100&fit=crop" class="trust-ring w-10 h-10 rounded-full object-cover" alt="Medical Staff" />
+        </div>
+        <p class="text-[13px] t-muted font-medium">Trusted by 10,000+ patients and doctors</p>
+      </div>
+    </div>
+
+    <!-- ─── Right: auth card ────────────────────────────────────────── -->
+    <div class="w-full max-w-[500px] mx-auto lg:ml-auto">
+      <div class="auth-card card-in p-6 sm:p-8" id="authCard">
+
+        <div class="flex items-center gap-3.5 mb-5">
+          <div class="w-11 h-11 rounded-2xl medical-gradient flex items-center justify-center text-white shadow-lg shadow-blue-200 shrink-0">
+            {{ ic.activity('w-5 h-5') }}
+          </div>
+          <div>
+            <h2 class="font-display font-bold text-2xl t-ink leading-tight" id="formTitle">Welcome back</h2>
+            <p class="text-[13px] t-sub mt-0.5" id="formSub">Sign in to your secure health vault.</p>
+          </div>
+        </div>
+
+        {% with msgs=get_flashed_messages(with_categories=true) %}{% if msgs %}{% for c,m in msgs %}
+        <div class="flash {% if c=='error' %}flash-error{% else %}flash-ok{% endif %}">{{ m }}</div>
+        {% endfor %}{% endif %}{% endwith %}
+
+        <!-- Sign-in / Sign-up tabs -->
+        <div class="seg mb-5">
+          <button type="button" id="tabIn" class="on" onclick="setMode('signin')">Sign in</button>
+          <button type="button" id="tabUp" onclick="setMode('signup')">Create account</button>
+        </div>
+
+        <!-- Email / password -->
+        <form method="POST" class="space-y-3.5" id="mainForm">
+          <input type="hidden" name="mode" id="mode" value="signin"/>
+          <div id="nameWrap" style="display:none">
+            <label class="field-label" for="nameField">Full name</label>
+            <input id="nameField" name="name" class="field mt-1.5" placeholder="e.g. Gaurav Gaikwad" autocomplete="name"/>
+          </div>
+          <div>
+            <label class="field-label" for="emailField">Email address</label>
+            <input id="emailField" name="email" required type="email" class="field mt-1.5" placeholder="you@example.com" autocomplete="email"/>
+          </div>
+          <div>
+            <label class="field-label" for="pw">Password</label>
+            <div class="relative mt-1.5">
+              <input id="pw" name="password" required type="password" class="field pr-14" placeholder="••••••••" autocomplete="current-password"/>
+              <button type="button" id="pwToggle" onclick="togglePw()" class="absolute right-4 top-1/2 -translate-y-1/2 text-[11.5px] font-bold hover:underline" style="color:var(--lp-muted)">Show</button>
+            </div>
+          </div>
+          <button class="btn-go py-3.5 text-[14.5px]" id="submitBtn">Continue →</button>
+          <p id="termsNote" class="terms-note pt-1" style="display:none">By creating an account you agree to our <a href="/terms">Terms</a> and <a href="/privacy">Privacy Policy</a>.</p>
+        </form>
+
+        <div class="divider"><span class="divider-line"></span><span class="divider-text">or continue securely</span><span class="divider-line"></span></div>
+
+        <div class="space-y-2.5">
+          <!-- Magic link -->
+          <div>
+            <button type="button" id="magicBtn" class="btn-sso" onclick="toggleMagic()">
+              <span class="sso-ic">{{ ic.link('w-[18px] h-[18px]') }}</span>
+              <span>
+                <span class="sso-label">Email sign-in link</span>
+                <span class="sso-sub">Passwordless access · single-use link</span>
+              </span>
+              {{ ic.chevron_right('sso-chev w-4 h-4') }}
+            </button>
+            <div id="magicInputRow" class="hidden mt-2 space-y-2">
+              <input id="magicEmailInput" type="email" class="field" placeholder="Enter your work email"/>
+              <form action="/auth/magic" method="POST">
+                <input type="hidden" name="email" id="magicEmailHidden"/>
+                <button type="submit" class="btn-go py-3 text-[13px]" onclick="document.getElementById('magicEmailHidden').value=document.getElementById('magicEmailInput').value">Send sign-in link</button>
+              </form>
+              <button type="button" onclick="document.getElementById('magicInputRow').classList.add('hidden');document.getElementById('magicBtn').classList.remove('hidden')" class="w-full text-center text-[12px] font-semibold t-muted">Cancel</button>
+            </div>
+          </div>
+
+          <!-- Email OTP -->
+          <div>
+            <button type="button" id="otpBtn" class="btn-sso" onclick="toggleOtp()">
+              <span class="sso-ic">{{ ic.key('w-[18px] h-[18px]') }}</span>
+              <span>
+                <span class="sso-label">One-time passcode</span>
+                <span class="sso-sub">6-digit code delivered to your email</span>
+              </span>
+              {{ ic.chevron_right('sso-chev w-4 h-4') }}
+            </button>
+            <div id="otpInputRow" class="hidden mt-2 space-y-2">
+              <input id="otpEmailInput" type="email" class="field" placeholder="Enter your work email"/>
+              <form action="/auth/otp" method="POST">
+                <input type="hidden" name="email" id="otpEmailHidden"/>
+                <button type="submit" class="btn-go py-3 text-[13px]" onclick="document.getElementById('otpEmailHidden').value=document.getElementById('otpEmailInput').value">Send passcode</button>
+              </form>
+              <button type="button" onclick="document.getElementById('otpInputRow').classList.add('hidden');document.getElementById('otpBtn').classList.remove('hidden')" class="w-full text-center text-[12px] font-semibold t-muted">Cancel</button>
+            </div>
+          </div>
+
+          <!-- Google -->
+          <a href="/auth/google" id="googleBtn" class="btn-sso" {% if not google_oauth_enabled %}title="Google sign-in is not enabled for this deployment"{% endif %}>
+            <span class="sso-ic">
+              <svg class="ggl w-[18px] h-[18px]" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+              </svg>
+            </span>
+            <span>
+              <span class="sso-label">{{ 'Google Workspace SSO' if google_oauth_enabled else 'Continue with Google' }}</span>
+              <span class="sso-sub">{{ 'Single sign-on for your organization' if google_oauth_enabled else 'Not enabled for this deployment' }}</span>
+            </span>
+            {{ ic.chevron_right('sso-chev w-4 h-4') }}
+          </a>
+        </div>
+
+        <div class="flex items-center gap-3 mt-5">
+          <span class="flex-1 h-px" style="background:var(--lp-card-border)"></span>
+          <span class="text-[10px] font-bold tracking-widest t-muted">SECURE ENTRY</span>
+          <span class="flex-1 h-px" style="background:var(--lp-card-border)"></span>
+        </div>
+        <div class="grid grid-cols-3 gap-2 mt-3">
+          <span class="auth-foot">{{ ic.globe('w-4 h-4') }} Global</span>
+          <span class="auth-foot">{{ ic.lock('w-4 h-4') }} SSL/TLS</span>
+          <span class="auth-foot">{{ ic.shield_check('w-4 h-4') }} HIPAA</span>
+        </div>
+        <p class="text-center text-[10px] tracking-widest font-bold mt-3 t-muted">ENCRYPTED IN TRANSIT &amp; AT REST · AI-ASSISTED, NOT A DIAGNOSIS</p>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer class="border-t px-4 sm:px-6 py-6" style="border-color:var(--lp-card-border)">
+  <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-[12.5px] t-muted">
+    <p>© 2025 Medora AI. All rights reserved.</p>
+    <div class="flex items-center gap-4">
+      <a href="/privacy" class="hover:underline">Privacy</a>
+      <a href="/terms" class="hover:underline">Terms</a>
+      <a href="/security" class="hover:underline">Security</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ─── Dark mode ───────────────────────────────────────────────────────────
+(function(){
+  const root=document.getElementById('htmlRoot');
+  const buttons=[document.getElementById('dmToggle'),document.getElementById('dmToggleMobile')];
+  function applyDark(on){
+    root.classList.toggle('dark',on);
+    localStorage.setItem('mi-dark',on?'1':'0');
+    buttons.forEach(b=>{
+      if(!b)return;
+      b.querySelector('.icon-sun').style.display=on?'':'none';
+      b.querySelector('.icon-moon').style.display=on?'none':'';
+    });
+  }
+  const dark=root.classList.contains('dark');
+  buttons.forEach(b=>{
+    if(!b)return;
+    b.querySelector('.icon-sun').style.display=dark?'':'none';
+    b.querySelector('.icon-moon').style.display=dark?'none':'';
+    b.onclick=()=>applyDark(!root.classList.contains('dark'));
+  });
+})();
+
+// ─── Sign-in / Sign-up ───────────────────────────────────────────────────
+function setMode(m,scroll){
+  const signup=m==='signup';
+  document.getElementById('mode').value=m;
+  document.getElementById('nameWrap').style.display=signup?'block':'none';
+  document.getElementById('termsNote').style.display=signup?'block':'none';
+  document.getElementById('formTitle').textContent=signup?'Create your vault':'Welcome back';
+  document.getElementById('formSub').textContent=signup?'One account for reports, trends and sharing.':'Sign in to your secure health vault.';
+  document.getElementById('submitBtn').textContent=signup?'Create account →':'Continue →';
+  document.getElementById('pw').setAttribute('autocomplete',signup?'new-password':'current-password');
+  document.getElementById('tabIn').classList.toggle('on',!signup);
+  document.getElementById('tabUp').classList.toggle('on',signup);
+  const cta=document.getElementById('navCta');
+  if(cta){cta.textContent=signup?'Sign in':'Create account';cta.dataset.mode=signup?'signin':'signup';}
+  if(scroll)document.getElementById('authCard').scrollIntoView({behavior:'smooth',block:'center'});
+}
+
+document.getElementById('navCta').addEventListener('click',function(e){
+  e.preventDefault();
+  setMode(this.dataset.mode||'signup',true);
+});
+
+// ─── Password visibility ─────────────────────────────────────────────────
+function togglePw(){
+  const p=document.getElementById('pw');
+  const show=p.type==='password';
+  p.type=show?'text':'password';
+  document.getElementById('pwToggle').textContent=show?'Hide':'Show';
+}
+
+// ─── Reveal helpers ──────────────────────────────────────────────────────
+function toggleMagic(){
+  document.getElementById('magicBtn').classList.add('hidden');
+  document.getElementById('magicInputRow').classList.remove('hidden');
+  document.getElementById('magicEmailInput').focus();
+}
+function toggleOtp(){
+  document.getElementById('otpBtn').classList.add('hidden');
+  document.getElementById('otpInputRow').classList.remove('hidden');
+  document.getElementById('otpEmailInput').focus();
+}
+
+{% if initial_mode == 'signup' %}setMode('signup');{% endif %}
+</script>
+</body></html>

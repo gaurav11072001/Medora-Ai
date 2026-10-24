@@ -1,0 +1,21 @@
+{% extends "admin_layout.html" %}{% block title %}System Configuration — Admin{% endblock %}{% block content %}
+<div class="flex flex-wrap items-end justify-between gap-3 mb-5">
+  <div><h1 class="font-display font-extrabold text-2xl">System Configuration</h1><p class="text-slate-500 text-[13px] mt-0.5">Manage platform behavior, AI prompts, and feature flags.</p></div>
+  <div class="flex gap-2"><button onclick="location.reload()" class="px-4 py-2.5 rounded-xl bg-white border text-[13px] font-bold">Discard</button><button form="cfgForm" class="px-4 py-2.5 rounded-xl bg-slate-900 text-white text-[13px] font-bold">Apply Changes</button></div>
+</div>
+<form id="cfgForm" method="POST" class="space-y-4 max-w-3xl">
+  <div class="bg-white rounded-2xl border border-slate-200 p-5">
+    <h3 class="font-bold mb-1">AI Engine Parameters</h3>
+    <div class="p-3.5 rounded-xl bg-blue-50 border border-blue-100 text-[12.5px] text-slate-600 mb-3">Analysis prompts are managed in code (ai_engine.py / rag_engine.py) — model, embeddings and vision are configured via the server .env (OLLAMA_MODEL, OLLAMA_EMBED_MODEL, GEMINI_MODEL).</div>
+  </div>
+  <div class="bg-white rounded-2xl border border-slate-200 p-5 space-y-4">
+    <h3 class="font-bold">Frontend Experience</h3>
+    <div><label class="text-[12.5px] font-bold text-slate-600">Landing Page Headline</label><input name="landing_headline" value="{{ cfg.landing_headline }}" class="mt-1.5 w-full border border-slate-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-500"/></div>
+  </div>
+  <div class="bg-white rounded-2xl border border-slate-200 p-5">
+    <h3 class="font-bold mb-3">System Safety</h3>
+    <label class="flex items-center justify-between gap-3 cursor-pointer"><span><b class="text-[13.5px]">Maintenance Mode</b> <span class="ml-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-100 text-rose-700">Critical</span><br/><span class="text-[12px] text-slate-400">Redirect all users to the maintenance page.</span></span>
+    <span class="relative inline-flex"><input type="checkbox" name="maintenance_mode" {% if cfg.maintenance_mode %}checked{% endif %} class="w-12 h-6 appearance-none rounded-full transition {{ 'bg-rose-600' if cfg.maintenance_mode else 'bg-slate-200' }}"/></span></label>
+  </div>
+</form>
+{% endblock %}

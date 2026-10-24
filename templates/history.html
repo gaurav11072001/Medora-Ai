@@ -1,0 +1,88 @@
+{% extends "layout.html" %}{% set active='history' %}{% block title %}Medical History — Medora AI{% endblock %}{% block content %}
+<div class="flex flex-wrap items-end justify-between gap-3 mb-5">
+  <div><h1 class="font-display font-extrabold text-[26px] md:text-[30px] tracking-tight">Medical History</h1>
+  <p class="text-slate-500 text-[13.5px] mt-1">A unified, specialist-verified record of your health journey.</p></div>
+  <div class="flex gap-2"><button onclick="exportCSV()" class="btn-ghost px-5 py-2.5 text-[13.5px]">Export Archive</button><a href="/upload" class="btn-brand px-5 py-2.5 text-[13.5px]">+ New analysis</a></div>
+</div>
+
+<div class="card p-5 mb-4">
+  <div class="flex items-center justify-between mb-3">
+    <h2 class="font-bold text-[15px]">Filter Control Center</h2>
+    <div class="flex items-center gap-3 text-[13px]"><button onclick="clearFilters()" class="font-bold text-blue-600 hover:underline">Clear All Filters</button></div>
+  </div>
+  <div class="grid sm:grid-cols-3 gap-3">
+    <label class="text-[12px] font-bold text-slate-500">Quick Search<input id="fq" value="{{ request.args.get('q','') }}" placeholder="Diagnosis, name, file…" class="mt-1 w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-normal outline-none focus:border-blue-400"/></label>
+    <label class="text-[12px] font-bold text-slate-500">Chronology<select id="ford" class="mt-1 w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-normal bg-white"><option value="new">Newest First</option><option value="old">Oldest First</option></select></label>
+    <label class="text-[12px] font-bold text-slate-500">View Mode<select id="fview" class="mt-1 w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-normal bg-white"><option value="time">Timeline</option><option value="person">By Person</option></select></label>
+  </div>
+  <div class="flex items-center gap-4 mt-3 text-[12.5px] text-slate-500"><span><b id="resCount">{{ total }}</b> Results Found</span><span><b id="critCount">0</b> Critical Flags</span></div>
+</div>
+
+<div id="groups" class="space-y-6"></div>
+<div id="list" class="hidden">
+{% for r in reports %}
+{% set _a = r.analysis_json() %}{% set _d = (_a.get('diagnosis',{}) or {}) %}
+{% set _crit = namespace(v=false) %}{% for f in (_a.get('detailedFindings',[]) or []) %}{% if f is mapping and f.get('isCritical') %}{% set _crit.v = true %}{% endif %}{% endfor %}
+<div class="rec card hoverable overflow-hidden mb-3 relative" data-id="{{ r.id }}" data-ts="{{ r.created_at.strftime('%Y-%m-%d %H:%M') }}" data-mlabel="{{ r.created_at.strftime('%B %Y') }}" data-person="{{ (r.detected_patient_name or 'Unknown Patient')|e }}" data-search="{{ ((r.file_name or '') ~ ' ' ~ (r.detected_patient_name or '') ~ ' ' ~ (_d.get('primary',''))) | lower | e }}" data-crit="{{ '1' if _crit.v else '0' }}">
+  <a href="{% if r.status=='completed' %}/report/{{ r.id }}{% else %}/analysis/{{ r.id }}{% endif %}" class="flex items-center gap-4 p-4 pr-12">
+    <span class="w-11 h-11 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-[11px] font-extrabold shrink-0">{{ r.file_type[:3]|upper }}</span>
+    <div class="flex-1 min-w-0">
+      <div class="flex items-center gap-2 flex-wrap"><h3 class="font-bold text-[14.5px] truncate">{{ _d.get('primary') or 'Diagnostic Analysis' }}</h3>
+        <span class="text-[10.5px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-500">{{ r.relationship or 'Patient' }}</span>
+        {% if _crit.v %}<span class="text-[10.5px] font-bold px-2 py-0.5 rounded-full bg-rose-100 text-rose-700">Critical Finding</span>{% endif %}</div>
+      <p class="text-[12px] text-slate-400 mt-0.5">{{ r.detected_patient_name or 'Unknown Patient' }} | {{ r.created_at.strftime('%d %b %Y') }}{% if _d.get('confidence') is not none %} | Confidence: {{ ((_d.get('confidence')*100)|round) }}%{% endif %} • {{ r.file_name }}</p>
+    </div>
+    <span class="pill hidden sm:inline {% if r.status=='completed' %}st-done{% elif r.status=='failed' %}st-fail{% else %}st-proc{% endif %}">{{ r.status }}</span>
+    <span class="text-blue-600 font-bold">›</span>
+  </a>
+  <button onclick="delHistory(event,{{ r.id }},this)" title="Delete this record" class="absolute right-3 bottom-3 text-[11px] font-bold text-slate-300 hover:text-rose-600 px-2 py-1">Delete ✕</button>
+</div>
+{% endfor %}
+</div>
+<div id="emptyState" class="hidden card p-12 text-center"><p class="font-display font-bold text-[17px]">No clinical records match your query</p><p class="text-[13px] text-slate-500 mt-1">Try broadening your search…</p><button onclick="clearFilters()" class="btn-brand px-6 py-2.5 mt-4 text-[13px]">Reset Control Center</button></div>
+
+<div class="flex gap-2 mt-4 text-[13px] items-center">
+{% if page>1 %}<a href="?page={{ page-1 }}&q={{ request.args.get('q','') }}" class="btn-ghost px-4 py-2">← Prev</a>{% endif %}
+{% if total>page*per %}<a href="?page={{ page+1 }}&q={{ request.args.get('q','') }}" class="btn-brand px-4 py-2">Load older reports</a>{% endif %}
+</div>
+{% endblock %}{% block scripts %}<script>
+const cards=[...document.querySelectorAll('.rec')];
+const groupsEl=document.getElementById('groups');
+document.getElementById('critCount').textContent=cards.filter(c=>c.dataset.crit==='1').length;
+function clearFilters(){document.getElementById('fq').value='';apply();}
+function apply(){
+const q=document.getElementById('fq').value.trim().toLowerCase();
+const ord=document.getElementById('ford').value;
+const view=document.getElementById('fview').value;
+let vis=cards.filter(c=>!q||c.dataset.search.includes(q));
+vis.sort((a,b)=>ord==='new'?(b.dataset.ts<a.dataset.ts?-1:1):(a.dataset.ts<b.dataset.ts?-1:1));
+document.getElementById('resCount').textContent=vis.length;
+document.getElementById('emptyState').classList.toggle('hidden',vis.length>0);
+const key=c=>view==='person'?c.dataset.person:c.dataset.mlabel;
+const order=[...new Set(vis.map(key))];
+groupsEl.innerHTML='';
+order.forEach(k=>{
+const items=vis.filter(c=>key(c)===k);
+const h=document.createElement('div');
+h.innerHTML='<span class="inline-block text-[11px] font-bold px-3 py-1.5 rounded-full bg-slate-900 text-white mb-2">'+k+' ('+items.length+' records)</span>';
+const wrap=document.createElement('div');items.forEach(c=>wrap.append(c.cloneNode(true)));
+h.append(wrap);groupsEl.append(h);});
+}
+['fq','ford','fview'].forEach(id=>document.getElementById(id).addEventListener('input',apply));
+document.getElementById('fq').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();location.href='?q='+encodeURIComponent(e.target.value);}});
+apply();
+function exportCSV(){
+let rows=[['id','file','patient','date','status']];
+cards.forEach(c=>{const a=c.querySelector('a');rows.push(['',c.dataset.search.split(' ').slice(0,2).join(' '),c.dataset.person,c.dataset.ts,c.querySelector('.pill')?.textContent||'']);});
+const csv=rows.map(r=>r.map(x=>'"'+String(x).replace(/"/g,'""')+'"').join(',')).join('\n');
+const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='medora-ai-archive.csv';a.click();}
+async function delHistory(e,id,btn){
+e.preventDefault();e.stopPropagation();
+if(!confirm('Delete this record permanently? The file and its analysis will be removed.'))return;
+const r=await fetch('/report/'+id+'/delete',{method:'POST'});
+if(r.ok||r.redirected){
+document.querySelectorAll('.rec[data-id="'+id+'"]').forEach(el=>el.remove());
+if(typeof apply==='function')apply();else location.reload();
+}else alert('Delete failed — please retry.');
+}
+</script>{% endblock %}

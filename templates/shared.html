@@ -1,0 +1,66 @@
+{% import "_icons.html" as ic %}<!DOCTYPE html><html><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>Shared Report — Medora AI</title><script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>body{font-family:Inter,sans-serif}.font-display{font-family:'Plus Jakarta Sans',sans-serif}</style><link rel="stylesheet" href="{{ url_for('static', filename='css/light-theme.css') }}"></head>
+<body class="mk bg-slate-50 min-h-screen">
+<header class="sticky top-0 z-30 bg-white border-b border-slate-200"><div class="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
+  <div class="flex items-center gap-2.5"><span class="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center">{{ ic.activity('w-5 h-5') }}</span><span class="font-display font-bold text-lg">Medora <span class="text-blue-600">AI</span></span><span class="text-[10px] font-bold tracking-widest text-blue-600 uppercase ml-1">Shared Record</span></div>
+  <span class="inline-flex items-center gap-1.5 text-[11.5px] font-bold px-3 py-1.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">✓ Verified Secure</span>
+</div></header>
+<main class="max-w-4xl mx-auto px-4 py-8">
+  <div class="bg-white rounded-2xl border border-slate-200 shadow-lg p-5 md:p-6 mb-6">
+    <p class="text-[10px] uppercase tracking-wide text-slate-400 font-bold">Clinical Synthesis Document</p>
+    <div class="flex flex-wrap items-start justify-between gap-3 mt-1">
+      <h1 class="font-display font-extrabold text-xl md:text-2xl">{{ 'Pathology Result' if (entities.doc_type=='lab') else 'Medical Record' }}</h1>
+      <div class="text-right text-[12px] text-slate-500"><p>Ref: <b class="font-mono">{{ report.share_token[:8]|upper if report.share_token else report.id }}</b></p><p>Date: {{ report.created_at.strftime('%Y-%m-%d') }}</p></div>
+    </div>
+    {% set diag = data.get('diagnosis',{}) or {} %}
+    {% set _conf = ((diag.confidence*100)|round if diag.confidence is not none else 0) %}
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-5 text-[13px]">
+      <div><p class="text-[10px] uppercase tracking-wide text-slate-400 font-bold mb-1">Patient Name</p><p class="font-bold">{{ report.detected_patient_name or 'Not specified' }}</p></div>
+      <div><p class="text-[10px] uppercase tracking-wide text-slate-400 font-bold mb-1">Relationship</p><p class="font-bold">{{ report.relationship or 'Not specified' }}</p></div>
+      <div class="col-span-2"><p class="text-[10px] uppercase tracking-wide text-slate-400 font-bold mb-1">Diagnostic Confidence</p><div class="flex items-center gap-2"><div class="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden"><div class="h-full bg-blue-600 rounded-full" style="width:{{ _conf }}%"></div></div><b>{{ _conf }}%</b></div></div>
+    </div>
+  </div>
+
+  <div class="bg-white rounded-2xl border border-slate-200 shadow-lg p-5 md:p-6 mb-6 border-l-4 !border-l-blue-600">
+    <p class="text-[10px] uppercase tracking-wide text-blue-600 font-bold">Primary Finding</p>
+    <h2 class="font-display font-extrabold text-lg mt-1">{{ diag.primary or 'Undetermined' }}</h2>
+    <p class="text-[14px] text-slate-600 mt-2">{{ data.executiveSummary or 'No summary available.' }}</p>
+  </div>
+
+  <div class="bg-white rounded-2xl border border-slate-200 shadow-lg p-5 md:p-6 mb-6">
+    <h3 class="font-bold text-[15px] mb-3">Clinical Observations</h3>
+    <div class="space-y-2.5">
+    {% for f in data.detailedFindings or [] %}
+    {% set _fd = (f.get('finding','') if f is mapping else f) %}{% set _ex = (f.get('explanation','') if f is mapping else '') %}{% set _cr = (f is mapping and f.get('isCritical')) %}
+    <div class="p-3.5 rounded-xl {% if _cr %}bg-rose-50 border border-rose-200{% else %}bg-slate-50 border border-slate-100{% endif %}">
+      <p class="font-bold text-[13.5px] {% if _cr %}text-rose-800{% endif %}">{{ _fd }} {% if _cr %}<span class="ml-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-600 text-white">CRITICAL</span>{% endif %}</p>
+      {% if _ex %}<p class="text-[12.5px] text-slate-600 mt-1">{{ _ex }}</p>{% endif %}
+    </div>
+    {% else %}<p class="text-[13px] text-slate-400">No observations listed.</p>{% endfor %}
+    </div>
+  </div>
+
+  <div class="grid md:grid-cols-2 gap-6 mb-6">
+    {% set tp = data.treatmentPlan or {} %}{% set meds = tp.medications or [] %}
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-lg p-5">
+      <h3 class="font-bold text-[15px] mb-3 flex items-center gap-2">{{ ic.pill('w-4 h-4 text-emerald-600') }} Action Plan</h3>
+      {% for m in meds %}{% if m is mapping %}<p class="text-[13px] py-1.5 border-b last:border-0">✓ <b>{{ m.get('name','—') }}</b> <span class="text-emerald-600 font-semibold">{{ m.get('dosage','') }}</span> <span class="text-slate-400">{{ m.get('frequency','') }}{% if m.get('duration') %} • {{ m.get('duration') }}{% endif %}</span></p>
+      {% else %}<p class="text-[13px] py-1">✓ <b>{{ m }}</b></p>{% endif %}{% else %}<p class="text-[13px] text-slate-400">No prescriptions listed.</p>{% endfor %}
+      {% if tp.therapyOptions %}<div class="mt-3">{% for t in tp.therapyOptions %}<p class="text-[13px] text-slate-600">• {{ t }}</p>{% endfor %}</div>{% endif %}
+    </div>
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-lg p-5">
+      <h3 class="font-bold text-[15px] mb-3 flex items-center gap-2">{{ ic.flame('w-4 h-4 text-amber-600') }} Lifestyle Guidelines</h3>
+      {% for x in data.lifestyleRecommendations or [] %}<p class="text-[13px] py-1.5 flex gap-2.5"><span class="w-5 h-5 rounded-full bg-slate-100 text-slate-500 text-[11px] font-bold flex items-center justify-center shrink-0">{{ loop.index }}</span>{{ x }}</p>{% else %}<p class="text-[13px] text-slate-400">None listed.</p>{% endfor %}
+    </div>
+  </div>
+
+  {% if data.emergencyTriggers %}
+  <div class="rounded-2xl p-5 md:p-6 mb-6 text-white relative overflow-hidden" style="background:#dc2626">
+    <h3 class="font-bold text-[15px] tracking-wide flex items-center gap-2">{{ ic.alert_triangle('w-5 h-5') }} EMERGENCY TRIGGERS</h3>
+    <div class="grid sm:grid-cols-2 gap-2.5 mt-3">{% for e in data.emergencyTriggers %}<p class="bg-white/10 rounded-xl px-3.5 py-2.5 text-[13px] font-medium">• {{ e }}</p>{% endfor %}</div>
+  </div>
+  {% endif %}
+
+  <p class="text-center text-[11.5px] text-slate-400 max-w-2xl mx-auto">This secure web view was generated by Medora AI for review purposes only and is not a substitute for professional medical diagnosis. Expires {{ report.share_expires_at.strftime('%Y-%m-%d') if report.share_expires_at else 'never' }}.</p>
+</main></body></html>

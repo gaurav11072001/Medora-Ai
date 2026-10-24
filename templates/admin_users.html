@@ -1,0 +1,30 @@
+{% extends "admin_layout.html" %}{% block title %}User Directory — Admin{% endblock %}{% block content %}
+<div class="flex flex-wrap items-end justify-between gap-3 mb-5">
+  <div><h1 class="font-display font-extrabold text-2xl">User Directory</h1><p class="text-slate-500 text-[13px] mt-0.5">{{ users|length }} account(s). Counts are computed in the database.</p></div>
+  <button onclick="location.reload()" class="px-4 py-2.5 rounded-xl bg-slate-900 text-white text-[13px] font-bold">Refresh</button>
+</div>
+<div class="bg-white rounded-2xl border border-slate-200 p-4 mb-4"><input id="q" placeholder="Search by name or email…" class="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-blue-500"/></div>
+<div class="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+<div class="overflow-x-auto"><table class="w-full text-sm min-w-[680px]">
+<thead><tr class="text-left text-[11px] tracking-widest text-slate-400 uppercase border-b border-slate-100"><th class="px-4 py-3">Account</th><th class="px-4 py-3">Role</th><th class="px-4 py-3">Joined</th><th class="px-4 py-3 text-right">Action</th></tr></thead>
+<tbody id="rows">
+{% for u in users %}
+<tr class="datarow border-b last:border-0 border-slate-100 hover:bg-slate-50/60" data-search="{{ ((u.name or '') ~ ' ' ~ u.email)|lower }}">
+  <td class="px-4 py-3"><div class="flex items-center gap-3"><span class="w-9 h-9 rounded-full flex items-center justify-center text-white text-[13px] font-bold" style="background:{% if u.role=='admin' %}#0f172a{% else %}#2563eb{% endif %}">{{ (u.name or u.email)[0]|upper }}</span><div><b>{{ u.name or 'Unnamed' }}</b><br/><span class="font-mono text-[12px] text-slate-400">{{ u.email }}</span></div></div></td>
+  <td class="px-4 py-3"><span class="text-[11px] font-bold px-2.5 py-1 rounded-full {% if u.role=='admin' %}bg-slate-900 text-white{% else %}bg-blue-50 text-blue-700{% endif %}">{{ u.role }}</span></td>
+  <td class="px-4 py-3 text-[12.5px] text-slate-500">{{ u.created_at.strftime('%Y-%m-%d') if u.created_at else '—' }}{% if u.last_login %}<br/><span class="text-[11.5px]">last login {{ u.last_login.strftime('%Y-%m-%d') }}</span>{% endif %}</td>
+  <td class="px-4 py-3 text-right whitespace-nowrap"><a href="/adminpanel/reports" class="text-blue-600 font-bold text-[13px] mr-3">Reports</a>{% if u.id != current_user.id %}<button onclick="delUser({{ u.id }},'{{ u.email|e }}',this)" class="text-rose-600 font-bold text-[13px]">Delete</button>{% else %}<span class="text-[11px] font-bold text-slate-300">you</span>{% endif %}</td>
+</tr>
+{% endfor %}
+</tbody></table></div>
+<p id="emptyRow" class="hidden p-6 text-center text-sm text-slate-400">No accounts found.</p>
+</div>
+{% endblock %}{% block scripts %}<script>
+const rows=[...document.querySelectorAll('.datarow')];
+document.getElementById('q').addEventListener('input',e=>{const q=e.target.value.toLowerCase();let n=0;
+rows.forEach(r=>{const ok=!q||r.dataset.search.includes(q);r.style.display=ok?'':'none';if(ok)n++;});
+document.getElementById('emptyRow').classList.toggle('hidden',n>0);});
+async function delUser(id,email,btn){if(!confirm('Delete user '+email+' and ALL their reports? This cannot be undone.'))return;
+const r=await fetch('/adminpanel/users/'+id+'/delete',{method:'POST'});const j=await r.json().catch(()=>({}));
+if(!r.ok){alert(j.error||'Delete failed');return;}btn.closest('tr').remove();}
+</script>{% endblock %}

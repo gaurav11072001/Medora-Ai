@@ -1,0 +1,37 @@
+{% import "_icons.html" as ic %}<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>{% block title %}Medora AI{% endblock %}</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>tailwind.config={theme:{extend:{fontFamily:{display:['"Plus Jakarta Sans"','Inter','sans-serif'],sans:['Inter','sans-serif']}}}}</script>
+<style>body{font-family:Inter,sans-serif}.font-display{font-family:'Plus Jakarta Sans',sans-serif}.medical-gradient{background:linear-gradient(135deg,#2563eb,#3b82f6)}.btn-shine{position:relative;overflow:hidden}.btn-shine::after{content:'';position:absolute;top:0;left:-60%;width:40%;height:100%;background:linear-gradient(120deg,transparent,rgba(255,255,255,.4),transparent);transform:skewX(-20deg);transition:left .6s}.btn-shine:hover::after{left:120%}</style>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/light-theme.css') }}">
+{% block head %}{% endblock %}
+</head>
+<body class="mk bg-slate-50 text-slate-900 min-h-screen">
+<div class="sticky top-4 z-40 px-4 pt-4">
+<nav class="max-w-7xl mx-auto h-16 bg-white/90 backdrop-blur rounded-full border border-slate-100 shadow-[0_8px_32px_-8px_rgba(15,35,90,0.18)] px-4 flex items-center justify-between">
+<a href="{% if current_user.is_authenticated %}/dashboard{% else %}/{% endif %}" class="flex items-center gap-2 text-blue-600 font-display font-bold text-xl"><span class="w-8 h-8 rounded-lg medical-gradient flex items-center justify-center text-white">{{ ic.activity('w-4 h-4') }}</span>Medora <span class="text-slate-900">AI</span></a>
+<div class="flex items-center gap-4 text-sm font-medium">
+{% if current_user.is_authenticated %}
+<a href="/dashboard" class="text-slate-600 hover:text-blue-600">Dashboard</a>
+<a href="/upload" class="text-slate-600 hover:text-blue-600">Upload</a>
+<a href="/history" class="text-slate-600 hover:text-blue-600">History</a>
+<a href="/trends" class="text-slate-600 hover:text-blue-600">Trends</a>
+<a href="/settings" class="text-slate-600 hover:text-blue-600">{{ current_user.name }}</a>
+{% if current_user.role=='admin' %}<a href="/adminpanel/dashboard" class="text-amber-600">Admin</a>{% endif %}
+<a href="/logout" class="px-4 py-2 rounded-full medical-gradient text-white font-bold btn-shine">Logout</a>
+{% else %}
+<a href="/#features" class="text-slate-600">Features</a>
+<a href="/security" class="text-slate-600">Security</a>
+<a href="/login" class="px-4 py-2 rounded-full medical-gradient text-white font-bold btn-shine">Sign In</a>
+{% endif %}
+</div></nav></div>
+<main class="max-w-7xl mx-auto px-4 py-8">
+{% with msgs=get_flashed_messages(with_categories=true) %}{% if msgs %}{% for c,m in msgs %}<div class="mb-4 p-4 rounded-xl {% if c=='error' %}bg-rose-50 text-rose-700 border border-rose-200{% else %}bg-emerald-50 text-emerald-700 border border-emerald-200{% endif %}">{{ m }}</div>{% endfor %}{% endif %}{% endwith %}
+{% block content %}{% endblock %}
+</main>
+{% block scripts %}{% endblock %}
+</body></html>

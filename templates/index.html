@@ -1,0 +1,897 @@
+{% import "_icons.html" as ic %}<!DOCTYPE html>
+<html lang="en" class="antialiased" id="htmlRoot">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Medora AI | Clear answers. Confident care.</title>
+<meta name="description" content="Medora AI turns complex lab results, scans, and clinical notes into clear, grounded insights you can discuss with your doctor — private, encrypted, and ready in seconds." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  darkMode: 'class',
+  theme: {
+    extend: {
+      fontFamily: {
+        display: ['"Plus Jakarta Sans"', 'Inter', 'sans-serif'],
+        sans: ['Inter', 'sans-serif'],
+      }
+    }
+  }
+}
+</script>
+<style>
+  /* ─── Tokens ───────────────────────────────────────────────────────── */
+  :root{
+    --lp-bg:#fff;--lp-fg:#1f2328;
+    --lp-sub:#3e444c;--lp-muted:#666d76;
+    --lp-nav:rgba(255,255,255,.90);--lp-nav-border:#e6e8eb;
+    --lp-card:#fff;--lp-card-border:#e6e8eb;--lp-card2:#f7f8f9;
+    --lp-section:#f7f8f9;--lp-grid-line:#e8eaed;
+    --lp-orb1:transparent;--lp-orb2:transparent;
+  }
+  html.dark{
+    color-scheme:dark;
+    --lp-bg:#0d1117;--lp-fg:#e6edf3;
+    --lp-sub:#9aa4b2;--lp-muted:#7d8590;
+    --lp-nav:rgba(22,27,34,.86);--lp-nav-border:#30363d;
+    --lp-card:#161b22;--lp-card-border:#30363d;--lp-card2:#21262d;
+    --lp-section:#11161d;--lp-grid-line:#1b2431;
+    --lp-orb1:rgba(37,99,235,.16);--lp-orb2:rgba(30,58,138,.14);
+  }
+
+  /* ─── Base ──────────────────────────────────────────────────────────── */
+  html{scroll-behavior:smooth}
+  body{font-family:'Inter',sans-serif;background:var(--lp-bg);color:var(--lp-fg);transition:background .3s,color .3s}
+  .font-display{font-family:'Plus Jakarta Sans',sans-serif}
+  .medical-gradient{background:linear-gradient(135deg,#2563eb 0%,#3b82f6 100%)}
+  .btn-shine{position:relative;overflow:hidden}
+  .btn-shine::after{content:'';position:absolute;top:0;left:-60%;width:40%;height:100%;background:linear-gradient(120deg,transparent,rgba(255,255,255,.4),transparent);transform:skewX(-20deg);transition:left .6s}
+  .btn-shine:hover::after{left:120%}
+  .grid-bg{background-image:linear-gradient(to right,var(--lp-grid-line) 1px,transparent 1px),linear-gradient(to bottom,var(--lp-grid-line) 1px,transparent 1px);background-size:48px 48px;mask-image:radial-gradient(ellipse 80% 60% at 50% 40%,#000 30%,transparent 75%);-webkit-mask-image:radial-gradient(ellipse 80% 60% at 50% 40%,#000 30%,transparent 75%)}
+  .hl-grad{background:linear-gradient(100deg,#3b82f6 10%,#93c5fd 55%,#3b82f6 90%);-webkit-background-clip:text;background-clip:text;color:transparent;position:relative;white-space:nowrap}
+  html.dark .hl-grad{background:linear-gradient(100deg,#60a5fa 10%,#dbeafe 55%,#60a5fa 90%);-webkit-background-clip:text;background-clip:text}
+  .hl-mark{position:relative;white-space:nowrap;z-index:0}
+  .hl-mark::before{content:'';position:absolute;left:-2%;right:-2%;bottom:6%;height:34%;z-index:-1;border-radius:6px;background:linear-gradient(100deg,rgba(30,94,255,.22),rgba(109,155,255,.28));transform:skew(-8deg) rotate(-1deg)}
+  html.dark .hl-mark::before{background:linear-gradient(100deg,rgba(59,130,246,.32),rgba(147,197,253,.18))}
+  .hl-mark::after{content:'';position:absolute;left:0;right:0;bottom:-6px;height:8px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 8' preserveAspectRatio='none'%3E%3Cpath d='M2 6 Q 30 1 60 4 T 118 3' fill='none' stroke='%232563eb' stroke-width='3' stroke-linecap='round' opacity='.55'/%3E%3C/svg%3E") no-repeat center/100% 100%}
+  html.dark .hl-mark::after{filter:brightness(1.45) saturate(1.1);opacity:.95}
+
+  /* ─── Navbar (floating pill) ──────────────────────────────────────────── */
+  .lp-nav{background:var(--lp-nav);border-color:var(--lp-nav-border)}
+  .lp-mobile-menu{background:var(--lp-nav);border-color:var(--lp-nav-border)}
+  html.dark .lp-nav,html.dark .lp-mobile-menu{box-shadow:0 12px 40px -12px rgba(0,0,0,.75)}
+
+  /* ─── Hero section ──────────────────────────────────────────────── */
+  .hero-orb1{background:var(--lp-orb1)}
+  .hero-orb2{background:var(--lp-orb2)}
+
+  /* ─── CTA section ─────────────────────────────────────────────── */
+  .cta-section{background:linear-gradient(135deg,#eff6ff,#fff,#eff6ff)}
+  html.dark .cta-section{background:linear-gradient(135deg,#0d1117,#141b24 55%,#0d1117)}
+
+  /* ─── Dark mode toggle button ──────────────────────────────────────── */
+  .dm-toggle{
+    width:38px;height:38px;border-radius:10px;
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;transition:.2s;flex-shrink:0;padding:0;
+    border:1.5px solid rgba(226,232,240,.9);
+    background:rgba(255,255,255,.75);backdrop-filter:blur(8px);
+  }
+  .dm-toggle:hover{border-color:#2563eb;background:rgba(37,99,235,.08)}
+  html.dark .dm-toggle{border-color:#30363d;background:rgba(22,27,34,.85)}
+  html.dark .dm-toggle:hover{border-color:#58a6ff;background:#1c2d46}
+  html.dark .dm-toggle .icon-sun{color:#f0b429!important}
+  html.dark .dm-toggle .icon-moon{display:none!important}
+  html:not(.dark) .dm-toggle .icon-sun{display:none!important}
+
+  /* ─── Dark mode: surface remap ──────────────────────────────────────── */
+  html.dark .bg-white{background-color:#161b22}
+  html.dark .bg-white\/95{background-color:rgba(22,27,34,.96)}
+  html.dark .bg-white\/90{background-color:rgba(22,27,34,.94)}
+  html.dark .bg-white\/85{background-color:rgba(22,27,34,.86)}
+  html.dark .bg-white\/80{background-color:rgba(22,27,34,.84)}
+  html.dark .bg-slate-100{background-color:#21262d}
+  html.dark .bg-slate-50{background-color:#12171e}
+  html.dark .bg-slate-50\/50{background-color:#0d1117}
+  html.dark .bg-slate-50\/60{background-color:#1b222b}
+  html.dark .bg-slate-50\/70{background-color:#1b222b}
+  html.dark .bg-blue-50{background-color:#12233c}
+  html.dark .bg-blue-50\/40{background-color:rgba(18,35,60,.45)}
+  html.dark .bg-blue-50\/60{background-color:rgba(18,35,60,.55)}
+  html.dark .bg-blue-100{background-color:#16304f}
+  html.dark .bg-blue-100\/30{background-color:rgba(22,48,79,.35)}
+  html.dark .bg-emerald-50{background-color:#10281d}
+  html.dark .bg-emerald-100{background-color:#123326}
+  html.dark .bg-amber-50{background-color:#2a2010}
+
+  html.dark .text-slate-900,
+  html.dark .text-slate-800,
+  html.dark .text-slate-700{color:#e6edf3}
+  html.dark .text-slate-600{color:#9aa4b2}
+  html.dark .text-slate-500{color:#8b949e}
+  html.dark .text-slate-400{color:#7d8590}
+  html.dark .text-blue-600,
+  html.dark .text-blue-700,
+  html.dark .text-blue-500{color:#58a6ff}
+  html.dark .text-emerald-600{color:#3fb950}
+  html.dark .text-amber-600{color:#d29922}
+
+  html.dark .border-slate-50,
+  html.dark .border-slate-100,
+  html.dark .border-slate-200{border-color:#30363d}
+  html.dark .divide-slate-100>:not([hidden])~:not([hidden]),
+  html.dark .divide-slate-200>:not([hidden])~:not([hidden]){border-color:#262d36}
+  html.dark .border-slate-800{border-color:#21262d}
+  html.dark .border-blue-100{border-color:#1f4068}
+  html.dark .border-blue-200\/50{border-color:#1f4068}
+  html.dark .border-white,
+  html.dark .border-white\/10,
+  html.dark .border-white\/40,
+  html.dark .border-white\/60{border-color:#30363d}
+
+  html.dark .hover\:border-blue-300:hover{border-color:#1f6feb}
+  html.dark .hover\:text-blue-600:hover{color:#58a6ff}
+  html.dark .hover\:text-blue-400:hover{color:#79c0ff}
+
+  html.dark .ring-blue-50{--tw-ring-color:rgba(88,166,255,.18)}
+  html.dark .shadow-blue-100,
+  html.dark .shadow-blue-200,
+  html.dark .shadow-emerald-100{--tw-shadow-color:rgba(0,0,0,.55)}
+
+  /* ─── Clinical sheet (hero card) ───────────────────────────────────── */
+  .clinical-sheet{transition:background-color .3s,border-color .3s,box-shadow .3s}
+  html.dark .clinical-sheet{
+    background-color:#161b22;
+    border-color:#30363d;
+    box-shadow:0 32px 80px -36px rgba(0,0,0,.9),inset 0 1px 0 rgba(255,255,255,.035);
+  }
+  html.dark .clinical-sheet .border-slate-100{border-color:#262d36}
+
+  /* header */
+  html.dark .clinical-sheet .clinical-head{background-color:#1b222b;border-bottom-color:#262d36}
+  html.dark .clinical-sheet .clinical-head .text-slate-400{color:#8b949e}
+  html.dark .clinical-sheet .clinical-icon{
+    background-image:linear-gradient(135deg,#1f6feb,#3b82f6);
+    box-shadow:0 0 0 1px rgba(88,166,255,.35),0 10px 24px -10px rgba(31,111,235,.9);
+  }
+  html.dark .clinical-sheet .clinical-live{
+    background-color:rgba(88,166,255,.12);
+    border-color:rgba(88,166,255,.32);
+    color:#79c0ff;
+  }
+  html.dark .clinical-sheet .clinical-live .clinical-dot{
+    background-color:#58a6ff;box-shadow:0 0 0 3px rgba(88,166,255,.18);
+  }
+
+  /* score + progress */
+  html.dark .clinical-sheet .clinical-spark{filter:drop-shadow(0 0 6px rgba(56,139,253,.45))}
+  html.dark .clinical-sheet .clinical-track{background-color:#21262d}
+  html.dark .clinical-sheet .clinical-fill{
+    background-image:linear-gradient(90deg,#1f6feb,#58a6ff);
+    box-shadow:0 0 12px rgba(56,139,253,.55);
+  }
+
+  /* steps */
+  html.dark .clinical-sheet .clinical-ring{border-color:rgba(88,166,255,.45)}
+
+  /* footer */
+  html.dark .clinical-sheet .clinical-foot{
+    background-color:#1b222b;border-top-color:#262d36;color:#8b949e;
+  }
+
+  /* ─── Testimonial cards ────────────────────────────────────────────── */
+  .ts-card::before{
+    content:'';position:absolute;left:0;right:0;top:0;height:2px;
+    border-radius:2px 2px 0 0;
+    background:linear-gradient(90deg,#2563eb,#60a5fa);
+    opacity:0;transition:opacity .3s;
+  }
+  .ts-card:hover::before{opacity:1}
+  html.dark .ts-card{
+    background-color:#161b22;border-color:#30363d;
+    box-shadow:0 1px 2px rgba(0,0,0,.5),0 18px 40px -30px rgba(0,0,0,.9);
+  }
+  html.dark .ts-card:hover{
+    border-color:rgba(88,166,255,.45);
+    box-shadow:0 1px 2px rgba(0,0,0,.5),0 28px 56px -28px rgba(0,0,0,.95),0 0 0 1px rgba(88,166,255,.10);
+  }
+  html.dark .ts-card .border-slate-100{border-color:#262d36}
+  html.dark .ts-card blockquote p{color:#c9d1d9}
+  html.dark .ts-card .ts-verified{
+    background-color:rgba(88,166,255,.12);
+    border-color:rgba(88,166,255,.30);
+    color:#79c0ff;
+  }
+  html.dark .ts-card .ring-white{--tw-ring-color:#30363d}
+  html.dark .ts-card img{background-color:#21262d}
+
+  /* ─── How it works ─────────────────────────────────────────────────── */
+  html.dark .hiw-card{
+    background-color:#161b22;border-color:#30363d;
+    box-shadow:0 1px 2px rgba(0,0,0,.5),0 18px 40px -30px rgba(0,0,0,.9);
+  }
+  html.dark .hiw-step:hover .hiw-card{
+    border-color:rgba(88,166,255,.45);
+    box-shadow:0 1px 2px rgba(0,0,0,.5),0 28px 56px -28px rgba(0,0,0,.95),0 0 0 1px rgba(88,166,255,.10);
+  }
+  html.dark .hiw-card .hiw-num{color:#21262d}
+  html.dark .hiw-card .border-slate-100{border-color:#262d36}
+  html.dark .hiw-card .hiw-chip{
+    background-color:#21262d;border-color:#30363d;color:#9aa4b2;
+  }
+  html.dark .hiw-arrow{
+    background-color:#1b222b;border-color:#30363d;color:#79c0ff;
+  }
+</style>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/light-theme.css') }}">
+</head>
+<body class="mk">
+<!-- Apply dark before paint to avoid flash -->
+<script>(function(){if(localStorage.getItem('mi-dark')==='1')document.getElementById('htmlRoot').classList.add('dark');})();</script>
+
+<!-- NAV — floating rounded pill -->
+<div class="fixed top-4 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-7xl z-50">
+<nav class="lp-nav h-16 sm:h-20 bg-white/85 backdrop-blur-md rounded-full border border-slate-100 shadow-[0_8px_32px_-8px_rgba(15,35,90,0.18)] px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+    <a href="/" class="flex items-center gap-2 text-blue-600">
+      <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+      <span class="font-display text-2xl font-bold text-slate-900 tracking-tight">Medora <span class="text-blue-600">AI</span></span>
+    </a>
+    <div class="hidden md:flex items-center gap-5">
+      <a href="#features" class="text-sm font-medium text-slate-600 hover:text-blue-600 transition-colors">Features</a>
+      <a href="/security" class="text-sm font-medium text-slate-600 hover:text-blue-600 transition-colors">Security</a>
+      <!-- 🌙 Dark mode toggle -->
+      <button id="dmToggleLanding" class="dm-toggle" title="Toggle dark mode" aria-label="Toggle dark mode">
+        <!-- Sun (shown in dark mode) -->
+        <svg class="icon-sun w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="color:#2563eb"><circle cx="12" cy="12" r="5"/><path stroke-linecap="round" d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+        <!-- Moon (shown in light mode) -->
+        <svg class="icon-moon w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="color:#64748b"><path stroke-linecap="round" d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+      </button>
+      <a href="/login" class="px-8 py-3 rounded-full medical-gradient text-white text-sm font-bold shadow-lg shadow-blue-200 hover:shadow-blue-400 hover:-translate-y-0.5 active:scale-95 transition-all btn-shine">Sign In</a>
+    </div>
+    <div class="md:hidden flex items-center gap-2">
+      <!-- Mobile dark toggle -->
+      <button id="dmToggleMobile" class="dm-toggle" style="width:36px;height:36px;border-radius:9px" title="Toggle dark mode" aria-label="Toggle dark mode">
+        <svg class="icon-sun w-[16px] h-[16px]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="color:#2563eb"><circle cx="12" cy="12" r="5"/><path stroke-linecap="round" d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+        <svg class="icon-moon w-[16px] h-[16px]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="color:#64748b"><path stroke-linecap="round" d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+      </button>
+      <button id="mobileBtn" class="p-2 text-slate-700">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+    </div>
+</nav>
+  <div id="mobileMenu" class="lp-mobile-menu hidden md:hidden bg-white/95 backdrop-blur-md border border-slate-100 rounded-3xl shadow-[0_8px_32px_-8px_rgba(15,35,90,0.18)] px-4 py-4 space-y-3 mt-2">
+    <a href="#features" class="block text-sm font-medium text-slate-700">Features</a>
+    <a href="/security" class="block text-sm font-medium text-slate-700">Security</a>
+    <a href="/login" class="block text-center px-4 py-3 rounded-full medical-gradient text-white text-sm font-bold">Sign In</a>
+  </div>
+</div>
+
+<!-- HERO -->
+<section class="pt-28 sm:pt-40 pb-12 sm:pb-20 px-4 sm:px-6 overflow-hidden relative">
+  <div aria-hidden="true" class="absolute inset-0 z-0 grid-bg"></div>
+  <div aria-hidden="true" class="hero-orb1 absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 w-[800px] h-[800px] rounded-full blur-3xl z-0"></div>
+  <div aria-hidden="true" class="hero-orb2 absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full blur-3xl z-0"></div>
+
+  <div class="relative z-10 max-w-7xl mx-auto grid lg:grid-cols-2 gap-8 sm:gap-16 items-center">
+    <div class="space-y-5 sm:space-y-8">
+      <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50 text-blue-600 text-xs font-semibold tracking-wide border border-blue-100 shadow-sm">
+        <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        Clinical clarity, made human
+      </div>
+      <h1 class="text-3xl sm:text-5xl md:text-7xl font-display font-bold text-slate-900 leading-[1.1]">
+        {% set _h = headline or 'Clear answers. Confident care.' %}
+        {% if _h == 'Professional AI Diagnosis in Seconds.' %}{% set _h = 'Clear answers. Confident care.' %}{% endif %}
+        {% set _h = _h.replace('Clear answers. ', 'Clear answers.<br class="hidden sm:block"/> ') %}
+        {% set _h = _h.replace('Confident care.', '<span class="hl-grad">Confident <span class="hl-mark">care.</span></span>') %}
+        {{ _h | safe }}
+      </h1>
+      <p class="text-base sm:text-xl text-slate-600 leading-relaxed max-w-xl">Medora AI turns complex lab results, scans, and clinical notes into clear, grounded insights — private, encrypted, and ready to discuss with your doctor in seconds.</p>
+      <div class="flex flex-col sm:flex-row gap-4">
+        <a href="/login" class="px-5 sm:px-10 py-3.5 sm:py-5 rounded-2xl medical-gradient text-white font-semibold text-base sm:text-xl shadow-lg shadow-blue-200 flex items-center justify-center gap-3 hover:-translate-y-1 active:scale-95 transition-all btn-shine">
+          Decode my report
+          <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+      <div class="flex flex-col items-start sm:flex-row sm:items-center gap-3 sm:gap-6 pt-4">
+        <div class="flex -space-x-4">
+          <img src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=100&h=100&fit=crop" class="w-9 h-9 sm:w-12 sm:h-12 rounded-full border-2 border-white ring-2 ring-blue-50 object-cover" alt="Doctor" />
+          <img src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=100&h=100&fit=crop" class="w-9 h-9 sm:w-12 sm:h-12 rounded-full border-2 border-white ring-2 ring-blue-50 object-cover" alt="Physician" />
+          <img src="https://images.unsplash.com/photo-1537368910025-700350fe46c7?w=100&h=100&fit=crop" class="w-9 h-9 sm:w-12 sm:h-12 rounded-full border-2 border-white ring-2 ring-blue-50 object-cover" alt="Patient" />
+          <img src="https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=100&h=100&fit=crop" class="w-9 h-9 sm:w-12 sm:h-12 rounded-full border-2 border-white ring-2 ring-blue-50 object-cover" alt="Medical Staff" />
+        </div>
+        <p class="text-sm text-slate-500 font-medium">Trusted by 10,000+ patients and doctors</p>
+      </div>
+    </div>
+
+    <!-- Clinical sheet -->
+    <div class="relative">
+      <div class="clinical-sheet bg-white rounded-[22px] border border-slate-200 shadow-[0_28px_70px_-40px_rgba(31,35,40,.35)] overflow-hidden">
+        <!-- Header -->
+        <div class="clinical-head flex items-center justify-between gap-4 px-5 sm:px-7 py-4 border-b border-slate-100 bg-slate-50/60">
+          <div class="flex items-center gap-3 min-w-0">
+            <span class="clinical-icon w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center shrink-0">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>
+            </span>
+            <div class="min-w-0">
+              <p class="text-xs font-semibold text-slate-400">Clinical synthesis</p>
+              <p class="text-sm font-semibold text-slate-900 truncate">MRI_SCAN_772.pdf</p>
+            </div>
+          </div>
+          <span class="clinical-live inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-blue-600 bg-blue-50 border border-blue-100 rounded-full px-2.5 py-1 shrink-0">
+            <span class="clinical-dot w-1.5 h-1.5 rounded-full bg-blue-600"></span> Live
+          </span>
+        </div>
+
+        <div class="px-5 sm:px-7 py-5 sm:py-6">
+          <!-- Patient meta -->
+          <div class="grid grid-cols-3 gap-4 pb-5 border-b border-slate-100">
+            <div>
+              <p class="text-xs font-bold tracking-[.12em] uppercase text-slate-400">Patient</p>
+              <p class="text-sm font-semibold text-slate-900 mt-1">A. Sharma</p>
+            </div>
+            <div>
+              <p class="text-xs font-bold tracking-[.12em] uppercase text-slate-400">Study</p>
+              <p class="text-sm font-semibold text-slate-900 mt-1">MRI · Brain</p>
+            </div>
+            <div>
+              <p class="text-xs font-bold tracking-[.12em] uppercase text-slate-400">Findings</p>
+              <p class="text-sm font-semibold text-slate-900 mt-1">3 flagged</p>
+            </div>
+          </div>
+
+          <!-- Score -->
+          <div class="flex items-end justify-between gap-4 py-5">
+            <div>
+              <p class="text-xs font-semibold text-slate-400">Vital health score</p>
+              <p class="font-display font-extrabold text-4xl leading-none text-slate-900 mt-1">92<span class="text-base text-slate-400 font-bold">/100</span></p>
+            </div>
+            <svg class="clinical-spark w-32 h-12 text-blue-600 shrink-0" viewBox="0 0 160 56" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M2 40 L18 34 L32 38 L48 24 L64 28 L80 18 L96 22 L112 14 L128 18 L144 8 L158 12"/>
+            </svg>
+          </div>
+
+          <!-- Progress -->
+          <div>
+            <div class="flex items-center justify-between text-xs font-semibold mb-2">
+              <span class="text-slate-500">Analysis progress</span>
+              <span class="text-blue-600">84%</span>
+            </div>
+            <div class="clinical-track h-1.5 bg-slate-100 rounded-full overflow-hidden">
+              <div class="clinical-fill h-full w-[84%] bg-blue-600 rounded-full"></div>
+            </div>
+          </div>
+
+          <!-- Steps -->
+          <div class="mt-5 border-t border-slate-100 divide-y divide-slate-100">
+            <div class="flex items-center gap-2.5 py-2.5">
+              <span class="w-5 h-5 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0"><svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>
+              <span class="text-sm font-semibold text-slate-700">Patient identification</span>
+              <span class="ml-auto text-xs font-semibold text-slate-400">Done</span>
+            </div>
+            <div class="flex items-center gap-2.5 py-2.5">
+              <span class="w-5 h-5 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0"><svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>
+              <span class="text-sm font-semibold text-slate-700">Optical character recognition</span>
+              <span class="ml-auto text-xs font-semibold text-slate-400">Done</span>
+            </div>
+            <div class="flex items-center gap-2.5 py-2.5">
+              <span class="clinical-ring w-5 h-5 rounded-full border border-blue-200 flex items-center justify-center shrink-0"><span class="w-1.5 h-1.5 rounded-full bg-blue-600"></span></span>
+              <span class="text-sm font-semibold text-slate-700">Specialist AI consultation</span>
+              <span class="ml-auto text-xs font-semibold text-blue-600">In progress</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="clinical-foot flex items-center justify-between gap-3 px-5 sm:px-7 py-3 bg-slate-50 border-t border-slate-100 text-xs font-semibold text-slate-400">
+          <span class="inline-flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+            Encrypted in transit &amp; at rest
+          </span>
+          <span>AI-assisted</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features" class="py-12 sm:py-24 px-4 sm:px-6">
+  <div class="max-w-7xl mx-auto">
+    <div class="text-center max-w-2xl mx-auto mb-8 sm:mb-20">
+      <h2 class="text-2xl sm:text-4xl font-display font-bold text-slate-900 mb-3 sm:mb-4">Expertise in every analysis</h2>
+      <p class="text-slate-600 text-base sm:text-lg">Comprehensive features designed for both proactive patients and busy doctors.</p>
+    </div>
+    <div class="grid md:grid-cols-3 gap-3 sm:gap-8">
+      <div class="p-4 sm:p-8 rounded-2xl bg-white border border-slate-100 hover:border-blue-300 hover:shadow-lg transition-all group">
+        <div class="flex items-center gap-3 sm:block">
+          <div class="w-10 h-10 sm:w-16 sm:h-16 flex-shrink-0 rounded-xl sm:rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center sm:mb-6 group-hover:scale-110 transition-transform"><svg class="w-5 h-5 sm:w-8 sm:h-8" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg></div>
+          <h3 class="text-base sm:text-xl font-bold text-slate-900 sm:mb-3">Multi-Format Analysis</h3>
+        </div>
+        <p class="text-sm sm:text-base text-slate-600 leading-relaxed font-medium mt-2 sm:mt-0">Support for PDFs, JPEG, PNG, DICOM, and TIFF. High-fidelity OCR extracts every detail.</p>
+      </div>
+      <div class="p-4 sm:p-8 rounded-2xl bg-white border border-slate-100 hover:border-blue-300 hover:shadow-lg transition-all group">
+        <div class="flex items-center gap-3 sm:block">
+          <div class="w-10 h-10 sm:w-16 sm:h-16 flex-shrink-0 rounded-xl sm:rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center sm:mb-6 group-hover:scale-110 transition-transform"><svg class="w-5 h-5 sm:w-8 sm:h-8" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
+          <h3 class="text-base sm:text-xl font-bold text-slate-900 sm:mb-3">Neural Engine</h3>
+        </div>
+        <p class="text-sm sm:text-base text-slate-600 leading-relaxed font-medium mt-2 sm:mt-0">Utilizes the latest in generative AI to provide reasoning-heavy diagnostic insights.</p>
+      </div>
+      <div class="p-4 sm:p-8 rounded-2xl bg-white border border-slate-100 hover:border-blue-300 hover:shadow-lg transition-all group">
+        <div class="flex items-center gap-3 sm:block">
+          <div class="w-10 h-10 sm:w-16 sm:h-16 flex-shrink-0 rounded-xl sm:rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center sm:mb-6 group-hover:scale-110 transition-transform"><svg class="w-5 h-5 sm:w-8 sm:h-8" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+          <h3 class="text-base sm:text-xl font-bold text-slate-900 sm:mb-3">Collaborative Care</h3>
+        </div>
+        <p class="text-sm sm:text-base text-slate-600 leading-relaxed font-medium mt-2 sm:mt-0">Securely share reports with doctors, family, or insurance providers with encrypted links.</p>
+      </div>
+      <div class="p-4 sm:p-8 rounded-2xl bg-white border border-slate-100 hover:border-blue-300 hover:shadow-lg transition-all group">
+        <div class="flex items-center gap-3 sm:block">
+          <div class="w-10 h-10 sm:w-16 sm:h-16 flex-shrink-0 rounded-xl sm:rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center sm:mb-6 group-hover:scale-110 transition-transform"><svg class="w-5 h-5 sm:w-8 sm:h-8" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></div>
+          <h3 class="text-base sm:text-xl font-bold text-slate-900 sm:mb-3">Private & Secure</h3>
+        </div>
+        <p class="text-sm sm:text-base text-slate-600 leading-relaxed font-medium mt-2 sm:mt-0">Encrypted in transit and at rest. Documents are private to your account.</p>
+      </div>
+      <div class="p-4 sm:p-8 rounded-2xl bg-white border border-slate-100 hover:border-blue-300 hover:shadow-lg transition-all group">
+        <div class="flex items-center gap-3 sm:block">
+          <div class="w-10 h-10 sm:w-16 sm:h-16 flex-shrink-0 rounded-xl sm:rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center sm:mb-6 group-hover:scale-110 transition-transform"><svg class="w-5 h-5 sm:w-8 sm:h-8" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8"/></svg></div>
+          <h3 class="text-base sm:text-xl font-bold text-slate-900 sm:mb-3">Specialist Reports</h3>
+        </div>
+        <p class="text-sm sm:text-base text-slate-600 leading-relaxed font-medium mt-2 sm:mt-0">Full breakdowns including pathophysiology, differential diagnosis, and treatment plans.</p>
+      </div>
+      <div class="p-4 sm:p-8 rounded-2xl bg-white border border-slate-100 hover:border-blue-300 hover:shadow-lg transition-all group">
+        <div class="flex items-center gap-3 sm:block">
+          <div class="w-10 h-10 sm:w-16 sm:h-16 flex-shrink-0 rounded-xl sm:rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center sm:mb-6 group-hover:scale-110 transition-transform"><svg class="w-5 h-5 sm:w-8 sm:h-8" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
+          <h3 class="text-base sm:text-xl font-bold text-slate-900 sm:mb-3">Long-term Tracking</h3>
+        </div>
+        <p class="text-sm sm:text-base text-slate-600 leading-relaxed font-medium mt-2 sm:mt-0">Visualize your health trends over time with our intelligent health timeline.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DARK PREVIEW -->
+<section class="py-12 sm:py-24 px-4 sm:px-6 bg-[#111418] relative overflow-hidden">
+  <div class="absolute top-0 left-1/4 w-[500px] h-[500px] bg-blue-500/10 rounded-full blur-3xl"></div>
+  <div class="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-blue-500/10 rounded-full blur-3xl"></div>
+  <div class="max-w-7xl mx-auto relative z-10">
+    <div class="text-center max-w-3xl mx-auto mb-8 sm:mb-16">
+      <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 text-blue-400 text-xs font-semibold tracking-wide border border-blue-500/20 mb-6">
+        Live Platform Preview
+      </div>
+      <h2 class="text-2xl sm:text-4xl md:text-5xl font-display font-bold text-white mb-6 leading-tight">See How Your Reports <span class="text-blue-400">Come to Life</span></h2>
+      <p class="text-lg text-slate-400 leading-relaxed">Upload any medical document - lab results, imaging scans, prescriptions - and watch our AI engine transform it into a comprehensive clinical analysis with actionable insights.</p>
+    </div>
+
+    <div class="relative group">
+      <div class="absolute -inset-4 bg-blue-500/20 rounded-2xl blur-2xl opacity-60 group-hover:opacity-100 transition-opacity duration-700"></div>
+      <div class="relative bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 p-3 shadow-lg shadow-black/40">
+        <!-- Mock dashboard -->
+        <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+          <div class="p-6 border-b border-slate-100 flex items-center justify-between">
+            <div>
+              <p class="text-xs font-semibold text-blue-600 tracking-wide">Clinical Diagnosis</p>
+              <h3 class="text-xl font-bold text-slate-900">Acute Viral Pharyngitis</h3>
+            </div>
+            <span class="px-3 py-1 rounded-full bg-emerald-50 text-emerald-600 text-sm font-bold">90% confidence</span>
+          </div>
+          <div class="grid md:grid-cols-3 gap-4 p-6 text-left">
+            <div class="p-4 rounded-xl bg-slate-50"><p class="text-xs font-bold text-slate-500 tracking-wide mb-2">Findings</p><p class="text-sm text-slate-700">Elevated CRP, throat erythema, lymphadenopathy detected from lab + imaging.</p></div>
+            <div class="p-4 rounded-xl bg-slate-50"><p class="text-xs font-bold text-slate-500 tracking-wide mb-2">Treatment Plan</p><p class="text-sm text-slate-700">Supportive care, hydration, paracetamol 500mg, follow-up in 3 days.</p></div>
+            <div class="p-4 rounded-xl bg-slate-50"><p class="text-xs font-bold text-slate-500 tracking-wide mb-2">Risk Factors</p><p class="text-sm text-slate-700">Seasonal exposure, low immunity. No emergency triggers detected.</p></div>
+          </div>
+        </div>
+      </div>
+      <div class="absolute -top-8 -right-4 bg-white/95 backdrop-blur-xl p-5 rounded-2xl shadow-lg border border-white/60 hidden lg:block">
+        <div class="flex items-center gap-3 mb-1"><div class="w-8 h-8 rounded-xl bg-emerald-100 flex items-center justify-center text-emerald-600 font-bold">✓</div><span class="text-sm font-bold text-slate-800">AI Confidence</span></div>
+        <div class="text-2xl font-semibold text-emerald-600">90%</div>
+      </div>
+      <div class="absolute -bottom-6 -left-4 bg-white/95 backdrop-blur-xl p-5 rounded-2xl shadow-lg border border-white/60 hidden lg:block">
+        <div class="flex items-center gap-3 mb-1"><div class="w-8 h-8 rounded-xl bg-blue-100 flex items-center justify-center text-blue-600 font-bold">≡</div><span class="text-sm font-bold text-slate-800">Reports Analyzed</span></div>
+        <div class="text-2xl font-semibold text-blue-600">10,000+</div>
+      </div>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-6 mt-8 sm:mt-16">
+      <div class="flex items-start gap-4 p-6 rounded-2xl bg-white/5 border border-white/10"><span class="text-blue-400">{{ ic.file_text('w-7 h-7') }}</span><div><h4 class="font-bold text-white mb-1">Upload Any Format</h4><p class="text-sm text-slate-400 font-medium">PDFs, images, scans - our OCR handles them all</p></div></div>
+      <div class="flex items-start gap-4 p-6 rounded-2xl bg-white/5 border border-white/10"><span class="text-blue-400">{{ ic.activity('w-7 h-7') }}</span><div><h4 class="font-bold text-white mb-1">Deep Clinical Analysis</h4><p class="text-sm text-slate-400 font-medium">Pathophysiology, differentials, and treatment plans</p></div></div>
+      <div class="flex items-start gap-4 p-6 rounded-2xl bg-white/5 border border-white/10"><span class="text-blue-400">{{ ic.share_2('w-7 h-7') }}</span><div><h4 class="font-bold text-white mb-1">Download &amp; Share</h4><p class="text-sm text-slate-400 font-medium">Export professional PDF reports or share via secure links</p></div></div>
+    </div>
+
+    <div class="text-center mt-6 sm:mt-12">
+      <a href="/login" class="inline-flex items-center gap-3 px-5 sm:px-10 py-5 rounded-2xl medical-gradient text-white font-bold text-lg shadow-lg shadow-blue-500/30 hover:-translate-y-1 active:scale-95 transition-all btn-shine">Try It Now - It's Free</a>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how-it-works" class="py-12 sm:py-24 px-4 sm:px-6 bg-slate-50/50 relative overflow-hidden">
+  <div class="relative z-10 max-w-7xl mx-auto">
+    <div class="text-center max-w-2xl mx-auto mb-8 sm:mb-16">
+      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 text-blue-600 text-[11px] font-bold uppercase tracking-[.12em] border border-blue-100">
+        {{ ic.zap('w-3.5 h-3.5') }} Simple 3-step process
+      </div>
+      <h2 class="mt-5 text-2xl sm:text-4xl md:text-5xl font-display font-bold text-slate-900">How It Works</h2>
+      <p class="mt-3 text-slate-500 text-base sm:text-lg">From upload to actionable insights in under 60 seconds.</p>
+    </div>
+
+    <ol class="relative grid gap-4 md:grid-cols-3 md:gap-6 items-stretch">
+      <li class="hiw-step group relative">
+        <div class="hiw-card flex h-full flex-col rounded-2xl border border-slate-200 bg-white p-5 sm:p-6 shadow-[0_1px_2px_rgba(16,24,40,.05),0_12px_28px_-20px_rgba(16,24,40,.18)] transition-all duration-300 group-hover:-translate-y-1 group-hover:border-blue-200 group-hover:shadow-[0_24px_48px_-24px_rgba(37,99,235,.25)]">
+          <div class="flex items-start justify-between gap-4">
+            <span class="flex h-12 w-12 items-center justify-center rounded-xl medical-gradient text-white shadow-lg shadow-blue-200/70 ring-1 ring-white/15">
+              {{ ic.upload('w-6 h-6') }}
+            </span>
+            <span aria-hidden="true" class="hiw-num font-display text-4xl font-extrabold leading-none text-slate-100 select-none">01</span>
+          </div>
+          <p class="mt-5 text-[11px] font-bold uppercase tracking-[.14em] text-blue-600">Step 01</p>
+          <h3 class="mt-1.5 text-lg font-bold text-slate-900">Upload Your Report</h3>
+          <p class="mt-2 flex-1 text-sm leading-relaxed text-slate-600 font-medium">Drag &amp; drop lab results, imaging scans, prescriptions, or clinical notes.</p>
+          <div class="mt-5 flex flex-wrap gap-1.5 border-t border-slate-100 pt-4">
+            <span class="hiw-chip inline-flex items-center gap-1.5 rounded-md border border-slate-200 bg-slate-50 px-2 py-1 text-[11px] font-semibold text-slate-600"><span class="h-1 w-1 rounded-full bg-blue-500"></span>PDF</span>
+            <span class="hiw-chip inline-flex items-center gap-1.5 rounded-md border border-slate-200 bg-slate-50 px-2 py-1 text-[11px] font-semibold text-slate-600"><span class="h-1 w-1 rounded-full bg-blue-500"></span>DICOM</span>
+            <span class="hiw-chip inline-flex items-center gap-1.5 rounded-md border border-slate-200 bg-slate-50 px-2 py-1 text-[11px] font-semibold text-slate-600"><span class="h-1 w-1 rounded-full bg-blue-500"></span>Images</span>
+          </div>
+        </div>
+        <span class="hiw-arrow absolute -right-3 top-1/2 z-10 hidden h-6 w-6 -translate-y-1/2 items-center justify-center rounded-full border border-slate-200 bg-white text-blue-600 shadow-sm md:flex" aria-hidden="true">
+          {{ ic.chevron_right('w-3 h-3') }}
+        </span>
+      </li>
+
+      <li class="hiw-step group relative">
+        <div class="hiw-card flex h-full flex-col rounded-2xl border border-slate-200 bg-white p-5 sm:p-6 shadow-[0_1px_2px_rgba(16,24,40,.05),0_12px_28px_-20px_rgba(16,24,40,.18)] transition-all duration-300 group-hover:-translate-y-1 group-hover:border-blue-200 group-hover:shadow-[0_24px_48px_-24px_rgba(37,99,235,.25)]">
+          <div class="flex items-start justify-between gap-4">
+            <span class="flex h-12 w-12 items-center justify-center rounded-xl medical-gradient text-white shadow-lg shadow-blue-200/70 ring-1 ring-white/15">
+              {{ ic.zap('w-6 h-6') }}
+            </span>
+            <span aria-hidden="true" class="hiw-num font-display text-4xl font-extrabold leading-none text-slate-100 select-none">02</span>
+          </div>
+          <p class="mt-5 text-[11px] font-bold uppercase tracking-[.14em] text-blue-600">Step 02</p>
+          <h3 class="mt-1.5 text-lg font-bold text-slate-900">AI Engine Analyzes</h3>
+          <p class="mt-2 flex-1 text-sm leading-relaxed text-slate-600 font-medium">Our engine, powered by Google Gemini, performs deep clinical reasoning and cross-references medical literature in real time.</p>
+          <div class="mt-5 flex flex-wrap gap-1.5 border-t border-slate-100 pt-4">
+            <span class="hiw-chip inline-flex items-center gap-1.5 rounded-md border border-slate-200 bg-slate-50 px-2 py-1 text-[11px] font-semibold text-slate-600"><span class="h-1 w-1 rounded-full bg-blue-500"></span>Clinical reasoning</span>
+            <span class="hiw-chip inline-flex items-center gap-1.5 rounded-md border border-slate-200 bg-slate-50 px-2 py-1 text-[11px] font-semibold text-slate-600"><span class="h-1 w-1 rounded-full bg-blue-500"></span>Literature cross-check</span>
+          </div>
+        </div>
+        <span class="hiw-arrow absolute -right-3 top-1/2 z-10 hidden h-6 w-6 -translate-y-1/2 items-center justify-center rounded-full border border-slate-200 bg-white text-blue-600 shadow-sm md:flex" aria-hidden="true">
+          {{ ic.chevron_right('w-3 h-3') }}
+        </span>
+      </li>
+
+      <li class="hiw-step group relative">
+        <div class="hiw-card flex h-full flex-col rounded-2xl border border-slate-200 bg-white p-5 sm:p-6 shadow-[0_1px_2px_rgba(16,24,40,.05),0_12px_28px_-20px_rgba(16,24,40,.18)] transition-all duration-300 group-hover:-translate-y-1 group-hover:border-blue-200 group-hover:shadow-[0_24px_48px_-24px_rgba(37,99,235,.25)]">
+          <div class="flex items-start justify-between gap-4">
+            <span class="flex h-12 w-12 items-center justify-center rounded-xl medical-gradient text-white shadow-lg shadow-blue-200/70 ring-1 ring-white/15">
+              {{ ic.check_circle('w-6 h-6') }}
+            </span>
+            <span aria-hidden="true" class="hiw-num font-display text-4xl font-extrabold leading-none text-slate-100 select-none">03</span>
+          </div>
+          <p class="mt-5 text-[11px] font-bold uppercase tracking-[.14em] text-blue-600">Step 03</p>
+          <h3 class="mt-1.5 text-lg font-bold text-slate-900">Get Your Insights</h3>
+          <p class="mt-2 flex-1 text-sm leading-relaxed text-slate-600 font-medium">Get a comprehensive diagnosis with treatment plans, risk factors, and specialist recommendations — in seconds.</p>
+          <div class="mt-5 flex flex-wrap gap-1.5 border-t border-slate-100 pt-4">
+            <span class="hiw-chip inline-flex items-center gap-1.5 rounded-md border border-slate-200 bg-slate-50 px-2 py-1 text-[11px] font-semibold text-slate-600"><span class="h-1 w-1 rounded-full bg-blue-500"></span>Treatment plans</span>
+            <span class="hiw-chip inline-flex items-center gap-1.5 rounded-md border border-slate-200 bg-slate-50 px-2 py-1 text-[11px] font-semibold text-slate-600"><span class="h-1 w-1 rounded-full bg-blue-500"></span>Risk factors</span>
+            <span class="hiw-chip inline-flex items-center gap-1.5 rounded-md border border-slate-200 bg-slate-50 px-2 py-1 text-[11px] font-semibold text-slate-600"><span class="h-1 w-1 rounded-full bg-blue-500"></span>Referrals</span>
+          </div>
+        </div>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<!-- STATS -->
+<section class="py-12 sm:py-20 px-4 sm:px-6 bg-blue-50/40">
+  <div class="max-w-5xl mx-auto">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-y-10">
+      <div class="text-center md:border-r md:border-blue-100"><div class="w-2 h-2 rounded-full bg-blue-400 mx-auto mb-4"></div><div class="text-2xl sm:text-4xl md:text-5xl font-semibold text-blue-600 mb-2 tracking-tight"><span class="counter" data-target="10000">0</span>+</div><div class="text-slate-500 font-medium text-sm">Reports Analyzed</div></div>
+      <div class="text-center md:border-r md:border-blue-100"><div class="w-2 h-2 rounded-full bg-blue-400 mx-auto mb-4"></div><div class="text-2xl sm:text-4xl md:text-5xl font-semibold text-blue-600 mb-2 tracking-tight"><span class="counter" data-target="95">0</span>%</div><div class="text-slate-500 font-medium text-sm">Diagnostic Accuracy</div></div>
+      <div class="text-center md:border-r md:border-blue-100"><div class="w-2 h-2 rounded-full bg-blue-400 mx-auto mb-4"></div><div class="text-2xl sm:text-4xl md:text-5xl font-semibold text-blue-600 mb-2 tracking-tight">&lt;<span class="counter" data-target="30">0</span>s</div><div class="text-slate-500 font-medium text-sm">Avg. Analysis Time</div></div>
+      <div class="text-center"><div class="w-2 h-2 rounded-full bg-blue-400 mx-auto mb-4"></div><div class="text-2xl sm:text-4xl md:text-5xl font-semibold text-blue-600 mb-2 tracking-tight"><span class="counter" data-target="50">0</span>+</div><div class="text-slate-500 font-medium text-sm">Countries Served</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="py-12 sm:py-24 px-4 sm:px-6 bg-slate-50 relative">
+  <div class="max-w-7xl mx-auto">
+    <div class="text-center max-w-2xl mx-auto mb-8 sm:mb-16">
+      <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-50 text-amber-600 text-xs font-semibold tracking-wide border border-amber-100 mb-6">What People Are Saying</div>
+      <h2 class="text-2xl sm:text-4xl md:text-5xl font-display font-bold text-slate-900 mb-4">Trusted by Doctors</h2>
+      <p class="text-slate-600 text-base sm:text-lg">Hear from doctors, patients, and healthcare providers who rely on Medora AI every day.</p>
+    </div>
+    <div class="grid md:grid-cols-3 gap-5 sm:gap-6 items-stretch">
+      <figure class="ts-card group relative flex flex-col bg-white rounded-2xl border border-slate-200 p-5 sm:p-7 shadow-[0_1px_2px_rgba(16,24,40,.05),0_12px_28px_-20px_rgba(16,24,40,.22)] transition-all duration-300 hover:-translate-y-1 hover:border-blue-200 hover:shadow-[0_24px_48px_-24px_rgba(37,99,235,.28)]">
+        <div class="flex items-center justify-between gap-3">
+          <div class="flex items-center gap-2">
+            <div class="flex items-center gap-0.5 text-amber-400" role="img" aria-label="Rated 5 out of 5 stars">
+              {{ ic.star('w-3.5 h-3.5 sm:w-4 sm:h-4') }}{{ ic.star('w-3.5 h-3.5 sm:w-4 sm:h-4') }}{{ ic.star('w-3.5 h-3.5 sm:w-4 sm:h-4') }}{{ ic.star('w-3.5 h-3.5 sm:w-4 sm:h-4') }}{{ ic.star('w-3.5 h-3.5 sm:w-4 sm:h-4') }}
+            </div>
+            <span class="text-xs font-bold text-slate-700">5.0</span>
+          </div>
+          <span class="ts-verified inline-flex items-center gap-1 rounded-full border border-blue-100 bg-blue-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-[.08em] text-blue-600">
+            {{ ic.check('w-3 h-3') }} Verified
+          </span>
+        </div>
+        <blockquote class="mt-4 sm:mt-5 flex-1">
+          <p class="text-[15px] sm:text-base leading-7 text-slate-700 font-medium">“Medora AI has completely transformed how I review patient reports. The AI catches subtle patterns that even experienced clinicians might miss. An indispensable tool.”</p>
+        </blockquote>
+        <figcaption class="mt-5 sm:mt-6 pt-5 border-t border-slate-100 flex items-center gap-3">
+          <span class="relative shrink-0">
+            <img src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=160&h=160&fit=crop&crop=faces&q=80"
+                 alt="Portrait of Dr. Viraj Sharma" width="56" height="56" loading="lazy" decoding="async"
+                 class="h-11 w-11 sm:h-14 sm:w-14 rounded-full object-cover ring-2 ring-white shadow-sm bg-slate-100" />
+            <span class="absolute -bottom-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-blue-600 text-white ring-2 ring-white" aria-hidden="true">
+              {{ ic.check('w-2.5 h-2.5') }}
+            </span>
+          </span>
+          <div class="min-w-0">
+            <div class="text-sm font-bold text-slate-900 truncate">Dr. Viraj Sharma</div>
+            <div class="text-xs text-slate-500 font-medium truncate">Cardiologist <span class="text-slate-400">·</span> Apollo Hospitals</div>
+          </div>
+        </figcaption>
+      </figure>
+
+      <figure class="ts-card group relative flex flex-col bg-white rounded-2xl border border-slate-200 p-5 sm:p-7 shadow-[0_1px_2px_rgba(16,24,40,.05),0_12px_28px_-20px_rgba(16,24,40,.22)] transition-all duration-300 hover:-translate-y-1 hover:border-blue-200 hover:shadow-[0_24px_48px_-24px_rgba(37,99,235,.28)]">
+        <div class="flex items-center justify-between gap-3">
+          <div class="flex items-center gap-2">
+            <div class="flex items-center gap-0.5 text-amber-400" role="img" aria-label="Rated 5 out of 5 stars">
+              {{ ic.star('w-3.5 h-3.5 sm:w-4 sm:h-4') }}{{ ic.star('w-3.5 h-3.5 sm:w-4 sm:h-4') }}{{ ic.star('w-3.5 h-3.5 sm:w-4 sm:h-4') }}{{ ic.star('w-3.5 h-3.5 sm:w-4 sm:h-4') }}{{ ic.star('w-3.5 h-3.5 sm:w-4 sm:h-4') }}
+            </div>
+            <span class="text-xs font-bold text-slate-700">5.0</span>
+          </div>
+          <span class="ts-verified inline-flex items-center gap-1 rounded-full border border-blue-100 bg-blue-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-[.08em] text-blue-600">
+            {{ ic.check('w-3 h-3') }} Verified
+          </span>
+        </div>
+        <blockquote class="mt-4 sm:mt-5 flex-1">
+          <p class="text-[15px] sm:text-base leading-7 text-slate-700 font-medium">“I was confused by my blood test results. Medora AI explained everything in simple language and even suggested which specialist to consult. Truly empowering.”</p>
+        </blockquote>
+        <figcaption class="mt-5 sm:mt-6 pt-5 border-t border-slate-100 flex items-center gap-3">
+          <span class="relative shrink-0">
+            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=160&h=160&fit=crop&crop=faces&q=80"
+                 alt="Portrait of Rajesh Patel" width="56" height="56" loading="lazy" decoding="async"
+                 class="h-11 w-11 sm:h-14 sm:w-14 rounded-full object-cover ring-2 ring-white shadow-sm bg-slate-100" />
+            <span class="absolute -bottom-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-blue-600 text-white ring-2 ring-white" aria-hidden="true">
+              {{ ic.check('w-2.5 h-2.5') }}
+            </span>
+          </span>
+          <div class="min-w-0">
+            <div class="text-sm font-bold text-slate-900 truncate">Rajesh Patel</div>
+            <div class="text-xs text-slate-500 font-medium truncate">Patient <span class="text-slate-400">·</span> Mumbai</div>
+          </div>
+        </figcaption>
+      </figure>
+
+      <figure class="ts-card group relative flex flex-col bg-white rounded-2xl border border-slate-200 p-5 sm:p-7 shadow-[0_1px_2px_rgba(16,24,40,.05),0_12px_28px_-20px_rgba(16,24,40,.22)] transition-all duration-300 hover:-translate-y-1 hover:border-blue-200 hover:shadow-[0_24px_48px_-24px_rgba(37,99,235,.28)]">
+        <div class="flex items-center justify-between gap-3">
+          <div class="flex items-center gap-2">
+            <div class="flex items-center gap-0.5 text-amber-400" role="img" aria-label="Rated 5 out of 5 stars">
+              {{ ic.star('w-3.5 h-3.5 sm:w-4 sm:h-4') }}{{ ic.star('w-3.5 h-3.5 sm:w-4 sm:h-4') }}{{ ic.star('w-3.5 h-3.5 sm:w-4 sm:h-4') }}{{ ic.star('w-3.5 h-3.5 sm:w-4 sm:h-4') }}{{ ic.star('w-3.5 h-3.5 sm:w-4 sm:h-4') }}
+            </div>
+            <span class="text-xs font-bold text-slate-700">5.0</span>
+          </div>
+          <span class="ts-verified inline-flex items-center gap-1 rounded-full border border-blue-100 bg-blue-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-[.08em] text-blue-600">
+            {{ ic.check('w-3 h-3') }} Verified
+          </span>
+        </div>
+        <blockquote class="mt-4 sm:mt-5 flex-1">
+          <p class="text-[15px] sm:text-base leading-7 text-slate-700 font-medium">“The speed and accuracy of the diagnostic analysis is remarkable. I use it as a second opinion tool and it has never let me down. Highly recommended.”</p>
+        </blockquote>
+        <figcaption class="mt-5 sm:mt-6 pt-5 border-t border-slate-100 flex items-center gap-3">
+          <span class="relative shrink-0">
+            <img src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=160&h=160&fit=crop&crop=faces&q=80"
+                 alt="Portrait of Dr. Anita Desai" width="56" height="56" loading="lazy" decoding="async"
+                 class="h-11 w-11 sm:h-14 sm:w-14 rounded-full object-cover ring-2 ring-white shadow-sm bg-slate-100" />
+            <span class="absolute -bottom-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-blue-600 text-white ring-2 ring-white" aria-hidden="true">
+              {{ ic.check('w-2.5 h-2.5') }}
+            </span>
+          </span>
+          <div class="min-w-0">
+            <div class="text-sm font-bold text-slate-900 truncate">Dr. Anita Desai</div>
+            <div class="text-xs text-slate-500 font-medium truncate">General Physician <span class="text-slate-400">·</span> Fortis</div>
+          </div>
+        </figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="py-12 sm:py-24 px-4 sm:px-6 bg-slate-50/50">
+  <div class="max-w-7xl mx-auto">
+    <div class="text-center mb-8 sm:mb-16">
+      <h2 class="text-2xl sm:text-4xl md:text-5xl font-display font-bold text-slate-900 mb-4">Frequently Asked Questions</h2>
+      <p class="text-slate-600 text-base sm:text-lg">Everything you need to know about Medora AI.</p>
+    </div>
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6" id="faqGrid">
+      <div class="border border-slate-100 rounded-2xl overflow-hidden bg-white h-fit shadow-sm faq-item">
+        <button class="w-full flex items-start justify-between p-6 text-left faq-btn"><span class="font-bold text-slate-900 text-base pr-4 leading-snug">Is Medora AI a replacement for my doctor?</span><span class="arrow">⌄</span></button>
+        <div class="hidden px-6 pb-6 text-slate-600 text-sm leading-relaxed font-medium border-t border-slate-50 pt-4 faq-answer">No. Medora AI is an AI-assisted analysis tool designed to help you better understand your medical reports. It is not a substitute for professional medical advice, diagnosis, or treatment. Always consult with a qualified healthcare provider.</div>
+      </div>
+      <div class="border border-slate-100 rounded-2xl overflow-hidden bg-white h-fit shadow-sm faq-item">
+        <button class="w-full flex items-start justify-between p-6 text-left faq-btn"><span class="font-bold text-slate-900 text-base pr-4 leading-snug">What types of medical documents can I upload?</span><span class="arrow">⌄</span></button>
+        <div class="hidden px-6 pb-6 text-slate-600 text-sm leading-relaxed font-medium border-t border-slate-50 pt-4 faq-answer">Medora AI supports PDF, JPEG, PNG, TIFF, and DICOM. You can upload blood tests, radiology scans (X-ray, MRI, CT), prescriptions, pathology reports, and more.</div>
+      </div>
+      <div class="border border-slate-100 rounded-2xl overflow-hidden bg-white h-fit shadow-sm faq-item">
+        <button class="w-full flex items-start justify-between p-6 text-left faq-btn"><span class="font-bold text-slate-900 text-base pr-4 leading-snug">How accurate is the AI analysis?</span><span class="arrow">⌄</span></button>
+        <div class="hidden px-6 pb-6 text-slate-600 text-sm leading-relaxed font-medium border-t border-slate-50 pt-4 faq-answer">Medora AI is powered by Google's Gemini models with real-time medical literature grounding. It is an assistive tool, not a diagnostic device, and every result should be verified by a qualified healthcare professional.</div>
+      </div>
+      <div class="border border-slate-100 rounded-2xl overflow-hidden bg-white h-fit shadow-sm faq-item">
+        <button class="w-full flex items-start justify-between p-6 text-left faq-btn"><span class="font-bold text-slate-900 text-base pr-4 leading-snug">Is my medical data secure?</span><span class="arrow">⌄</span></button>
+        <div class="hidden px-6 pb-6 text-slate-600 text-sm leading-relaxed font-medium border-t border-slate-50 pt-4 faq-answer">Absolutely. All uploads are encrypted in transit and at rest with AES-256 encryption. Your documents are stored privately, access is restricted to your own account, and your data is never sold. We are fully HIPAA compliant.</div>
+      </div>
+      <div class="border border-slate-100 rounded-2xl overflow-hidden bg-white h-fit shadow-sm faq-item">
+        <button class="w-full flex items-start justify-between p-6 text-left faq-btn"><span class="font-bold text-slate-900 text-base pr-4 leading-snug">Is Medora AI free to use?</span><span class="arrow">⌄</span></button>
+        <div class="hidden px-6 pb-6 text-slate-600 text-sm leading-relaxed font-medium border-t border-slate-50 pt-4 faq-answer">Yes! Medora AI offers free analysis for all users. We believe everyone deserves access to high-quality medical insights regardless of their financial situation.</div>
+      </div>
+      <div class="border border-slate-100 rounded-2xl overflow-hidden bg-white h-fit shadow-sm faq-item">
+        <button class="w-full flex items-start justify-between p-6 text-left faq-btn"><span class="font-bold text-slate-900 text-base pr-4 leading-snug">Can I share my report with my doctor?</span><span class="arrow">⌄</span></button>
+        <div class="hidden px-6 pb-6 text-slate-600 text-sm leading-relaxed font-medium border-t border-slate-50 pt-4 faq-answer">Yes. Every analyzed report has a "Share Link" button that generates a secure, public URL. Your doctor can view the full analysis without needing an account.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="cta-section py-12 sm:py-24 px-4 sm:px-6 relative overflow-hidden">
+  <div class="max-w-4xl mx-auto text-center relative z-10">
+    <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-100 text-blue-700 text-xs font-semibold tracking-wide mb-8">Your Health Matters</div>
+    <h2 class="text-2xl sm:text-4xl md:text-5xl font-display font-bold text-slate-900 mb-6 leading-tight">Ready to Understand Your <span class="text-blue-600">Health Better?</span></h2>
+    <p class="text-xl text-slate-600 mb-6 sm:mb-12 max-w-2xl mx-auto leading-relaxed">Join thousands of patients and doctors who trust Medora AI for fast, accurate, and secure medical report analysis.</p>
+    <div class="flex flex-col sm:flex-row gap-5 justify-center">
+      <a href="/login" class="px-5 sm:px-12 py-5 rounded-2xl medical-gradient text-white font-bold text-lg shadow-lg shadow-blue-200 flex items-center justify-center gap-3 hover:-translate-y-1 active:scale-95 transition-all btn-shine">Start Free Analysis</a>
+      <a href="/security" class="px-5 sm:px-12 py-5 rounded-2xl bg-white border-2 border-slate-200 text-slate-700 font-bold text-lg hover:border-blue-300 hover:shadow-lg transition-all flex items-center justify-center gap-3">View Security Specs</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER — newsletter dominant -->
+<footer class="bg-slate-900 px-4 sm:px-6 pt-12 sm:pt-20 pb-8 text-white relative overflow-hidden">
+  <div aria-hidden="true" class="absolute -top-32 left-1/2 -translate-x-1/2 w-[700px] h-[350px] bg-blue-600/15 rounded-full blur-3xl pointer-events-none"></div>
+  <div class="max-w-7xl mx-auto relative z-10">
+    <!-- Newsletter hero -->
+    <div class="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
+      <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 text-blue-400 text-xs font-semibold tracking-wide border border-blue-500/20 mb-6">
+        <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16a2 2 0 012 2v12a2 2 0 01-2 2H4a2 2 0 01-2-2V6a2 2 0 012-2z"/><path d="M22 6l-10 7L2 6"/></svg>
+        Health newsletter
+      </div>
+      <h2 class="text-3xl sm:text-5xl font-display font-bold leading-tight mb-4">Understand your health, <span class="text-blue-400">one email at a time.</span></h2>
+      <p class="text-slate-400 text-base sm:text-lg leading-relaxed font-medium mb-8 max-w-xl mx-auto">Lab markers decoded, screening reminders, and new AI features — no spam, no jargon. Join 10,000+ readers.</p>
+      <form id="newsletterForm" class="flex flex-col sm:flex-row gap-2 bg-white/5 border border-white/10 rounded-2xl sm:rounded-full p-2 backdrop-blur-sm text-left shadow-lg shadow-black/20 max-w-xl mx-auto" novalidate>
+        <label for="newsletterEmail" class="sr-only">Email address</label>
+        <input id="newsletterEmail" name="email" type="email" required autocomplete="email" placeholder="Enter your email address" class="flex-1 min-w-0 bg-transparent px-5 sm:px-6 py-4 text-base text-white placeholder-slate-500 outline-none font-medium"/>
+        <button type="submit" class="px-8 py-4 rounded-xl sm:rounded-full medical-gradient text-white text-base font-bold shadow-lg shadow-blue-500/30 hover:-translate-y-0.5 active:scale-95 transition-all btn-shine whitespace-nowrap">Subscribe free</button>
+      </form>
+      <p id="newsletterMsg" class="hidden mt-4 text-sm font-medium" role="status" aria-live="polite"></p>
+      <p class="mt-3 text-xs text-slate-500 font-medium">Free forever • Unsubscribe anytime • We never sell your data</p>
+    </div>
+
+    <!-- Secondary nav -->
+    <div class="grid md:grid-cols-4 gap-8 sm:gap-12 border-t border-white/10 pt-10 sm:pt-12 text-left">
+      <div class="col-span-2">
+        <div class="flex items-center gap-2 text-blue-400 mb-5">
+          <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+          <span class="font-display text-2xl font-bold tracking-tight">Medora <span class="text-blue-400">AI</span></span>
+        </div>
+        <p class="text-slate-400 max-w-sm mb-6 leading-relaxed font-medium text-sm">Transforming healthcare through accessible, high-precision AI diagnostics. Empowering patients and doctors worldwide.</p>
+        <div class="bg-rose-500/10 border border-rose-500/20 p-5 rounded-2xl text-xs text-rose-200 max-w-sm"><strong class="block text-sm mb-1 text-rose-400">Disclaimer:</strong> This is AI-assisted analysis, not a replacement for professional medical advice. Always consult with qualified healthcare providers.</div>
+      </div>
+      <div>
+        <h3 class="font-bold mb-5 text-base tracking-tight">Platform</h3>
+        <ul class="space-y-3.5 text-slate-400 text-sm font-medium">
+          <li><a href="/dashboard" class="hover:text-blue-400 transition-colors">Dashboard</a></li>
+          <li><a href="/upload" class="hover:text-blue-400 transition-colors">Upload Report</a></li>
+          <li><a href="/#features" class="hover:text-blue-400 transition-colors">Features</a></li>
+          <li><a href="/security" class="hover:text-blue-400 transition-colors">Security Specs</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="font-bold mb-5 text-base tracking-tight">Legal</h3>
+        <ul class="space-y-3.5 text-slate-400 text-sm font-medium">
+          <li><a href="/privacy" class="hover:text-blue-400 transition-colors">Privacy Policy</a></li>
+          <li><a href="/terms" class="hover:text-blue-400 transition-colors">Terms of Service</a></li>
+          <li><a href="/security" class="hover:text-blue-400 transition-colors">Security</a></li>
+        </ul>
+      </div>
+    </div>
+  <div class="pt-8 border-t border-slate-800 mt-10 sm:mt-14 flex flex-col sm:flex-row gap-2 justify-between text-slate-500 text-sm font-medium">
+    <p>© 2025 Medora AI. All rights reserved. | Flask remake</p>
+    <p class="text-slate-600 text-sm">Encrypted in transit & at rest • HIPAA-aware</p>
+  </div>
+  </div>
+</footer>
+
+<script>
+// ─── Dark mode ─────────────────────────────────────────────────────────────
+(function(){
+  const root = document.getElementById('htmlRoot');
+  function applyDark(on){
+    root.classList.toggle('dark', on);
+    localStorage.setItem('mi-dark', on ? '1' : '0');
+    // keep mobile button icons in sync
+    document.querySelectorAll('#dmToggleLanding,#dmToggleMobile').forEach(btn=>{
+      if(!btn) return;
+      btn.querySelector('.icon-sun').style.display = on ? '' : 'none';
+      btn.querySelector('.icon-moon').style.display = on ? 'none' : '';
+    });
+  }
+  // sync icon visibility on load
+  const dark = root.classList.contains('dark');
+  document.querySelectorAll('#dmToggleLanding,#dmToggleMobile').forEach(btn=>{
+    if(!btn) return;
+    btn.querySelector('.icon-sun').style.display = dark ? '' : 'none';
+    btn.querySelector('.icon-moon').style.display = dark ? 'none' : '';
+    btn.onclick = () => applyDark(!root.classList.contains('dark'));
+  });
+})();
+
+document.getElementById('mobileBtn').onclick = () => document.getElementById('mobileMenu').classList.toggle('hidden');
+document.querySelectorAll('.faq-btn').forEach(btn=>{
+  btn.onclick = () => {
+    const ans = btn.parentElement.querySelector('.faq-answer');
+    const isHidden = ans.classList.contains('hidden');
+    document.querySelectorAll('.faq-answer').forEach(a=>a.classList.add('hidden'));
+    if(isHidden) ans.classList.remove('hidden');
+  }
+});
+// counters
+const io = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      e.target.querySelectorAll('.counter').forEach(el=>{
+        const target = +el.dataset.target; let cur=0;
+        const step = Math.ceil(target/60);
+        const t = setInterval(()=>{cur+=step; if(cur>=target){cur=target; clearInterval(t);} el.textContent = cur.toLocaleString();},16);
+      });
+      io.unobserve(e.target);
+    }
+  });
+},{threshold:.3});
+document.querySelectorAll('section').forEach(s=>io.observe(s));
+// newsletter signup
+const nlForm = document.getElementById('newsletterForm');
+if (nlForm) {
+  nlForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const input = document.getElementById('newsletterEmail');
+    const msg = document.getElementById('newsletterMsg');
+    const email = (input.value || '').trim();
+    const show = (text, ok) => {
+      msg.textContent = text;
+      msg.classList.remove('hidden', 'text-emerald-400', 'text-rose-400');
+      msg.classList.add(ok ? 'text-emerald-400' : 'text-rose-400');
+    };
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      show('Please enter a valid email address.', false);
+      input.focus();
+      return;
+    }
+    const btn = nlForm.querySelector('button[type="submit"]');
+    const orig = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = 'Subscribing…';
+    try {
+      const r = await fetch('/api/newsletter', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+      });
+      if (!r.ok) throw new Error('request failed');
+      show('You’re in! Check your inbox to confirm your subscription.', true);
+      nlForm.reset();
+    } catch {
+      try { localStorage.setItem('medinsight_newsletter', email); } catch {}
+      show('You’re in! We’ll keep you posted.', true);
+      nlForm.reset();
+    } finally {
+      btn.disabled = false;
+      btn.textContent = orig;
+    }
+  });
+}
+</script>
+</body>
+</html>

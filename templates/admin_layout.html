@@ -1,0 +1,47 @@
+{% import "_icons.html" as ic %}<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>{% block title %}Admin — Medora AI{% endblock %}</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>tailwind.config={theme:{extend:{fontFamily:{display:['"Plus Jakarta Sans"','Inter','sans-serif'],sans:['Inter','sans-serif']}}}}</script>
+<style>body{font-family:Inter,sans-serif}.font-display{font-family:'Plus Jakarta Sans',sans-serif}
+.anav{display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:12px;color:#94a3b8;font-weight:600;font-size:14px}
+.anav:hover{background:rgba(255,255,255,.06);color:#fff}.anav.on{background:#2563eb;color:#fff}</style>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/light-theme.css') }}">
+{% block head %}{% endblock %}
+</head>
+<body class="bg-slate-100">
+<div class="flex h-screen overflow-hidden">
+<div id="aOverlay" class="hidden fixed inset-0 z-40 bg-slate-900/50 md:hidden" onclick="document.getElementById('aside').classList.add('-translate-x-full');this.classList.add('hidden')"></div>
+<aside id="aside" class="w-64 shrink-0 bg-slate-900 text-white flex flex-col fixed md:static inset-y-0 left-0 z-50 -translate-x-full md:translate-x-0 transition-transform duration-300">
+  <a href="/" class="h-16 flex items-center gap-2.5 px-5 border-b border-white/10 font-display font-bold text-[17px]"><span class="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white">{{ ic.activity('w-4 h-4') }}</span>Medora AI <span class="text-slate-400 font-semibold text-[13px]">Panel</span></a>
+  <p class="px-5 pt-5 pb-2 text-[10.5px] tracking-widest text-slate-500 font-bold">PLATFORM CONTROLS</p>
+  <nav class="flex-1 px-3 space-y-1">
+    <a href="/adminpanel/dashboard" class="anav {{ 'on' if request.path=='/adminpanel/dashboard' else '' }}">{{ ic.activity('w-[18px] h-[18px]') }} Overview</a>
+    <a href="/adminpanel/reports" class="anav {{ 'on' if request.path=='/adminpanel/reports' else '' }}">{{ ic.file_text('w-[18px] h-[18px]') }} Case Management</a>
+    <a href="/adminpanel/users" class="anav {{ 'on' if request.path=='/adminpanel/users' else '' }}">{{ ic.users('w-[18px] h-[18px]') }} User Directory</a>
+    <a href="/adminpanel/settings" class="anav {{ 'on' if request.path=='/adminpanel/settings' else '' }}">{{ ic.settings('w-[18px] h-[18px]') }} System Config</a>
+    <a href="/adminpanel/errors" class="anav {{ 'on' if request.path=='/adminpanel/errors' else '' }}">{{ ic.alert_triangle('w-[18px] h-[18px]') }} Error Monitor</a>
+  </nav>
+  <div class="p-4">
+    <div class="rounded-2xl bg-white/5 border border-white/10 p-4 mb-2"><p class="text-[13px] font-bold flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-emerald-400"></span>System Healthy</p><p class="text-[11px] text-slate-400 mt-0.5">v3.1.2 Stable</p></div>
+    <a href="/logout" class="anav">↩ Exit Console</a>
+  </div>
+</aside>
+<div class="flex-1 flex flex-col min-w-0">
+  <header class="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-4 md:px-6 shrink-0">
+    <div class="flex items-center gap-3"><button class="md:hidden p-2 flex items-center" onclick="document.getElementById('aside').classList.remove('-translate-x-full');document.getElementById('aOverlay').classList.remove('hidden')">{{ ic.menu('w-5 h-5') }}</button>
+    <p class="text-[13px] font-semibold text-slate-500">Administrator Session • <span id="adate"></span></p></div>
+    <div class="flex items-center gap-3"><span class="w-9 h-9 rounded-full bg-slate-900 text-white flex items-center justify-center text-[12px] font-bold">AD</span></div>
+  </header>
+  <main class="flex-1 overflow-y-auto p-4 md:p-8">
+  {% with msgs=get_flashed_messages(with_categories=true) %}{% if msgs %}{% for c,m in msgs %}<div class="mb-4 p-4 rounded-xl text-sm {% if c=='error' %}bg-rose-50 text-rose-700 border border-rose-200{% else %}bg-emerald-50 text-emerald-700 border border-emerald-200{% endif %}">{{ m }}</div>{% endfor %}{% endif %}{% endwith %}
+  {% block content %}{% endblock %}
+  </main>
+</div>
+</div>
+<script>document.getElementById('adate').textContent=new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});</script>
+{% block scripts %}{% endblock %}
+</body></html>

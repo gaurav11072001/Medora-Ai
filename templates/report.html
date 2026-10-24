@@ -1,0 +1,295 @@
+{% extends "layout.html" %}{% import "_icons.html" as ic %}{% set active='history' %}{% block title %}{{ report.file_name }} — Medora AI{% endblock %}{% block content %}
+{% set diag = data.get('diagnosis',{}) or {} %}
+{% set _conf = ((diag.get('confidence')*100)|round if diag.get('confidence') is not none else 0) %}
+{% set findings = data.detailedFindings or [] %}
+{% set tp = data.treatmentPlan or {} %}
+{% set meds = tp.medications or [] %}
+{% set therapies = tp.therapyOptions or [] %}
+{% set file_url = url_for('report_file', report_id=report.id) %}
+{% set is_img = report.file_type in ('png','jpg','jpeg','webp') %}
+{% set is_pdf = report.file_type == 'pdf' %}
+
+<!-- Header: back + title + status + actions -->
+<div class="flex flex-col md:flex-row md:items-start justify-between gap-4 mb-6">
+  <div class="min-w-0">
+    <a href="/dashboard" class="inline-flex items-center gap-1.5 text-[13px] font-semibold text-slate-500 hover:text-slate-800 mb-2">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 12H5m0 0l7 7m-7-7l7-7"/></svg>
+      Back to dashboard</a>
+    <div class="flex items-center gap-2 flex-wrap">
+      <h1 class="font-display text-xl md:text-2xl font-bold truncate max-w-[420px]" title="{{ report.file_name }}">{{ report.file_name }}</h1>
+      {% if report.status=='completed' %}<span class="text-[11px] font-bold px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-700">completed</span>
+      {% elif report.status=='failed' %}<span class="text-[11px] font-bold px-2.5 py-1 rounded-full bg-rose-100 text-rose-700">failed</span>
+      {% else %}<span class="text-[11px] font-bold px-2.5 py-1 rounded-full bg-blue-100 text-blue-700">pending {{ report.progress }}%</span>{% endif %}
+      <span class="text-[11px] font-bold px-2.5 py-1 rounded-full bg-slate-100 text-slate-500">1 Files</span>
+    </div>
+    <p class="text-[13px] text-slate-500 mt-1">Analysing Reports for <b class="text-slate-700">{{ report.detected_patient_name or 'Unknown Patient' }}</b> • {{ report.relationship or 'Patient' }} Record</p>
+  </div>
+  <div class="flex flex-wrap items-center gap-2">
+    <div class="flex items-center gap-1.5 border rounded-xl px-2.5 py-2 bg-white text-sm">
+      <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+      <select id="lang" class="bg-transparent outline-none text-[13px] font-semibold max-w-[130px]">
+        <option>English</option><option>Hindi</option><option>Marathi</option><option>Tamil</option><option>Telugu</option><option>Bengali</option><option>Kannada</option><option>Gujarati</option><option>Punjabi</option><option>Malayalam</option><option>Urdu</option><option>Spanish</option><option>French</option><option>Mandarin</option><option>Arabic</option><option>Japanese</option>
+      </select>
+    </div>
+    <button onclick="share()" class="px-4 py-2 rounded-xl bg-white border text-[13px] font-bold hover:border-blue-300">Share Link</button>
+    <button onclick="revoke()" class="px-3 py-2 rounded-xl bg-white border text-[13px] font-semibold text-slate-500 hover:text-rose-600">Stop Sharing</button>
+    <button id="dlBtn" onclick="download()" class="px-4 py-2 rounded-xl bg-slate-900 text-white text-[13px] font-bold">Download Report</button>
+    <button onclick="delThis({{ report.id }})" class="px-3 py-2 rounded-xl bg-white border border-rose-200 text-rose-600 text-[13px] font-bold hover:bg-rose-50">Delete</button>
+  </div>
+</div>
+<div id="shareBox" class="hidden mb-4 p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-sm break-all"></div>
+<div id="dlErr" class="hidden mb-4 p-4 rounded-2xl bg-rose-50 border border-rose-200 text-sm text-rose-700" role="alert"></div>
+
+{% if report.status!='completed' %}
+<div class="p-6 bg-white rounded-2xl border border-slate-200 shadow-lg text-center">Analysis {{ report.status }} ({{ report.progress }}%). <a class="underline font-bold" href="/analysis/{{ report.id }}">Track progress</a></div>
+{% else %}
+<div class="grid lg:grid-cols-12 gap-8">
+  <!-- LEFT: document preview (sticky) -->
+  <div class="lg:col-span-5">
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-lg overflow-hidden lg:sticky lg:top-24">
+      <div class="flex items-center justify-between gap-2 px-4 py-3 border-b border-slate-100">
+        <p class="text-[13px] font-bold truncate">{{ report.file_name }}</p>
+        <a href="{{ file_url }}" target="_blank" rel="noopener" class="inline-flex items-center gap-1 text-[12px] font-bold text-blue-600 hover:underline">Open
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 3h6v6M10 14L21 3M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/></svg></a>
+      </div>
+      <div class="bg-slate-50">
+        {% if is_img %}
+        <img src="{{ file_url }}" alt="{{ report.file_name }}" class="w-full h-[440px] md:h-[520px] xl:h-[650px] object-contain"/>
+        {% elif is_pdf %}
+        <embed src="{{ file_url }}" type="application/pdf" class="w-full h-[440px] md:h-[520px] xl:h-[650px]"/>
+        {% else %}
+        <div class="h-[440px] flex flex-col items-center justify-center gap-3 text-slate-400">
+          <span class="text-slate-300">{{ ic.file_text('w-16 h-16') }}</span><p class="text-[13px] font-semibold">Preview not available for .{{ report.file_type }}</p>
+          <a href="{{ file_url }}" class="text-[13px] font-bold text-blue-600 hover:underline">Open original file →</a>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Your Next Steps (desktop left) -->
+    <div class="hidden lg:block bg-white rounded-2xl border border-slate-200 shadow-lg p-5 mt-8">
+      <p class="text-[10px] uppercase tracking-wide text-slate-400 font-bold">Your Next Steps</p>
+      <h3 class="font-bold text-[15px] mt-0.5 mb-3">What to arrange</h3>
+      {% set gaps = data.dataGaps or [] %}
+      {% if gaps or (specialty and specialty.primary) %}
+        {% if gaps %}<p class="text-[13px] text-slate-600 mb-2">{{ gaps|length }} missing test{{ 's' if gaps|length!=1 else '' }} to complete this assessment:</p>
+        <ul class="text-[13px] text-slate-600 space-y-1 mb-3">{% for g in gaps[:4] %}<li>• {{ g }}</li>{% endfor %}</ul>{% endif %}
+        {% if specialty and specialty.primary %}
+        <div class="p-3 rounded-xl bg-blue-50/70 border border-blue-100">
+          <p class="text-[11px] uppercase tracking-wide text-slate-400 font-bold">Doctor to consult</p>
+          <p class="font-bold text-[14px]">{{ specialty.primary }}</p>
+          <p class="text-[12.5px] text-slate-500">{{ specialty.why }}</p>
+          <button onclick="openSpecs()" class="mt-2 inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-900 text-white text-[12.5px] font-bold">{{ ic.calendar('w-4 h-4') }} Find &amp; book nearby</button>
+        </div>
+        {% endif %}
+      {% else %}
+        <p class="text-[13px] text-slate-500">Nothing outstanding — these reports covered what the assessment needed.</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- RIGHT: analysis -->
+  <div class="lg:col-span-7 space-y-8">
+    <!-- Clinical Diagnosis -->
+    <section class="bg-white rounded-2xl border border-slate-200 shadow-lg p-5 md:p-6">
+      <div class="flex items-center gap-3 mb-4">
+        <span class="w-10 h-10 rounded-2xl flex items-center justify-center text-white" style="background:#2563eb">{{ ic.stethoscope('w-5 h-5') }}</span>
+        <h2 class="font-display font-extrabold text-[17px]">Clinical Diagnosis</h2>
+      </div>
+      <p class="text-[10px] uppercase tracking-wide text-blue-600 font-bold">Primary Synthesis</p>
+      <p class="text-lg font-bold leading-snug mt-0.5" data-diag-primary>{{ diag.primary or 'Analysis pending' }}</p>
+      <div class="mt-3">
+        <div class="flex justify-between text-[12px] font-bold"><span>Confidence</span><span>{{ _conf }}%</span></div>
+        <div class="h-2 bg-slate-100 rounded-full mt-1.5 overflow-hidden"><div class="h-full rounded-full bg-blue-600 confbar" data-confbar="{{ _conf }}" style="width:0%"></div></div>
+        {% if diag.differential %}<p class="text-[12px] text-slate-500 mt-1.5">Differential: {{ ', '.join(diag.differential) }}</p>{% endif %}
+      </div>
+      <div class="mt-5">
+        <div class="flex items-center gap-2"><p class="text-[10px] uppercase tracking-wide text-slate-400 font-bold">What this means</p><span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-50 text-blue-600 border border-blue-100">In plain language</span></div>
+        <p id="summary" class="text-[14px] text-slate-700 mt-1.5">{{ data.executiveSummary or 'Summary pending…' }}</p>
+        <button onclick="explainText(document.getElementById('summary').textContent)" class="mt-1.5 inline-flex items-center gap-1.5 text-[12.5px] font-bold text-blue-600 hover:underline">{{ ic.sparkles('w-4 h-4') }} Explain in simple words</button>
+        <p id="simpleOut" class="hidden mt-2 p-3 bg-blue-50 rounded-xl text-[13px]"></p>
+        <div class="mt-3 flex items-center gap-2">
+          <button id="translateBtn" class="px-3 py-1.5 rounded-xl bg-white border text-[12.5px] font-bold">Translate summary ↑</button>
+          <span class="text-[11px] text-slate-400">16 languages in the picker above</span>
+        </div>
+      </div>
+      <div class="mt-5">
+        <p class="text-[10px] uppercase tracking-wide text-slate-400 font-bold mb-2">Core Observations</p>
+        <div class="space-y-2.5">
+          {% for f in findings if f is mapping and f.get('isCritical') %}
+          {% set _fd = f.get('finding','') %}{% set _ex = f.get('explanation','') %}
+          <div class="p-3.5 rounded-xl bg-rose-50 border border-rose-200">
+            <p class="font-bold text-[13.5px]">{{ _fd }} <span class="ml-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-600 text-white">Critical</span>
+              <button onclick="explainText({{ _fd|tojson }})" class="inline-flex items-center text-blue-600 font-bold ml-1" title="Explain simply">{{ ic.sparkles('w-4 h-4') }}</button></p>
+            {% if _ex %}<p class="text-[12.5px] text-slate-600 mt-1">{{ _ex }}</p>{% endif %}
+          </div>
+          {% endfor %}
+          {% for f in findings if not (f is mapping and f.get('isCritical')) %}
+          {% set _fd = (f.get('finding','') if f is mapping else (f if f is string else '')) %}{% set _ex = (f.get('explanation','') if f is mapping else '') %}
+          <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-100">
+            <p class="font-bold text-[13.5px]">{{ _fd }} <button onclick="explainText({{ _fd|tojson }})" class="inline-flex items-center text-blue-600 font-bold ml-1" title="Explain simply">{{ ic.sparkles('w-4 h-4') }}</button></p>
+            {% if _ex %}<p class="text-[12.5px] text-slate-600 mt-1">{{ _ex }}</p>{% endif %}
+          </div>
+          {% else %}
+          {% if not findings %}<p class="text-[13px] text-slate-400">No discrete findings listed.</p>{% endif %}
+          {% endfor %}
+        </div>
+      </div>
+    </section>
+
+    <!-- Treatment Strategy -->
+    <section class="bg-white rounded-2xl border border-slate-200 shadow-lg p-5 md:p-6">
+      <div class="flex items-center gap-3 mb-4">
+        <span class="w-10 h-10 rounded-2xl flex items-center justify-center text-white" style="background:#2563eb">{{ ic.clipboard_check('w-5 h-5') }}</span>
+        <h2 class="font-display font-extrabold text-[17px]">Treatment Strategy</h2>
+      </div>
+      <div class="flex items-center gap-2 mb-3"><p class="text-[10px] uppercase tracking-wide text-slate-400 font-bold">Active Prescriptions</p><span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">{{ meds|length }} drug{{ 's' if meds|length!=1 else '' }}</span></div>
+      {% if meds %}
+      <div class="grid sm:grid-cols-2 gap-3">
+        {% for m in meds %}{% if m is mapping %}
+        <div class="p-3.5 rounded-xl bg-emerald-50/70 border border-emerald-100">
+          <p class="font-bold text-[13.5px] flex items-center gap-2">{{ ic.pill('w-4 h-4 text-emerald-600') }} {{ m.get('name','—') }}</p>
+          <div class="text-[12px] text-slate-600 mt-1.5 space-y-0.5">
+            <p>Gauge Dose: <b>{{ m.get('dosage') or 'as directed — report named this drug without stating a dose' }}</b></p>
+            <p>Clock Frequency: <b>{{ m.get('frequency') or '—' }}</b></p>
+            <p>Calendar Duration: <b>{{ m.get('duration') or '—' }}</b></p>
+          </div>
+        </div>
+        {% else %}<div class="p-3.5 rounded-xl bg-emerald-50/70 border border-emerald-100"><p class="font-bold text-[13.5px] flex items-center gap-2">{{ ic.pill('w-4 h-4 text-emerald-600') }} {{ m }}</p></div>{% endif %}{% endfor %}
+      </div>
+      {% else %}
+      <div class="p-4 rounded-xl border border-dashed border-slate-200 text-[13px] text-slate-400">No medications prescribed.</div>
+      {% endif %}
+      <p class="text-[10px] uppercase tracking-wide text-slate-400 font-bold mt-5 mb-2">Therapeutic Protocol</p>
+      {% if therapies %}
+      <ul class="space-y-2">{% for t in therapies %}<li class="flex items-start gap-2.5 text-[13.5px]"><span class="w-5 h-5 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center text-[11px] font-bold shrink-0 mt-0.5">✓</span><span>{{ t }}</span></li>{% endfor %}</ul>
+      {% else %}<p class="text-[13px] text-slate-400">No specific therapies indicated.</p>{% endif %}
+    </section>
+
+    <!-- Emergency -->
+    {% if data.emergencyTriggers %}
+    <section class="bg-white rounded-2xl border border-rose-200 shadow-lg p-5 md:p-6">
+      <div class="flex items-center gap-3 mb-1">
+        <span class="w-10 h-10 rounded-2xl bg-rose-100 text-rose-600 flex items-center justify-center">{{ ic.alert_triangle('w-5 h-5') }}</span>
+        <h2 class="font-display font-extrabold text-[17px] text-rose-700">When to seek urgent care</h2>
+      </div>
+      <p class="text-[12.5px] text-slate-500 mb-3">Contact a doctor if any of these appear:</p>
+      <ul class="grid sm:grid-cols-2 gap-2">{% for e in data.emergencyTriggers %}<li class="flex items-start gap-2 text-[13.5px]"><span class="w-1.5 h-1.5 rounded-full bg-rose-500 mt-2 shrink-0"></span><span>{{ e }}</span></li>{% endfor %}</ul>
+      <div class="mt-4 p-3.5 rounded-xl bg-rose-100/50 border border-rose-200 text-[13px] font-semibold text-rose-800">If you experience any of these symptoms, visit the Emergency Department immediately.</div>
+    </section>
+    {% endif %}
+
+    <!-- Lifestyle + Follow-up -->
+    <div class="grid sm:grid-cols-2 gap-8">
+      <section class="bg-white rounded-2xl border border-slate-200 shadow-lg p-5">
+        <div class="flex items-center gap-2.5 mb-3"><span class="w-9 h-9 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center">{{ ic.life_buoy('w-5 h-5') }}</span><h3 class="font-bold text-[15px]">Lifestyle Directives</h3></div>
+        {% set _ls = data.lifestyleRecommendations or [] %}
+        {% if _ls %}<ol class="space-y-2.5">{% for x in _ls %}<li class="flex items-start gap-2.5 text-[13.5px]"><span class="w-5 h-5 rounded-full bg-amber-100 text-amber-700 text-[11px] font-bold flex items-center justify-center shrink-0 mt-0.5">{{ loop.index }}</span><span>{{ x }}</span></li>{% endfor %}</ol>
+        {% else %}<p class="text-[13px] text-slate-400">No lifestyle directives listed.</p>{% endif %}
+      </section>
+      <section class="bg-white rounded-2xl border border-slate-200 shadow-lg p-5">
+        <div class="flex items-center gap-2.5 mb-3"><span class="w-9 h-9 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center">{{ ic.clock('w-5 h-5') }}</span><h3 class="font-bold text-[15px]">Follow-up Protocols</h3></div>
+        {% set _fu = data.followUpActions or [] %}
+        {% if _fu %}<div class="space-y-0">{% for x in _fu %}<div class="flex gap-3"><div class="flex flex-col items-center"><span class="w-2.5 h-2.5 rounded-full bg-blue-600 mt-1.5"></span>{% if not loop.last %}<span class="w-px flex-1 bg-blue-100 my-1"></span>{% endif %}</div><div class="pb-4"><p class="text-[13.5px]">{{ x }}</p><button onclick="gcal({{ x|tojson }})" class="mt-1 inline-flex items-center gap-1 text-[11.5px] font-bold text-blue-600 hover:underline">{{ ic.plus('w-3.5 h-3.5') }} Add to Google Calendar</button></div></div>{% endfor %}</div>
+        {% else %}<p class="text-[13px] text-slate-400">No follow-ups listed.</p>{% endif %}
+      </section>
+    </div>
+
+    <!-- Next steps (mobile copy) -->
+    <section class="lg:hidden bg-white rounded-2xl border border-slate-200 shadow-lg p-5">
+      <p class="text-[10px] uppercase tracking-wide text-slate-400 font-bold">Your Next Steps</p>
+      <h3 class="font-bold text-[15px] mt-0.5 mb-2">What to arrange</h3>
+      {% set gaps = data.dataGaps or [] %}
+      {% if gaps %}<ul class="text-[13px] text-slate-600 space-y-1 mb-3">{% for g in gaps[:4] %}<li>• {{ g }}</li>{% endfor %}</ul>
+      {% else %}<p class="text-[13px] text-slate-500">Nothing outstanding — these reports covered what the assessment needed.</p>{% endif %}
+      {% if specialty and specialty.primary %}<button onclick="openSpecs()" class="mt-1 inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-900 text-white text-[12.5px] font-bold">{{ ic.calendar('w-4 h-4') }} Find &amp; book {{ specialty.primary }}</button>{% endif %}
+    </section>
+
+    <!-- CTA: consult specialist -->
+    <section class="rounded-2xl bg-blue-600 text-white shadow-lg p-5 md:p-6">
+      <h3 class="font-display font-extrabold text-[17px]">Consult with specialized Doctor</h3>
+      <p class="text-[13px] text-blue-100 mt-1">This analysis has been generated by our Neural AI Engine based on 1 case file. Book a 15-minute session to review it with a specialist.</p>
+      <div class="flex flex-wrap gap-2 mt-4">
+        <button onclick="openSpecs()" class="px-4 py-2.5 rounded-xl bg-white text-blue-700 text-[13px] font-bold">Find Specialists &amp; Book</button>
+        {% if specialty and specialty.primary %}<span class="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-white/15 text-[12.5px] font-semibold">Top Recommendation: <b>{{ specialty.primary }}</b>{% if specialty.secondary %} + {{ specialty.secondary }}{% endif %}</span>{% endif %}
+      </div>
+    </section>
+  </div>
+</div>
+
+<!-- Specialists modal -->
+<div id="specModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50">
+  <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[85vh] overflow-y-auto p-5">
+    <div class="flex items-center justify-between mb-1"><h3 class="font-bold text-[16px]">Recommended Specialists</h3><button onclick="closeSpecs()" class="w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center text-slate-500">{{ ic.x('w-4 h-4') }}</button></div>
+    <p class="text-[12px] text-slate-400 mb-3">Based on Primary Diagnosis: <b>{{ diag.primary or '—' }}</b></p>
+    <div class="flex gap-2 mb-3">
+      <button id="specBtn" onclick="docs()" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-900 text-white text-[13px] font-bold">{{ ic.map_pin('w-4 h-4') }} Rescan Nearby</button>
+      <button onclick="docs(true)" class="px-3 py-2 rounded-xl bg-white border text-[13px] font-semibold">Without location</button>
+    </div>
+    <p id="specStatus" class="text-[12px] text-slate-400 mb-2"></p>
+    <div id="specList" class="text-sm space-y-2"></div>
+  </div>
+</div>
+
+<!-- FAB + Health Assistant dialog -->
+<button onclick="toggleChat(true)" class="fixed bottom-4 right-4 z-40 w-14 h-14 rounded-full bg-blue-600 text-white shadow-2xl hover:scale-105 transition flex items-center justify-center">{{ ic.message_circle('w-6 h-6') }}<span class="absolute top-1 right-1 w-3 h-3 rounded-full bg-emerald-400 border-2 border-white"></span></button>
+<div id="chatDlg" class="hidden fixed bottom-20 right-4 z-50 w-[min(92vw,380px)] bg-white rounded-2xl border border-slate-200 shadow-2xl overflow-hidden">
+  <div class="flex items-center justify-between px-4 py-3 border-b border-slate-100">
+    <div><p class="font-bold text-[14px]">Health Assistant</p><p class="text-[11px] text-slate-400">Ask about your report • <span id="ragBadge">checking…</span></p></div>
+    <button onclick="toggleChat(false)" class="w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center text-slate-500">{{ ic.x('w-4 h-4') }}</button>
+  </div>
+  <div id="chat" class="h-64 overflow-y-auto bg-slate-50 p-3 text-sm space-y-2"><p class="text-slate-400">Any follow-up questions? Ask about specific findings…</p></div>
+  <div class="p-2.5 flex flex-wrap gap-1.5 border-t border-slate-100">
+    <button onclick="quickAsk(this)" class="text-[11.5px] font-semibold px-2.5 py-1.5 rounded-full bg-blue-50 text-blue-700 hover:bg-blue-100">What does the primary diagnosis mean?</button>
+    <button onclick="quickAsk(this)" class="text-[11.5px] font-semibold px-2.5 py-1.5 rounded-full bg-blue-50 text-blue-700 hover:bg-blue-100">Are there any life-threatening findings?</button>
+    <button onclick="quickAsk(this)" class="text-[11.5px] font-semibold px-2.5 py-1.5 rounded-full bg-blue-50 text-blue-700 hover:bg-blue-100">What are my next steps?</button>
+    <button onclick="quickAsk(this)" class="text-[11.5px] font-semibold px-2.5 py-1.5 rounded-full bg-blue-50 text-blue-700 hover:bg-blue-100">Explain the medication plan</button>
+  </div>
+  <div class="flex gap-2 p-2.5 border-t border-slate-100"><input id="qin" class="flex-1 border rounded-xl px-3 py-2 text-sm outline-none focus:border-blue-400" placeholder="Ask about values, findings…"/><button onclick="ask()" class="px-4 py-2 rounded-xl bg-blue-600 text-white text-sm font-bold">Send</button></div>
+  <p class="px-3 pb-2.5 text-[10.5px] text-slate-400">AI-powered • consult your doctor for final advice</p>
+</div>
+{% endif %}{% endblock %}{% block scripts %}<script>
+const RID={{ report.id }};
+async function share(){const b=document.getElementById('shareBox');b.classList.remove('hidden');b.textContent='Creating link…';const r=await fetch('/report/'+RID+'/share',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({expiry_days:7})});const j=await r.json();if(!r.ok){b.textContent='Share failed: '+(j.error||'try again');return;}b.innerHTML='';b.append('Share with your doctor: ');const u=document.createElement('b');u.textContent=j.url;b.append(u);}
+async function revoke(){if(!confirm('Stop sharing? Doctors will lose access.'))return;await fetch('/report/'+RID+'/share',{method:'DELETE'});alert('Sharing stopped.');}
+async function delThis(id){if(!confirm('Delete this report permanently? The file and its analysis will be removed.'))return;const r=await fetch('/report/'+id+'/delete',{method:'POST'});if(r.ok||r.redirected){location.href='/dashboard';}else alert('Delete failed — please retry.');}
+async function download(){const btn=document.getElementById('dlBtn'),err=document.getElementById('dlErr');btn.disabled=true;btn.textContent='Generating PDF…';err.classList.add('hidden');try{const r=await fetch('/report/'+RID+'/download.pdf');if(!r.ok)throw new Error('generation failed');const blob=await r.blob();const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='Medora_AI_Report_'+RID+'.pdf';a.click();}catch(e){err.textContent='Download failed: '+e.message;err.classList.remove('hidden');}finally{btn.disabled=false;btn.textContent='Download Report';}}
+function gcal(text){const url='https://calendar.google.com/calendar/render?action=TEMPLATE&text='+encodeURIComponent('Medora AI follow-up: '+text);window.open(url,'_blank');}
+async function explainText(t){const o=document.getElementById('simpleOut');o.classList.remove('hidden');o.textContent='Simplifying…';try{const ctl=new AbortController();const to=setTimeout(()=>ctl.abort(),30000);const r=await fetch('/api/explain',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({term:String(t).slice(0,300)}),signal:ctl.signal});clearTimeout(to);const j=await r.json();o.textContent=r.ok?j.explanation:('Error: '+(j.error||'AI unreachable'));}catch(e){o.textContent='Error: request timed out, try again.';}}
+async function translate(btn){const l=document.getElementById('lang').value;const prev=btn?btn.textContent:'';if(btn){btn.disabled=true;btn.textContent='Translating…';}try{const ctl=new AbortController();const to=setTimeout(()=>ctl.abort(),60000);const r=await fetch('/api/translate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({report_id:RID,targetLanguage:l}),signal:ctl.signal});clearTimeout(to);const j=await r.json();if(!r.ok){alert('Translation failed: '+(j.error||'AI unreachable'));return;}const d=j.data||{};if(d.executiveSummary)document.getElementById('summary').textContent=d.executiveSummary;if(d.diagnosis&&d.diagnosis.primary){const el=document.querySelector('[data-diag-primary]');if(el)el.textContent=d.diagnosis.primary;}if(btn){btn.disabled=false;btn.textContent='Translated to '+l+' ✓';setTimeout(()=>{btn.textContent=prev||'Translate summary ↑';},3000);}}catch(e){alert('Translation timed out, try again.');}finally{if(btn){btn.disabled=false;if(!btn.textContent.includes('✓'))btn.textContent=prev||'Translate summary ↑';}}}
+function toggleChat(open){document.getElementById('chatDlg').classList.toggle('hidden',!open);}
+function quickAsk(btn){document.getElementById('qin').value=btn.textContent;ask();}
+const escHtml=s=>String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let hist=[];async function ask(){const inp=document.getElementById('qin');const q=inp.value.trim();if(!q)return;hist.push({role:'user',content:q});const chat=document.getElementById('chat');const qp=document.createElement('p');qp.innerHTML='<b>You:</b> ';qp.append(document.createTextNode(q));chat.append(qp);inp.value='';chat.innerHTML+='<p id="typing" class="text-slate-400">…</p>';chat.scrollTop=1e6;
+const r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:q,history:hist,report_id:RID})});const j=await r.json();document.getElementById('typing')?.remove();if(!r.ok){const ep=document.createElement('p');ep.className='bg-rose-50 p-2 rounded-lg text-rose-700';ep.textContent='Error: '+(j.error||'AI unreachable');chat.append(ep);return;}let bt=String(j.text||'').replace(/\*\*/g,'').replace(/\*/g,'');hist.push({role:'assistant',content:bt});const ap=document.createElement('p');ap.className='bg-white p-2 rounded-lg border';ap.innerHTML='<b>AI:</b> <span style="white-space:pre-line">'+escHtml(bt)+'</span>';chat.append(ap);setTimeout(()=>{chat.scrollTop=chat.scrollHeight;},50);}
+fetch('/api/rag_status').then(r=>r.json()).then(j=>{const b=document.getElementById('ragBadge');if(b)b.textContent=j.ollama_reachable?j.gen_model+' • '+j.my_chunks+' chunks':'AI unreachable';}).catch(()=>{});
+function openSpecs(){document.getElementById('specModal').classList.remove('hidden');docs();}
+function closeSpecs(){document.getElementById('specModal').classList.add('hidden');}
+async function docs(skipGeo){
+const btn=document.getElementById('specBtn'),st=document.getElementById('specStatus'),box=document.getElementById('specList');
+const diag={{ (data.get('diagnosis',{}) or {}).get('primary','')|tojson }};
+btn.disabled=true;btn.textContent='Locating You…';st.textContent='Requesting location…';
+box.innerHTML='<p class="text-slate-400 text-[13px]">Scanning Professional Directories…</p>';
+const getPos=()=>new Promise(res=>{if(skipGeo||!navigator.geolocation)return res({});navigator.geolocation.getCurrentPosition(p=>res({latitude:p.coords.latitude,longitude:p.coords.longitude}),()=>res({}),{timeout:8000,maximumAge:600000});});
+const pos=await getPos();const hasGeo=!!(pos.latitude&&pos.longitude);
+st.textContent=hasGeo?('Location on • '+Number(pos.latitude).toFixed(3)+', '+Number(pos.longitude).toFixed(3)):'Please allow location for nearby results, or use the links below';
+btn.textContent='Searching…';
+try{
+const ctl=new AbortController();const to=setTimeout(()=>ctl.abort(),45000);
+const r=await fetch('/api/doctors',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({diagnosis:diag,...pos}),signal:ctl.signal});
+clearTimeout(to);const j=await r.json();if(!r.ok)throw new Error(j.error||'AI unreachable');
+const esc=s=>String(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let h='<div class="flex items-center justify-between mt-1"><p class="font-bold">Suggested: '+esc(j.specialty)+'</p><span class="text-[11px] font-bold px-2 py-1 rounded-full '+(hasGeo?'bg-emerald-50 text-emerald-600':'bg-slate-100 text-slate-500')+'">'+((j.doctors||[]).length)+' nearby</span></div>';
+h+='<p class="text-[13px] text-slate-600 mt-1">'+esc(j.guidance)+'</p>';
+h+='<div class="flex flex-wrap gap-2 mt-3"><a href="'+j.maps_url+'" target="_blank" rel="noopener" class="px-3 py-2 rounded-xl bg-blue-600 text-white text-[12.5px] font-bold">Find Specialists &amp; Book</a>';
+if(j.practo_url)h+='<a href="'+j.practo_url+'" target="_blank" rel="noopener" class="px-3 py-2 rounded-xl bg-white border text-[12.5px] font-bold">Practo</a>';
+h+='</div>';
+if((j.doctors||[]).length){h+='<div class="mt-3 space-y-2 max-h-64 overflow-y-auto pr-1">'+j.doctors.map(d=>'<div class="p-3 rounded-xl bg-slate-50 border border-slate-100"><div class="flex justify-between gap-2"><b class="text-[13px]">'+esc(d.name)+'</b><span class="text-[11px] font-bold text-blue-600 whitespace-nowrap">'+esc(d.distance_km)+' km</span></div><a href="'+d.maps_url+'" target="_blank" rel="noopener" class="text-[12px] font-bold text-blue-600 hover:underline">Directions →</a></div>').join('')+'</div>';}
+else{h+='<div class="mt-3 p-4 rounded-xl bg-blue-50/60 border border-blue-100 text-[13px] text-slate-600">No Specialists Found Nearby — tap <b>Find Specialists &amp; Book</b> above for live Google Maps results.</div>';}
+box.innerHTML=h;
+}catch(e){box.innerHTML='<p class="text-rose-600 text-sm">Unavailable: '+(e.name==='AbortError'?'timed out after 45s — try Without location.':escHtml(e.message||e))+'</p>';}
+finally{btn.disabled=false;btn.textContent='Rescan Nearby';}
+}
+document.getElementById('qin')?.addEventListener('keydown',e=>{if(e.key==='Enter')ask();});
+document.getElementById('translateBtn')?.addEventListener('click',()=>{const b=document.getElementById('translateBtn');if(b)translate(b);});
+</script>{% endblock %}

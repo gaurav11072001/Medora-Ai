@@ -1,0 +1,48 @@
+{% extends "layout.html" %}{% import "_icons.html" as ic %}{% set active='settings' %}{% block title %}Settings — Medora AI{% endblock %}{% block content %}
+<div class="flex flex-wrap items-end justify-between gap-3 mb-6">
+  <div><h1 class="font-display font-extrabold text-[26px] md:text-[30px] tracking-tight">System Control</h1>
+  <p class="text-slate-500 text-[13.5px] mt-1">Configure your clinical identity and platform security.</p></div>
+  <button form="profForm" class="btn-brand px-6 py-3 text-[13.5px]">Save Configuration</button>
+</div>
+<div class="grid lg:grid-cols-3 gap-4 items-start">
+  <div class="space-y-4">
+    <div class="card p-2 flex lg:flex-col gap-1" id="tabs">
+      <button data-t="prof" class="on text-left px-4 py-3 rounded-xl text-[13.5px] font-bold bg-blue-50 text-blue-700" onclick="tab('prof')">User Profile</button>
+      <button data-t="vault" class="text-left px-4 py-3 rounded-xl text-[13.5px] font-semibold text-slate-500 hover:bg-slate-50" onclick="tab('vault')">Vault &amp; Security</button>
+      <button data-t="alerts" class="text-left px-4 py-3 rounded-xl text-[13.5px] font-semibold text-slate-500 hover:bg-slate-50" onclick="tab('alerts')">Alert Center</button>
+      <button data-t="sync" class="text-left px-4 py-3 rounded-xl text-[13.5px] font-semibold text-slate-500 hover:bg-slate-50" onclick="tab('sync')">Data Sync</button>
+    </div>
+    <div class="rounded-[18px] p-5 text-white" style="background:#2563eb">
+      <p class="font-bold text-[14px] flex items-center gap-2">{{ ic.lock('w-4 h-4') }} Encryption Active</p>
+      <p class="text-blue-100/90 text-[12.5px] mt-1">All health data is secured with AES-256 encryption in transit &amp; at rest.</p>
+    </div>
+  </div>
+  <div class="lg:col-span-2 space-y-4">
+    <div id="pane-prof" class="card p-6">
+      <div class="flex items-center gap-4 mb-5"><img src="https://api.dicebear.com/7.x/personas/svg?seed={{ user.email }}&backgroundColor=eef4ff" class="w-16 h-16 rounded-full border" alt=""/><div><h3 class="font-extrabold text-[17px]">{{ user.name }}</h3><p class="text-[11px] font-bold text-slate-400">CLINICAL ACCOUNT • ID VERIFIED • HIPAA COMPLIANT</p></div></div>
+      <form id="profForm" method="POST" class="space-y-4 max-w-lg">
+        <div><label class="text-sm font-semibold">Display Name</label><input name="name" value="{{ user.name }}" class="mt-1 w-full border border-slate-200 rounded-xl px-4 py-3"/></div>
+        <div><label class="text-sm font-semibold">Primary Email</label><input value="{{ user.email }}" readonly disabled class="mt-1 w-full border border-slate-200 rounded-xl px-4 py-3 bg-slate-50 text-slate-500"/></div>
+        <div><label class="text-sm font-semibold">New password</label><input name="new_password" type="password" placeholder="Leave blank to keep current" class="mt-1 w-full border border-slate-200 rounded-xl px-4 py-3"/></div>
+      </form>
+    </div>
+    <div id="pane-vault" class="hidden card p-6">
+      <h3 class="font-bold text-[15px] mb-1">System Security Audit</h3><p class="text-[13px] text-slate-500 mb-4">Your account was last accessed on this device. End your session anytime.</p>
+      <div class="flex items-center justify-between p-4 rounded-xl bg-slate-50 border"><div><p class="font-bold text-[13.5px]">This device</p><p class="text-[12px] text-slate-400">End your session and require sign-in again.</p></div><a href="/logout" class="px-5 py-2.5 rounded-xl bg-white border font-bold text-sm text-rose-600">Sign out</a></div>
+    </div>
+    <div id="pane-alerts" class="hidden card p-6 space-y-3">
+      <h3 class="font-bold text-[15px] mb-1">Alert Center</h3>
+      {% for t,s in [('Critical Insight Emails','Instant alerts when critical findings are detected.'),('Health Summaries','Periodic summaries of your records.')] %}
+      <label class="flex items-center justify-between p-4 rounded-xl bg-slate-50 border cursor-pointer"><span><b class="text-[13.5px] block">{{ t }}</b><span class="text-[12px] text-slate-400">{{ s }}</span></span><input type="checkbox" class="w-5 h-5 accent-blue-600" checked onchange="localStorage.setItem('mi_{{ loop.index }}',this.checked)"/></label>
+      {% endfor %}
+    </div>
+    <div id="pane-sync" class="hidden card p-6">
+      <h3 class="font-bold text-[15px] mb-1">Unified Health Record</h3><p class="text-[13px] text-slate-500 mb-3">Integrate Medora AI with your care providers.</p>
+      <div class="flex gap-2"><button disabled class="px-4 py-2.5 rounded-xl bg-slate-100 text-slate-400 text-[13px] font-bold cursor-not-allowed">Connect Health Cloud (coming soon)</button><button disabled class="px-4 py-2.5 rounded-xl bg-slate-100 text-slate-400 text-[13px] font-bold cursor-not-allowed">Link Records (coming soon)</button></div>
+    </div>
+    <p class="text-[11.5px] text-slate-400">Platform Build: 3.1.2-RELEASE • <a class="underline" href="mailto:privacy@medinsight.in">Request Data Erasure</a></p>
+  </div>
+</div>{% endblock %}{% block scripts %}<script>
+function tab(name){['prof','vault','alerts','sync'].forEach(t=>{document.getElementById('pane-'+t).classList.add('hidden');const b=document.querySelector('#tabs [data-t="'+t+'"]');b.classList.remove('on','bg-blue-50','text-blue-700');b.classList.add('text-slate-500');});
+document.getElementById('pane-'+name).classList.remove('hidden');const b=document.querySelector('#tabs [data-t="'+name+'"]');b.classList.add('on','bg-blue-50','text-blue-700');b.classList.remove('text-slate-500');}
+</script>{% endblock %}

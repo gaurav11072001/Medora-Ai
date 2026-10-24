@@ -1,0 +1,24 @@
+{% extends "base.html" %}{% import "_icons.html" as ic %}{% block title %}Security — Medora AI{% endblock %}{% block content %}
+<div class="max-w-4xl mx-auto">
+<div class="text-center mb-8"><h1 class="font-display text-3xl md:text-4xl font-bold flex items-center justify-center gap-3">{{ ic.shield_check('w-9 h-9 text-blue-600') }} Enterprise-Grade Security</h1><p class="text-slate-600 mt-3 max-w-2xl mx-auto">Our infrastructure is built on trust and compliance, with military-grade encryption protecting every report.</p></div>
+
+<div class="grid md:grid-cols-3 gap-4 mb-4">
+<div class="bg-white rounded-2xl border p-6"><h3 class="font-bold mb-1">End-to-End Encryption</h3><p class="text-sm text-slate-500">TLS 1.3 in transit + AES-256 at rest. Data stays unreadable to outsiders.</p></div>
+<div class="bg-white rounded-2xl border p-6"><h3 class="font-bold mb-1">HIPAA Aligned</h3><p class="text-sm text-slate-500">PHI handled under HIPAA-aligned practices with per-account isolation.</p></div>
+<div class="bg-white rounded-2xl border p-6"><h3 class="font-bold mb-1">Zero-Retention AI</h3><p class="text-sm text-slate-500">Documents are processed ephemerally — never stored, logged, or used for training.</p></div>
+</div>
+
+<div class="rounded-2xl bg-slate-900 text-white p-6 md:p-8 mb-4"><h2 class="font-bold text-lg mb-4 flex items-center gap-2">{{ ic.globe('w-5 h-5') }} Technical Architecture</h2>
+<div class="space-y-3 text-sm">
+<p class="flex gap-2.5"><span class="text-emerald-400 font-bold">✓</span><span><b>Secure Transmission:</b> <span class="text-slate-300">HTTPS + HSTS with short-lived access.</span></span></p>
+<p class="flex gap-2.5"><span class="text-emerald-400 font-bold">✓</span><span><b>Per-user vault:</b> <span class="text-slate-300">uploads isolated by account; share links are random unguessable tokens.</span></span></p>
+<p class="flex gap-2.5"><span class="text-emerald-400 font-bold">✓</span><span><b>Infrastructure Isolation:</b> <span class="text-slate-300">audit + error logging with admin-only access.</span></span></p>
+</div></div>
+
+<div class="bg-white rounded-2xl border divide-y divide-slate-100 mb-4">
+<div class="p-6"><h3 class="font-bold mb-1 flex items-center gap-2">{{ ic.key('w-5 h-5 text-amber-500') }} Data Access &amp; Control</h3><p class="text-sm text-slate-500"><b>Strict ownership:</b> you retain rights — data is never sold or shared for marketing. <b>Access control:</b> only your account (plus admins for support) can reach your vault. <b>Instant delete</b> removes file + analysis.</p></div>
+</div>
+
+<div class="rounded-2xl bg-blue-50 border border-blue-100 p-8 text-center"><h2 class="font-bold text-lg">Have Security Concerns?</h2><p class="text-sm text-slate-500 mt-1 mb-4">For vulnerabilities or compliance questions, contact us immediately.</p><a href="mailto:security@medinsight.in" class="inline-block px-6 py-3 rounded-xl bg-blue-600 text-white text-sm font-bold">Contact Security Team</a></div>
+<p class="text-center text-xs text-slate-400 mt-8">© 2025 Medora AI. All rights reserved.</p>
+</div>{% endblock %}

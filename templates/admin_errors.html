@@ -1,0 +1,19 @@
+{% extends "admin_layout.html" %}{% import "_icons.html" as ic %}{% block title %}Error Monitor — Admin{% endblock %}{% block content %}
+<div class="flex flex-wrap items-end justify-between gap-3 mb-5">
+  <div><h1 class="font-display font-extrabold text-2xl">Error Monitor</h1><p class="text-slate-500 text-[13px] mt-0.5">Application failures, newest first.</p></div>
+  <button onclick="location.reload()" class="px-4 py-2.5 rounded-xl bg-slate-900 text-white text-[13px] font-bold">Refresh</button>
+</div>
+<div class="bg-white rounded-2xl border border-slate-200 divide-y divide-slate-100">
+{% for e in errors %}
+<div class="p-4">
+  <button class="w-full text-left flex items-start gap-3" onclick="this.nextElementSibling.classList.toggle('hidden')">
+    <span class="w-8 h-8 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center shrink-0 font-bold">!</span>
+    <span class="min-w-0"><b class="text-[13.5px] block truncate">{{ e.message[:140] }}</b><span class="text-[11.5px] text-slate-400">{{ e.path or '—' }} | {{ e.created_at.strftime('%Y-%m-%d %H:%M') if e.created_at else '' }}</span></span>
+  </button>
+  <pre class="hidden ml-11 mt-2 p-3 rounded-xl bg-slate-900 text-slate-200 text-[11.5px] whitespace-pre-wrap">{{ e.message }}</pre>
+</div>
+{% else %}
+<div class="p-10 text-center"><span class="inline-flex text-emerald-500">{{ ic.check_circle('w-12 h-12') }}</span><p class="font-bold mt-2">No errors recorded.</p></div>
+{% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends "base.html" %}{% import "_icons.html" as ic %}{% block title %}Privacy Policy — Medora AI{% endblock %}{% block content %}
+<div class="max-w-4xl mx-auto">
+<div class="text-center border-b border-slate-200 pb-8 mb-8"><h1 class="font-display text-3xl md:text-4xl font-bold">Privacy Policy</h1><p class="text-sm text-slate-400 mt-2">Last Updated: October 26, 2024</p><p class="text-slate-600 mt-3 max-w-2xl mx-auto">At Medora AI, we prioritize confidentiality. This policy demonstrates our HIPAA/GDPR-aligned handling of your health data.</p></div>
+
+<div class="space-y-4">
+<div class="bg-white rounded-2xl border p-6"><h2 class="font-bold text-lg mb-2 flex items-center gap-2">{{ ic.globe('w-5 h-5 text-blue-600') }} 1. Introduction</h2><p class="text-sm text-slate-600">Medora AI ("we") processes medical documents to generate AI-assisted insights. We treat all health information as sensitive and confidential.</p></div>
+
+<div class="bg-white rounded-2xl border p-6"><h2 class="font-bold text-lg mb-3 flex items-center gap-2">{{ ic.shield('w-5 h-5 text-emerald-600') }} 2. Information We Collect</h2>
+<h3 class="font-bold text-sm mt-3">2.1 Personal Health Information (PHI)</h3>
+<ul class="text-sm text-slate-600 list-disc ml-5 mt-1 space-y-1"><li>Diagnostic imaging (MRI, CT, X-Ray)</li><li>Laboratory test results</li><li>Clinical notes and discharge summaries</li><li>Prescription records</li></ul>
+<h3 class="font-bold text-sm mt-3">2.2 Personal Identifiers</h3><p class="text-sm text-slate-600 mt-1">Name, email, phone, age — kept separate from clinical content wherever possible.</p>
+<h3 class="font-bold text-sm mt-3">2.3 Usage Data</h3><p class="text-sm text-slate-600 mt-1">Browser type, pages visited, and diagnostic logs used to keep the service reliable.</p></div>
+
+<div class="bg-white rounded-2xl border p-6"><h2 class="font-bold text-lg mb-2 flex items-center gap-2">{{ ic.server('w-5 h-5 text-blue-600') }} 3. AI Processing &amp; Third Parties</h2><p class="text-sm text-slate-600">Our service utilizes Google's Gemini API. How your data interacts with AI:</p>
+<div class="mt-3 p-4 rounded-xl bg-blue-50 border border-blue-100 text-sm text-slate-700 space-y-1.5"><p><b>Data Transmission:</b> encrypted with TLS 1.3.</p><p><b>No Model Training:</b> your data is not used to train models.</p><p><b>Ephemeral Processing:</b> not retained in model memory.</p></div></div>
+
+<div class="bg-white rounded-2xl border p-6"><h2 class="font-bold text-lg mb-3 flex items-center gap-2">{{ ic.lock('w-5 h-5 text-rose-500') }} 4. Data Security</h2>
+<div class="grid sm:grid-cols-2 gap-3 text-sm"><div class="p-4 rounded-xl bg-slate-50"><b>Encryption At Rest</b><p class="text-slate-500">AES-256</p></div><div class="p-4 rounded-xl bg-slate-50"><b>Encryption In Transit</b><p class="text-slate-500">SSL/TLS</p></div><div class="p-4 rounded-xl bg-slate-50"><b>Access Controls</b><p class="text-slate-500">Per-account isolation, admin-only tooling</p></div><div class="p-4 rounded-xl bg-slate-50"><b>Sharing</b><p class="text-slate-500">Random unguessable links, revocable anytime</p></div></div></div>
+
+<div class="bg-white rounded-2xl border p-6"><h2 class="font-bold text-lg mb-2 flex items-center gap-2">{{ ic.eye('w-5 h-5 text-amber-500') }} 5. Your Rights</h2>
+<ul class="text-sm text-slate-600 list-disc ml-5 space-y-1"><li>Request a copy of your data</li><li>Request deletion (Right to be Forgotten) — delete any report from your dashboard</li><li>Correct inaccuracies in your profile</li><li>Export a portable PDF of any analysis</li></ul></div>
+
+<div class="rounded-2xl bg-slate-900 text-white p-6"><h2 class="font-bold text-lg">Contact Data Protection Officer</h2><p class="text-sm text-slate-300 mt-2">Email: <a class="text-blue-400 underline" href="mailto:privacy@medinsight.in">privacy@medinsight.in</a></p><p class="text-sm text-slate-300">Address: 123 Innovation Dr, Palo Alto, CA 94301</p></div>
+</div>
+<p class="text-center text-xs text-slate-400 mt-8">© 2025 Medora AI. All rights reserved.</p>
+</div>{% endblock %}

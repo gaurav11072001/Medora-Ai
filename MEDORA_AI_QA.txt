@@ -1,0 +1,613 @@
+
+
+Q1: What is Medora AI?
+A:  Medora AI is a full-stack web application that replicates the
+    medinsight.in platform. It allows users to upload medical documents
+    (PDF, JPG, PNG, TIFF, DICOM, DOCX, TXT), runs AI-powered analysis on
+    them, and presents structured clinical reports with diagnosis,
+    treatment plans, lifestyle recommendations, risk factors, and more.
+    Built with Flask (Python) on the backend and server-rendered HTML
+    templates with Tailwind CSS on the frontend.
+
+Q2: What is the primary purpose of this project?
+A:  The project aims to make medical reports understandable to
+    non-medical users. It takes complex lab reports, radiology images,
+    and clinical documents, extracts the key information using AI, and
+    presents it in plain language with confidence scores, differential
+    diagnoses, treatment plans, and follow-up actions.
+
+Q3: What tech stack does Medora AI use?
+A:  Backend:    Python 3.11, Flask 3.1.0, Flask-Login, Flask-SQLAlchemy
+    Database:   SQLite (file-based, zero-config)
+    AI/ML:      Ollama (local LLM), Google Gemini (cloud fallback),
+                scikit-learn (TF-IDF), numpy, PyMuPDF (PDF), pytesseract
+                (OCR), Pillow (images)
+    Frontend:   Jinja2 templates, Tailwind CSS, Chart.js, vanilla JS
+    PDF Gen:    ReportLab 4.2.2
+    Auth:       Flask-Login with Werkzeug password hashing
+
+Q4: Is this a production-ready application?
+A:  It is a functional prototype/clone with production-like features
+    (auth, admin panel, security headers, error logging). However, it
+    is NOT a certified medical device. All AI output carries a disclaimer
+    that it is AI-assisted information, not medical advice.
+
+Q5: What are the main user roles?
+A:  Patient (default): Can upload reports, view analysis, chat with AI,
+    translate reports, download PDFs, manage settings, share reports.
+    Admin: Has access to the admin panel for managing users, reports,
+    system settings, error logs, and landing page configuration.
+
+================================================================================
+SECTION 2: SETUP & INSTALLATION
+================================================================================
+
+Q6: How do I install and run Medora AI?
+A:  1. Ensure Python 3.11+ is installed
+    2. Install dependencies: pip install -r requirements.txt
+    3. Start Ollama: ollama serve (in a separate terminal)
+    4. Pull required models:
+       ollama pull qwen3:4b
+       ollama pull nomic-embed-text
+    5. Copy .env.example to .env and configure
+    6. Run: python app.py
+    7. Open http://127.0.0.1:5000
+
+Q7: What environment variables are required?
+A:  SECRET_KEY          — Flask session encryption key (required in production)
+    ADMIN_EMAIL         — Admin login email
+    ADMIN_PASSWORD      — Admin login password
+    OLLAMA_HOST         — Ollama server URL (default: http://localhost:11434)
+    OLLAMA_MODEL        — Generation model (default: qwen3:4b)
+    OLLAMA_EMBED_MODEL  — Embedding model (default: nomic-embed-text)
+    OLLAMA_VISION_MODEL — Vision model (default: disabled)
+    GEMINI_API_KEY      — Google Gemini API key (optional but recommended)
+    GEMINI_MODEL        — Gemini model name (default: gemini-2.5-flash)
+    INSTANT_ANALYSIS    — 1 = fast mode (default), 0 = thorough mode
+    DISABLE_OLLAMA      — Set to 1 to skip local Ollama entirely
+
+Q8: What file types are supported for upload?
+A:  PDF, PNG, JPG, JPEG, TIFF, TIF, WEBP, DICOM (.dcm), TXT, DOC, DOCX.
+    Maximum file size: 25 MB (configured via MAX_CONTENT_LENGTH).
+
+Q9: Do I need both Ollama and Gemini?
+A:  No, but at least one AI backend must be available. The system tries
+    Gemini first (if GEMINI_API_KEY is set), then falls back to local
+    Ollama. If neither is available, analysis fails with a clear error.
+    Gemini is strongly recommended for speed and quality.
+
+Q10: How do I configure the admin account?
+A:  Set ADMIN_EMAIL and ADMIN_PASSWORD in .env before first run. The admin
+     user is automatically created on startup if it does not exist.
+     Default seeded credentials: admin@medinsight.in / admin123
+
+================================================================================
+SECTION 3: CORE FEATURES
+================================================================================
+
+Q11: What happens when I upload a medical document?
+A:  The upload triggers an async analysis pipeline:
+     1. File is saved to uploads/ with a unique timestamped name
+     2. A Report record is created in the database (status: processing)
+     3. A background thread runs the full analysis:
+        a. Text extraction (PDF parsing, OCR for images, docx parsing)
+        b. Medical NLP entity extraction (patient name, lab values, etc.)
+        c. RAG chunking and embedding into the vector store
+        d. AI analysis (diagnosis, findings, treatment, risks, etc.)
+     4. The report status updates to "completed" or "failed"
+     5. The frontend polls /api/report_status/<id> for live progress
+
+Q12: What sections does a completed analysis report contain?
+A:  - Executive Summary (plain-language overview)
+     - Clinical Diagnosis (primary diagnosis + confidence % + differential)
+     - Core Observations (findings with critical/non-critical flags)
+     - Pathophysiology (disease mechanism explanation)
+     - Treatment Plan (medications + therapy options)
+     - Lifestyle Recommendations
+     - Follow-up Actions
+     - Risk Factors (with impact level bars)
+     - Emergency Triggers (when to seek urgent care)
+     - Current Status (active problems, trajectory)
+     - Key Extracted Values (NLP-extracted lab values in table format)
+     - Clinician Problem List
+
+Q13: How does the confidence score work?
+A:  The AI returns a confidence value (0.0 to 1.0) for the primary
+     diagnosis. The system uses robust parsing: it accepts decimals,
+     percentages (85%), and word descriptions ("high" = 0.85,
+     "moderate" = 0.7). A repair pass can re-ask the model to rate
+     confidence if the initial value is missing or zero.
+
+Q14: What is the "Explain in simple words" feature?
+A:  Clicking this button sends the selected text to /api/explain, which
+     uses the AI to rephrase medical jargon into everyday language with
+     an analogy and a note on why doctors care. Output appears in a
+     highlighted box below the text.
+
+Q15: How does report sharing work?
+A:  Each report has a unique share_token. Clicking "Share Link" creates
+     a public URL (/shared/<token>) that doctors can view without logging
+     in. Links expire after 7 days by default. "Stop Sharing" revokes
+     access immediately. The share_access table tracks views (IP, timestamp).
+
+Q16: Can I download my report as a PDF?
+A:  Yes. Click "Download Report" on any completed report. The PDF includes:
+     - Branded header (Medora AI)
+     - Patient metadata (name, file, date, relationship)
+     - Confidence strip table
+     - Uploaded document preview (for image uploads)
+     - All analysis sections in a professional layout
+     - Key extracted values table
+     - Clinician problem list
+     - Medical disclaimer footer with page numbers
+
+Q17: What is the difference between INSTANT_ANALYSIS=1 and =0?
+A:  INSTANT_ANALYSIS=1 (default): Uses trimmed prompts, fewer tokens
+     (1100), and skips the confidence repair pass. Analysis completes
+     in ~10-30 seconds.
+     INSTANT_ANALYSIS=0: Uses full prompts, more tokens (2200), and
+     runs an additional repair LLM pass to validate confidence scores.
+     More thorough but significantly slower (60-120+ seconds).
+
+================================================================================
+SECTION 4: AI ENGINE & RAG
+================================================================================
+
+Q18: What is RAG and how is it used here?
+A:  RAG (Retrieval-Augmented Generation) is a technique where relevant
+     document excerpts are retrieved and included in the AI prompt.
+     In Medora AI:
+     - Every uploaded document is chunked into ~500 character pieces
+       (with 120 character overlap)
+     - Each chunk is embedded using nomic-embed-text (768 dimensions)
+     - Chunks are stored in the document_chunk table
+     - At query time, hybrid retrieval combines:
+       * 70% embedding cosine similarity
+       * 30% keyword overlap (TF-IDF style)
+     - Top 4-6 chunks are included in the analysis/chat prompt
+
+Q19: What AI models are used?
+A:  Primary (local):  qwen3:4b via Ollama — handles text generation,
+     JSON analysis, chat responses, and translations.
+     Embeddings:       nomic-embed-text via Ollama — 768-dimensional
+     vectors for semantic search.
+     Cloud (fallback):  gemini-2.5-flash (or gemini-flash-latest) —
+     faster, higher quality, handles vision (image understanding).
+     Vision:            Gemini vision API for image transcription when
+     Tesseract OCR is unavailable or returns poor results.
+
+Q20: How does the system handle Gemini API quota exhaustion?
+A:  A circuit breaker pattern is implemented:
+     - When a 429 (quota exceeded) error is detected, Gemini is
+       immediately blocked for 5 minutes (300 seconds)
+     - During cooldown, all requests skip Gemini entirely and go
+       straight to Ollama
+     - This prevents wasting 60+ seconds per model retry on a dead quota
+     - After cooldown expires, one request probes Gemini again
+     - If it fails again, the cooldown resets
+
+Q21: What happens if both AI backends fail?
+A:  The system NEVER returns mock/fake data. If both Gemini and Ollama
+     are unavailable:
+     - Analysis: Report status is set to "failed" with an error message
+     - Chat: Returns HTTP 503 with "AI unreachable"
+     - Translation: Returns HTTP 503
+     - Explain: Returns HTTP 503
+     - Doctors: Falls back to a generic General Physician referral
+     All errors are logged to the error_log table for admin review.
+
+Q22: How does image analysis work?
+A:  For image uploads (JPG, PNG, TIFF, WEBP):
+     1. Tesseract OCR attempts text extraction first
+     2. If OCR returns < 40 characters (poor quality or missing engine):
+        a. Gemini vision API transcribes the image
+        b. Falls back to local Ollama vision model if configured
+     3. The extracted text is then processed through the normal analysis
+        pipeline (NLP, RAG, AI diagnosis)
+     4. The original image is displayed in the report's left sidebar
+     5. The image is also embedded in the PDF download
+
+Q23: What is the Gemini circuit breaker?
+A:  A performance optimization that detects when the Gemini API key has
+     exhausted its quota (HTTP 429). Instead of retrying each model with
+     a 60-second timeout (wasting 2+ minutes per request), it:
+     - Detects quota/rate-limit errors via pattern matching
+     - Immediately stops trying remaining Gemini models
+     - Sets a 5-minute cooldown timer
+     - Routes all requests to Ollama during cooldown
+     - Reduces failure time from 120+ seconds to ~7 seconds
+
+Q24: How does the chat/RAG system work?
+A:  The chat feature (/api/chat) uses a conversation-aware RAG system:
+     - User message + conversation history (last 6 messages) is sent
+     - Relevant document chunks are retrieved via hybrid search
+     - The AI receives: retrieved excerpts + conversation + user question
+     - Responses include source citations like [S1], [S2]
+     - Responses are formatted as professional bullet points
+     - A medical disclaimer is appended to every response
+     - Markdown formatting (**, *) is stripped from responses
+
+Q25: What is the hybrid retrieval scoring formula?
+A:  Score = 0.7 * cosine_similarity(query_embedding, chunk_embedding)
+           + 0.3 * keyword_overlap_score
+     Where keyword_overlap is the Jaccard-like overlap between query
+     words and chunk words (words longer than 2 characters).
+     This ensures both semantic matches and exact keyword matches
+     contribute to retrieval ranking.
+
+================================================================================
+SECTION 5: TRANSLATION
+================================================================================
+
+Q26: Which languages are supported for translation?
+A:  The language picker offers 16 languages:
+     English, Hindi, Marathi, Tamil, Telugu, Bengali, Kannada, Gujarati,
+     Punjabi, Malayalam, Urdu, Spanish, French, Mandarin, Arabic, Japanese.
+     Hindi and Marathi are fully functional and tested.
+
+Q27: How does translation work?
+A:  1. User selects a target language from the dropdown
+     2. User clicks "Translate summary ↑"
+     3. Frontend sends POST /api/translate with report_id + targetLanguage
+     4. Backend calls translate_analysis() which:
+        a. Sends the full analysis JSON to Gemini (or Ollama)
+        b. Prompt: "Translate all string VALUES into [language].
+           Keep JSON keys and structure identical."
+        c. Returns the translated JSON
+     5. Frontend updates the summary and diagnosis text with translations
+     6. Button shows "Translated to [language] ✓" confirmation
+
+Q28: What gets translated?
+A:  The executive summary and primary diagnosis are translated and
+     displayed in the UI. The full analysis JSON is translated by the
+     backend (all string values), but only the summary and diagnosis
+     are swapped in the visible report. The PDF download always uses
+     the original English analysis.
+
+Q29: Can I translate the entire report page?
+A:  Currently, translation applies to the executive summary and primary
+     diagnosis text. The full report sections (findings, treatment, etc.)
+     remain in English. The backend translates the complete JSON, so
+     extending the frontend to show more translated sections is
+     straightforward.
+
+================================================================================
+SECTION 6: PDF GENERATION
+================================================================================
+
+Q30: What library generates the PDF?
+A:  ReportLab 4.2.2 using the Platypus framework (SimpleDocTemplate).
+     This provides flowable document elements: Paragraphs, Tables,
+     Images, Spacers, and horizontal rules with automatic pagination.
+
+Q31: What does the PDF layout look like?
+A:  - Blue branded header band with "MEDORA AI" and report title
+     - Document title and metadata line
+     - Horizontal rule separator
+     - Confidence strip table (primary diagnosis + confidence %)
+     - Uploaded document preview (for image files, scaled to fit)
+     - Styled sections with blue headings
+     - Key extracted values in a formatted table
+     - Clinician problem list
+     - Footer with medical disclaimer and page numbers
+
+Q32: How is the uploaded image embedded in the PDF?
+A:  When the report file is an image (PNG/JPG/WEBP):
+     - ReportLab's ImageReader reads the image dimensions
+     - The image is scaled to fit within the content width (170mm)
+     - Height is capped to prevent it from dominating the page
+     - Aspect ratio is always preserved
+     - The image appears under "Uploaded Document Preview" heading
+
+Q33: What happens if PDF generation fails?
+A:  The error is caught and logged. The user sees an error message
+     in the UI (displayed in the #dlErr div). Common causes:
+     - Corrupt image file that ReportLab cannot parse
+     - Missing analysis data (report not completed)
+     - File permission issues in the uploads directory
+
+================================================================================
+SECTION 7: USER AUTHENTICATION & SECURITY
+================================================================================
+
+Q34: How does authentication work?
+A:  Flask-Login manages user sessions:
+     - Passwords are hashed with Werkzeug's generate_password_hash (PBKDF2)
+     - Sessions use signed cookies (SECRET_KEY)
+     - Cookies are HttpOnly and SameSite=Lax by default
+     - Optional COOKIE_SECURE=1 for HTTPS-only cookies
+     - @login_required decorator protects routes
+     - Admin routes use @admin_required (role check)
+
+Q35: What security headers are set?
+A:  Every response includes:
+     - X-Content-Type-Options: nosniff
+     - X-Frame-Options: SAMEORIGIN
+     - Referrer-Policy: strict-origin-when-cross-origin
+
+Q36: How are file uploads secured?
+A:  - Filenames are sanitized with Werkzeug's secure_filename
+     - Only whitelisted extensions are accepted (ALLOWED set)
+     - Maximum file size: 25 MB
+     - Files are stored with random timestamped names (not original names)
+     - File access requires authentication (or valid share token)
+     - Users can only access their own files (user_id check)
+
+Q37: Is the database encrypted?
+A:  The SQLite database is NOT encrypted at rest. The README mentions
+     "Files are encrypted in transit & at rest" in the UI copy, but this
+     refers to the production medinsight.in service. For this local
+     clone, files are stored as-is in the uploads/ directory. For true
+     encryption, you would need to implement disk-level encryption or
+     use SQLCipher.
+
+================================================================================
+SECTION 8: DATABASE SCHEMA
+================================================================================
+
+Q38: What tables exist in the database?
+A:  1. user        — id, email, password_hash, name, avatar, role,
+                       created_at, last_login
+     2. report      — id, user_id, file_name, file_type, file_path,
+                       status, progress, analysis (JSON), detected_patient_name,
+                       relationship, share_token, share_expires_at,
+                       share_revoked, entities (JSON), created_at
+     3. document_chunk — id, report_id, user_id, chunk_index, text,
+                       embedding (JSON vector)
+     4. share_access — id, report_id, ip, user_agent, accessed_at
+     5. app_config   — id, landing_headline, maintenance_mode
+     6. error_log    — id, message, path, created_at
+
+Q39: What is the document_chunk table for?
+A:  It is the RAG vector store. Each row represents one chunk of text
+     from an uploaded document, along with its 768-dimensional embedding
+     vector (stored as JSON). This enables fast semantic similarity
+     search during analysis and chat retrieval.
+
+Q40: How is the analysis data stored?
+A:  The analysis column in the report table stores a JSON string with
+     the full structured analysis: executiveSummary, detailedFindings,
+     diagnosis, pathophysiology, treatmentPlan, lifestyleRecommendations,
+     followUpActions, riskFactors, emergencyTriggers, currentStatus,
+     trends, timeline, dataGaps. The entities column stores NLP-extracted
+     structured data (patient info, lab values, medications).
+
+================================================================================
+SECTION 9: API ENDPOINTS
+================================================================================
+
+Q41: What API endpoints are available?
+A:  GET  /api/health              — Server health check
+     GET  /api/report_status/<id>  — Poll analysis progress
+     POST /api/translate           — Translate report to target language
+     POST /api/doctors             — Get specialist referral guidance
+     POST /api/chat                — Chat with AI about the report
+     POST /api/explain             — Simplify medical jargon
+     GET  /api/rag_status          — Check AI backend status
+     POST /api/reindex             — Admin: rebuild RAG index
+     POST /api/newsletter          — Subscribe to newsletter
+
+Q42: How does the frontend poll for analysis progress?
+A:  The /analysis/<id> page uses JavaScript setInterval to poll
+     /api/report_status/<id> every 2 seconds. The response includes:
+     { id, status, progress, error, redirect }
+     When status becomes "completed", the frontend redirects to
+     /report/<id>. If "failed", an error message is shown.
+
+Q43: What is the /api/rag_status endpoint?
+A:  Returns the current state of AI backends:
+     { ollama_reachable, gen_model, embed_model, my_chunks,
+       gemini_configured, gemini_models, use_ollama }
+     The frontend uses this to display a badge showing which model
+     is active and how many document chunks are indexed.
+
+================================================================================
+SECTION 10: ADMIN PANEL
+================================================================================
+
+Q44: What can admins do?
+A:  - View system dashboard (user count, report count, storage stats)
+     - Manage all reports (view, delete)
+     - Manage users (view, delete)
+     - Configure landing page headline
+     - Toggle maintenance mode
+     - View error logs
+     - Rebuild RAG index (re-embed all documents)
+
+Q45: How do I access the admin panel?
+A:  Navigate to /adminpanel/login and log in with the admin credentials
+     (ADMIN_EMAIL and ADMIN_PASSWORD from .env). The admin panel has its
+     own layout with a sidebar navigation.
+
+Q46: What is maintenance mode?
+A:  When enabled via admin panel, all non-admin routes show a
+     maintenance page. This is useful during updates or when AI backends
+     are being reconfigured. The maintenance state is stored in the
+     app_config table.
+
+================================================================================
+SECTION 11: TROUBLESHOOTING
+================================================================================
+
+Q47: Why is my analysis stuck at a certain percentage?
+A:  Common causes:
+     - Gemini API quota exhausted (429) — check error_log table
+     - Ollama model not pulled — run: ollama pull qwen3:4b
+     - Ollama server not running — run: ollama serve
+     - Large file taking long — increase ANALYSIS_TIMEOUT_S
+     - Server restarted mid-analysis — stale reports are auto-marked
+       as "failed" on startup
+
+Q48: Why does the chat return "AI unreachable"?
+A:  Both Gemini and Ollama failed. Check:
+     - Is GEMINI_API_KEY valid and not quota-exhausted?
+     - Is Ollama running? (ollama serve)
+     - Is the model pulled? (ollama list)
+     - Check error_log table for specific error messages
+
+Q49: Why is the translate button not working?
+A:  - Ensure you are logged in (endpoint requires @login_required)
+     - Check browser console for JavaScript errors
+     - The button uses addEventListener (not inline onclick)
+     - Verify /api/translate returns 200 (check Network tab)
+     - If Gemini is quota-blocked, translation falls back to Ollama
+       which may be slow (up to 300s timeout)
+
+Q50: Why does the PDF download fail or produce a blank file?
+A:  - Ensure the report status is "completed" (not processing/failed)
+     - Check that the uploaded file still exists on disk
+     - For image reports, verify the image is not corrupt
+     - Check Flask logs for ReportLab errors
+     - Ensure the uploads/ directory is writable
+
+Q51: How do I reset the application?
+A:  1. Stop the server (Ctrl+C)
+     2. Delete instance/medinsight.db (resets all data)
+     3. Delete uploads/* (removes uploaded files)
+     4. Restart: python app.py
+     This gives you a fresh start with only the admin user.
+
+Q52: Why are my reports showing "Analysis interrupted"?
+A:  This happens when the server is restarted while analysis is running.
+     The background thread dies with the process. On next startup, all
+     "processing" reports are automatically marked as "failed" with this
+     message. Simply re-upload the file to retry.
+
+================================================================================
+SECTION 12: ARCHITECTURE & DESIGN
+================================================================================
+
+Q53: Why is SQLite used instead of PostgreSQL?
+A:  SQLite requires zero configuration, runs as a single file, and is
+     sufficient for a single-server deployment. For production at scale,
+     you would switch to PostgreSQL by changing SQLALCHEMY_DATABASE_URI.
+     The ORM (SQLAlchemy) makes this a one-line change.
+
+Q54: How does the async analysis work?
+A:  When a file is uploaded:
+     1. The upload route saves the file and creates a Report record
+     2. run_analysis_async() spawns a daemon thread
+     3. The thread runs within Flask's app context
+     4. Progress is updated in the database at key milestones
+        (14% = text extracted, 55% = RAG indexed, 68% = AI running)
+     5. A ticker thread bumps progress (75%, 82%, 88%, 93%) while
+        the LLM generates, so the UI never looks frozen
+     6. The frontend polls the database for progress updates
+
+Q55: What is the INSTANT_ANALYSIS optimization?
+A:  When INSTANT_ANALYSIS=1 (default):
+     - Prompts are trimmed to essential information
+     - Token limits are reduced (1100 vs 2200)
+     - The confidence repair pass is skipped
+     - RAG context is limited to top-4 chunks instead of top-6
+     - Document text is truncated to 3500 chars
+     This reduces analysis time from 60-120s to 10-30s with minimal
+     quality loss for most medical reports.
+
+Q56: How does the system prevent fake/hallucinated medical data?
+A:  - No mock responses: if AI backends fail, errors are returned
+     - Confidence is always a number (0-1), never a word
+     - Non-medical uploads honestly return "No medical content detected"
+     - Source citations [S1], [S2] link chat responses to document excerpts
+     - Every response includes a medical disclaimer
+     - The system never fabricates lab values or diagnoses without evidence
+
+Q57: What is the purpose of the _repair_confidence function?
+A:  When INSTANT_ANALYSIS=0, after the initial analysis, a second LLM
+     pass reviews the diagnosis and assigns a proper confidence score
+     if the first pass returned 0.0 or null. This improves reliability
+     of the confidence percentage shown in the UI.
+
+Q58: How does the share link system work?
+A:  - Each report gets a unique share_token (secrets.token_urlsafe)
+     - Share links expire after 7 days (configurable)
+     - The /shared/<token> route is PUBLIC (no login required)
+     - ShareAccess records track who viewed the link
+     - "Stop Sharing" sets share_revoked = True
+     - Expired/revoked links show a "link expired" page
+
+================================================================================
+SECTION 13: FRONTEND
+================================================================================
+
+Q59: What JavaScript frameworks are used?
+A:  Vanilla JavaScript only. No React, Vue, or jQuery. The frontend uses:
+     - fetch() for API calls
+     - setInterval for progress polling
+     - DOM manipulation for dynamic content
+     - Chart.js for the trends page
+     - Tailwind CSS utility classes for styling
+
+Q60: How does the chat interface work?
+A:  - Messages are stored in a local `hist` array (conversation history)
+     - User messages are appended immediately
+     - A "typing..." indicator shows while waiting for the AI
+     - AI responses are rendered with white-space:pre-line to preserve
+       bullet point formatting
+     - Markdown asterisks (**, *) are stripped from responses
+     - The chat auto-scrolls to the bottom on new messages
+     - Quick-ask buttons populate common questions
+
+Q61: What is the language picker?
+A:  A dropdown in the report header with 16 language options. When a
+     language is selected and "Translate summary ↑" is clicked, the
+     executive summary and primary diagnosis are translated via the AI
+     backend. The translation is displayed in-place without reloading.
+
+================================================================================
+SECTION 14: DEPLOYMENT
+================================================================================
+
+Q62: Can I deploy this to production?
+A:  Yes, with modifications:
+     - Set a strong SECRET_KEY
+     - Use PostgreSQL instead of SQLite
+     - Set FLASK_ENV=production
+     - Use a production WSGI server (gunicorn, uWSGI)
+     - Set COOKIE_SECURE=1 if using HTTPS
+     - Configure a reverse proxy (nginx, Caddy)
+     - Set up proper logging and monitoring
+
+Q63: What are the system requirements?
+A:  - Python 3.11+
+     - 4GB+ RAM (for Ollama models)
+     - 10GB+ disk space (for models and uploads)
+     - Ollama installed and running (for local AI)
+     - Tesseract OCR installed (optional, for image text extraction)
+     - Internet connection (for Gemini API)
+
+Q64: How do I switch from Gemini to Ollama-only mode?
+A:  Set DISABLE_OLLAMA=0 (default) and remove/comment out GEMINI_API_KEY
+     in .env. The system will use only local Ollama. Note: analysis will
+     be significantly slower (especially on CPU).
+
+Q65: How do I switch to Gemini-only mode?
+A:  Set DISABLE_OLLAMA=1 in .env. The system will skip Ollama entirely
+     and use only Gemini. This is faster but requires a valid API key
+     with sufficient quota.
+
+================================================================================
+SECTION 15: MEDICAL DISCLAIMER & ETHICS
+================================================================================
+
+Q66: Is this a medical device?
+A:  NO. This is an AI-assisted educational tool. It is NOT a certified
+     medical device and should NOT be used for actual medical diagnosis
+     or treatment decisions. All output includes disclaimers advising
+     users to consult qualified healthcare professionals.
+
+Q67: What disclaimers are shown?
+A:  - Chat responses: "AI-assisted info, not medical advice — confirm
+       with your doctor."
+     - PDF footer: "AI-assisted analysis — not a replacement for
+       professional medical advice."
+     - Report page: "AI-powered • consult your doctor for final advice"
+     - Landing page: Full disclaimer about AI limitations
+
+Q68: How does the system handle non-medical uploads?
+A:  If the AI determines the uploaded document contains no medical
+     content (e.g., a photo of a hand, a landscape), it honestly
+     reports "No medical content detected" rather than fabricating a
+     diagnosis. This is a core design principle: never fake medical data.
+
+
