@@ -16,7 +16,7 @@
 <div class="lg:col-span-2 card p-5 md:p-7">
   <div class="text-center mb-3"><span class="pill st-proc">Step 1 of 3</span></div>
   <div id="drop" class="dropzone p-8 md:p-10 text-center cursor-pointer">
-    <span class="mx-auto w-14 h-14 rounded-2xl bg-white border shadow-card flex items-center justify-center text-blue-600 text-2xl mb-4">↑</span>
+    <span class="mx-auto w-14 h-14 rounded-2xl bg-white border shadow-card flex items-center justify-center text-blue-600 mb-4">{{ ic.upload('w-7 h-7') }}</span>
     <h2 class="font-display font-bold text-[19px]" id="dropTitle">Drop your medical documents here</h2>
     <p class="text-slate-500 text-[13.5px] mt-1">Drag &amp; drop files here or click to browse</p>
     <input id="file" type="file" multiple class="hidden" accept=".pdf,.png,.jpg,.jpeg,.tiff,.tif,.webp,.dcm,.txt,.doc,.docx"/>
@@ -29,7 +29,7 @@
     <label class="text-[12.5px] font-semibold text-slate-600">Person's Name<input id="pname" placeholder="E.g. John Doe" class="mt-1.5 w-full border border-slate-200 rounded-xl px-4 py-3 text-sm font-normal outline-none focus:border-blue-400"/></label>
   </div>
   <label class="block text-[12.5px] font-semibold text-slate-600 mt-3">Any symptoms or context?<textarea id="notes" rows="2" placeholder="E.g. Persistent lower back pain for 2 weeks…" class="mt-1.5 w-full border border-slate-200 rounded-xl px-4 py-3 text-sm font-normal outline-none focus:border-blue-400"></textarea></label>
-  <button id="go" class="btn-brand w-full py-4 mt-4 text-[14.5px]">Run analysis →</button>
+  <button id="go" class="btn-brand w-full py-4 mt-4 text-[14.5px]"><span class="inline-flex items-center justify-center gap-2">Run analysis {{ ic.arrow_right('w-4 h-4') }}</span></button>
   <div id="prog" class="hidden mt-4"><div class="h-2 bg-slate-100 rounded-full overflow-hidden"><div id="bar" class="h-full rounded-full transition-all" style="width:6%;background:#2563eb"></div></div><p id="msg" class="text-[12px] text-slate-500 mt-2">Preparing upload…</p></div>
   <p class="text-[11.5px] text-slate-400 mt-3 text-center">Uploading your documents… files are encrypted in transit &amp; at rest.</p>
 </div>
@@ -37,15 +37,15 @@
 <div class="space-y-4">
   <div class="card p-5"><p class="eyebrow mb-3">You can upload</p>
     <ul class="space-y-2.5 text-[13.5px] text-slate-600">
-      <li class="flex gap-2.5"><span class="text-blue-600">●</span> Blood Tests &amp; Lab Reports</li>
-      <li class="flex gap-2.5"><span class="text-blue-600">●</span> X-Rays, MRI, CT Scans</li>
-      <li class="flex gap-2.5"><span class="text-blue-600">●</span> Prescriptions</li>
-      <li class="flex gap-2.5"><span class="text-blue-600">●</span> Discharge Summaries</li>
-      <li class="flex gap-2.5"><span class="text-blue-600">●</span> Medical Documents</li>
+      <li class="flex gap-2.5"><span class="text-blue-600">{{ ic.check('w-4 h-4') }}</span> Blood Tests &amp; Lab Reports</li>
+      <li class="flex gap-2.5"><span class="text-blue-600">{{ ic.check('w-4 h-4') }}</span> X-Rays, MRI, CT Scans</li>
+      <li class="flex gap-2.5"><span class="text-blue-600">{{ ic.check('w-4 h-4') }}</span> Prescriptions</li>
+      <li class="flex gap-2.5"><span class="text-blue-600">{{ ic.check('w-4 h-4') }}</span> Discharge Summaries</li>
+      <li class="flex gap-2.5"><span class="text-blue-600">{{ ic.check('w-4 h-4') }}</span> Medical Documents</li>
     </ul></div>
   <div class="card p-5" style="background:var(--tl-soft);border-color:var(--tl-line)"><p class="eyebrow mb-3" style="color:var(--tl-ink)">Your data is safe</p>
     <ul class="space-y-2 text-[13px]" style="color:var(--tl-ink)">
-      <li>✓ 256-bit Encrypted</li><li>✓ HIPAA Compliant</li><li>✓ Private &amp; Secure</li><li>✓ Erased on Request</li>
+      <li class="flex items-center gap-2">{{ ic.check('w-3.5 h-3.5') }} 256-bit Encrypted</li><li class="flex items-center gap-2">{{ ic.check('w-3.5 h-3.5') }} HIPAA Compliant</li><li class="flex items-center gap-2">{{ ic.check('w-3.5 h-3.5') }} Private &amp; Secure</li><li class="flex items-center gap-2">{{ ic.check('w-3.5 h-3.5') }} Erased on Request</li>
     </ul></div>
   <div class="card p-5"><p class="eyebrow mb-3">How AI Analysis Works</p>
     <ol class="space-y-3 text-[13px] text-slate-600">

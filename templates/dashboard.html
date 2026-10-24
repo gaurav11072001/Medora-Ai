@@ -1,6 +1,6 @@
-{% extends "layout.html" %}{% set active='dashboard' %}{% block title %}Dashboard — Medora AI{% endblock %}{% block content %}
+{% extends "layout.html" %}{% import "_icons.html" as ic %}{% set active='dashboard' %}{% block title %}Dashboard — Medora AI{% endblock %}{% block content %}
 {% if awaiting %}
-<a href="/history" class="block mb-5 p-4 rounded-2xl bg-amber-50 border border-amber-200 text-[13.5px]"><b>Analysis in progress — {{ awaiting }} file{{ 's' if awaiting!=1 else '' }} being analysed.</b><span class="text-slate-500"> Track from Medical History →</span></a>
+<a href="/history" class="block mb-5 p-4 rounded-2xl bg-amber-50 border border-amber-200 text-[13.5px]"><b>Analysis in progress — {{ awaiting }} file{{ 's' if awaiting!=1 else '' }} being analysed.</b><span class="text-slate-500"> Track from Medical History {{ ic.arrow_right('w-3.5 h-3.5') }}</span></a>
 {% endif %}
 <!-- Header -->
 <div class="flex flex-wrap items-end justify-between gap-4 mb-6">
@@ -8,21 +8,21 @@
     <h1 class="font-display font-extrabold text-[28px] md:text-[32px] tracking-tight leading-tight">Health Overview</h1>
     <p class="text-slate-500 text-[14px] mt-1">Welcome, {{ user.name.split(' ')[0] }}. Monitoring {{ total }} clinical record{{ 's' if total!=1 else '' }}.</p>
   </div>
-  <a href="/upload" class="btn-brand px-5 py-3 text-[13.5px] flex items-center gap-2"><span class="text-lg leading-none">+</span> New Intake</a>
+  <a href="/upload" class="btn-brand px-5 py-3 text-[13.5px] flex items-center gap-2">{{ ic.plus('w-4 h-4') }} New Intake</a>
 </div>
 
 <!-- Stats -->
 <div class="grid grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
   {% set cards = [
-    ('Total Reports', total, 'All files in your vault', 'var(--brand)', 'var(--brand-bg)', 'M7 3h10a2 2 0 012 2v14a2 2 0 01-2 2H7a2 2 0 01-2-2V5a2 2 0 012-2z M9 9h6M9 13h6'),
-    ('Awaiting Analysis', awaiting, 'Files being analysed', 'var(--am-ink)', 'var(--am-tint)', 'M12 7v5l3 3 M12 21a9 9 0 100-18 9 9 0 000 18z'),
-    ('Analyses Complete', done, 'Has been analysed', 'var(--tl-ink)', 'var(--tl-tint)', 'M20 6L9 17l-5-5'),
-    ('People Tracked', people, 'Patient profiles monitored', 'var(--brand)', 'var(--brand-bg)', 'M16 19v-1a4 4 0 00-8 0v1 M12 11a4 4 0 100-8 4 4 0 000 8z')
+    ('Total Reports', total, 'All files in your vault', 'var(--brand)', 'var(--brand-bg)', 'description'),
+    ('Awaiting Analysis', awaiting, 'Files being analysed', 'var(--am-ink)', 'var(--am-tint)', 'schedule'),
+    ('Analyses Complete', done, 'Has been analysed', 'var(--tl-ink)', 'var(--tl-tint)', 'check_circle'),
+    ('People Tracked', people, 'Patient profiles monitored', 'var(--brand)', 'var(--brand-bg)', 'group')
   ] %}
-  {% for label,val,sub,color,bg,path in cards %}
+  {% for label,val,sub,color,bg,icon in cards %}
   <div class="card hoverable reveal p-5 flex flex-col min-h-[150px]">
     <div class="flex items-start justify-between mb-4">
-      <span class="w-10 h-10 rounded-xl flex items-center justify-center" style="background:{{ bg }};color:{{ color }}"><svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="{{ path }}"/></svg></span>
+      <span class="w-10 h-10 rounded-xl flex items-center justify-center" style="background:{{ bg }};color:{{ color }}"><span class="material-icons w-5 h-5" aria-hidden="true" translate="no">{{ icon }}</span></span>
     </div>
     <p class="text-[11px] font-bold tracking-widest text-slate-400 uppercase">{{ label }}</p>
     <p class="font-display font-extrabold text-[30px] leading-none mt-1">{{ val }}</p>
@@ -36,7 +36,7 @@
 <div class="lg:col-span-2 card overflow-hidden">
   <div class="flex items-center justify-between px-5 py-4 border-b border-slate-100">
     <div><h2 class="font-display font-bold text-[16px]">Recent Records</h2><p class="text-[12.5px] text-slate-400">My Health Records • latest first</p></div>
-    <a href="/history" class="text-[13px] font-bold text-blue-600 hover:underline">View History →</a>
+    <a href="/history" class="inline-flex items-center gap-1 text-[13px] font-bold text-blue-600 hover:underline">View History {{ ic.arrow_right('w-3.5 h-3.5') }}</a>
   </div>
   {% if reports %}
   <div class="overflow-x-auto"><table class="grid-table min-w-[560px]">
@@ -44,8 +44,8 @@
     <tr class="hover:bg-slate-50/70">
       <td><div class="flex items-center gap-3"><span class="w-9 h-9 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-[10px] font-extrabold">{{ r.file_type[:3]|upper }}</span><div class="min-w-0"><p class="font-semibold text-[13.5px] max-w-[220px] truncate">{{ r.file_name }}</p><p class="text-[11.5px] text-slate-400">{{ r.detected_patient_name }} • {{ r.created_at.strftime('%d %b %Y') }}</p></div></div></td>
       <td><span class="pill {% if r.status=='completed' %}st-done{% elif r.status=='failed' %}st-fail{% else %}st-proc{% endif %}">{{ 'Analysis ready' if r.status=='completed' else ('Processing' if r.status=='processing' else r.status) }}{% if r.status=='processing' %} • {{ r.progress }}%{% endif %}</span></td>
-      <td class="text-right whitespace-nowrap"><a href="{% if r.status=='completed' %}/report/{{ r.id }}{% else %}/analysis/{{ r.id }}{% endif %}" class="text-[13px] font-bold text-blue-600 hover:underline">›</a>
-        <button onclick="delRecord({{ r.id }},this)" title="Delete this record" class="ml-3 text-[13px] font-bold text-slate-300 hover:text-rose-600">✕</button></td>
+      <td class="text-right whitespace-nowrap"><a href="{% if r.status=='completed' %}/report/{{ r.id }}{% else %}/analysis/{{ r.id }}{% endif %}" class="text-[13px] font-bold text-blue-600 hover:underline">{{ ic.chevron_right('w-4 h-4') }}</a>
+        <button onclick="delRecord({{ r.id }},this)" title="Delete this record" class="ml-3 text-slate-300 hover:text-rose-600 align-middle">{{ ic.x('w-3.5 h-3.5') }}</button></td>
     </tr>{% endfor %}</tbody>
   </table></div>
   {% else %}

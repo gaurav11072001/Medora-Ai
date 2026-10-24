@@ -1,5 +1,41 @@
 /* Medora AI — light theme: charcoal (#1F2328) + a single blue (#2563EB), no gradients. */
 
+/* ─── Icons — Material Icons (filled) ───────────────────────────────────────
+   One webfont for the whole app. The Google stylesheet already ships the
+   .material-icons base class (inline-block, line-height 1, ligatures on), so
+   this file only maps the Tailwind width classes used at call sites onto a
+   matching font-size. Keeping the map here means every template that links
+   light-theme.css gets correctly sized icons with no extra head tags. */
+@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
+
+.material-icons {
+  vertical-align: middle;
+  flex-shrink: 0;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+.material-icons.w-2\.5 { font-size: 10px; }
+.material-icons.w-3 { font-size: 12px; }
+.material-icons.w-3\.5 { font-size: 14px; }
+.material-icons.w-4 { font-size: 16px; }
+.material-icons.w-5 { font-size: 20px; }
+.material-icons.w-6 { font-size: 24px; }
+.material-icons.w-7 { font-size: 28px; }
+.material-icons.w-8 { font-size: 32px; }
+.material-icons.w-9 { font-size: 36px; }
+.material-icons.w-12 { font-size: 48px; }
+.material-icons.w-16 { font-size: 64px; }
+.material-icons.w-\[16px\] { font-size: 16px; }
+.material-icons.w-\[17px\] { font-size: 17px; }
+.material-icons.w-\[18px\] { font-size: 18px; }
+.material-icons.w-\[20px\] { font-size: 20px; }
+@media (min-width: 640px) {
+  .material-icons.sm\:w-4 { font-size: 16px; }
+  .material-icons.sm\:w-5 { font-size: 20px; }
+  .material-icons.sm\:w-6 { font-size: 24px; }
+  .material-icons.sm\:w-8 { font-size: 32px; }
+}
+
 html:not(.dark) .medical-gradient,
 html:not(.dark) .btn-brand,
 html:not(.dark) .btn-go {
@@ -177,3 +213,18 @@ html.dark .bg-teal-400,
 html.dark .bg-teal-500 { background-color: #2dd4bf !important; }
 html.dark .border-teal-100,
 html.dark .border-teal-200 { border-color: #115e59 !important; }
+
+/* Blue + slate, dark theme.
+   Tailwind's blue/slate ramps are tuned for light surfaces: on the #161b22 card
+   the 500–700 steps fall below readable contrast. These keep the brand hue but
+   lift it to the dark-mode blue (#58a6ff) and the charcoal ink tokens. */
+html.dark .text-slate-700 { color: #cdd9e5 !important; }
+html.dark .text-blue-500,
+html.dark .text-blue-600,
+html.dark .text-blue-700 { color: #58a6ff !important; }
+html.dark .bg-blue-50,
+html.dark .bg-blue-50\/60,
+html.dark .bg-blue-50\/70,
+html.dark .bg-blue-100 { background-color: #12233f !important; }
+html.dark .border-blue-100,
+html.dark .border-blue-200 { border-color: #1f3a63 !important; }

@@ -12,7 +12,7 @@
   <form method="POST" class="space-y-3" onsubmit="document.getElementById('goBtn').disabled=true;document.getElementById('goBtn').textContent='Verifying…'">
     <div><label class="text-[12.5px] font-bold text-slate-600">Administrator ID</label><input name="email" type="email" required autofocus placeholder="admin@medinsight.in" class="mt-1.5 w-full border border-slate-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-500"/></div>
     <div><label class="text-[12.5px] font-bold text-slate-600">Security Key</label><input name="password" type="password" required placeholder="••••••••" class="mt-1.5 w-full border border-slate-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-500"/></div>
-    <button id="goBtn" class="w-full py-3.5 rounded-xl bg-slate-900 text-white font-bold text-sm hover:bg-slate-800">Authenticate Access →</button>
+    <button id="goBtn" class="w-full py-3.5 rounded-xl bg-slate-900 text-white font-bold text-sm hover:bg-slate-800">{{ ic.arrow_right('w-4 h-4') }} Authenticate Access</button>
   </form>
   <p class="text-center text-[11px] text-slate-400 mt-5">Unauthorized access is monitored and logged.</p>
 </div>

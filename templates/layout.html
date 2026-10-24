@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+{% import "_icons.html" as ic %}<!DOCTYPE html>
 <html lang="en" id="htmlRoot">
 <head>
 <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
@@ -91,7 +91,7 @@ html:not(.dark) .am-card{background:#f59e0b!important;background-image:none!impo
 /* ─── Dark mode toggle button ─────────────────────────────────────────── */
 #darkToggle{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;border:1px solid var(--line);background:var(--card);transition:.18s;flex-shrink:0}
 #darkToggle:hover{border-color:var(--brand-line);background:var(--brand-bg)}
-#darkToggle svg{transition:transform .35s cubic-bezier(.34,1.56,.64,1)}
+#darkToggle svg, #darkToggle .material-icons{transition:transform .35s cubic-bezier(.34,1.56,.64,1)}
 html.dark #darkToggle .icon-moon{display:none}
 html:not(.dark) #darkToggle .icon-sun{display:none}
 
@@ -148,27 +148,27 @@ html.dark .bg-amber-50{background:#3a2a10!important}html.dark .text-amber-700{co
 <aside class="w-[268px] shrink-0 border-r hidden lg:flex flex-col sticky top-0 h-screen" style="background:var(--sidebar-bg);border-color:var(--sidebar-border)">
   <div class="px-6 pt-6 pb-2 flex items-center gap-3">
     <span class="w-10 h-10 rounded-2xl flex items-center justify-center text-white shadow-pop" style="background:#2563eb">
-      <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24"><path stroke-linecap="round" d="M6 3v5a4 4 0 008 0V3"/><path stroke-linecap="round" d="M10 15v1a5 5 0 0010 0v-3"/><circle cx="20" cy="10" r="1.6"/></svg>
+      {{ ic.stethoscope('w-5 h-5') }}
     </span>
     <div class="leading-none"><p class="font-display font-extrabold text-[19px] tracking-tight" style="color:var(--ink)">Medora AI</p><p class="text-[11px] font-semibold tracking-widest mt-1" style="color:var(--mut)">CARE PORTAL</p></div>
   </div>
   <div class="px-6 mt-5"><p class="eyebrow mb-2">Menu</p>
   <nav class="space-y-1">
-    <a href="/dashboard" class="navlink {% if active=='dashboard' %}active{% endif %}"><svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg>Dashboard</a>
-    <a href="/upload" class="navlink {% if active=='upload' %}active{% endif %}"><svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 16V6m0 0l-3.5 3.5M12 6l3.5 3.5M4 20h16"/></svg>Upload New</a>
-    <a href="/history" class="navlink {% if active=='history' %}active{% endif %}"><svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" d="M3 12a9 9 0 109-9M3 5v4h4M12 8v4l3 2"/></svg>Medical History</a>
-    <a href="/trends" class="navlink {% if active=='trends' %}active{% endif %}"><svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12h4l2.5 7 4-15 2.5 8H21"/></svg>Health Trends</a>
+    <a href="/dashboard" class="navlink {% if active=='dashboard' %}active{% endif %}">{{ ic.dashboard('w-[18px] h-[18px]') }}Dashboard</a>
+    <a href="/upload" class="navlink {% if active=='upload' %}active{% endif %}">{{ ic.upload('w-[18px] h-[18px]') }}Upload New</a>
+    <a href="/history" class="navlink {% if active=='history' %}active{% endif %}">{{ ic.history('w-[18px] h-[18px]') }}Medical History</a>
+    <a href="/trends" class="navlink {% if active=='trends' %}active{% endif %}">{{ ic.trends('w-[18px] h-[18px]') }}Health Trends</a>
   </nav></div>
   <div class="px-6 mt-6"><p class="eyebrow mb-2">Account</p>
   <nav class="space-y-1">
-    <a href="/settings" class="navlink {% if active=='settings' %}active{% endif %}"><svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9L17 7M7 17l-2.1 2.1"/></svg>Settings</a>
+    <a href="/settings" class="navlink {% if active=='settings' %}active{% endif %}">{{ ic.settings('w-[18px] h-[18px]') }}Settings</a>
     {% if current_user.role=='admin' %}<a href="/adminpanel/dashboard" class="navlink"><span class="w-2 h-2 rounded-full bg-blue-600"></span>Admin console</a>{% endif %}
   </nav></div>
   <div class="mt-auto p-4">
     <div class="card p-4 flex items-center gap-3">
       <span class="relative"><img src="https://api.dicebear.com/7.x/personas/svg?seed={{ current_user.email }}&backgroundColor=eef4ff" class="w-10 h-10 rounded-full border" alt=""/><span class="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-blue-600 border-2" style="border-color:var(--card)"></span></span>
       <div class="min-w-0 flex-1"><p class="font-bold text-[13.5px] truncate" style="color:var(--ink)">{{ current_user.name }}</p><p class="text-[11.5px] font-medium truncate" style="color:var(--mut)">{{ current_user.email }}</p></div>
-      <a href="/logout" title="Sign out" class="p-2" style="color:var(--mut)"><svg class="w-5 h-5 hover:text-rose-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12H4m0 0l4-4m-4 4l4 4M10 4H6a2 2 0 00-2 2v12a2 2 0 002 2h4"/></svg></a>
+      <a href="/logout" title="Sign out" class="p-2 hover:text-rose-500" style="color:var(--mut)">{{ ic.logout('w-5 h-5') }}</a>
     </div>
     <p class="text-center text-[11px] mt-3" style="color:var(--mut)">PHI encrypted • v2.4</p>
   </div>
@@ -181,7 +181,7 @@ html.dark .bg-amber-50{background:#3a2a10!important}html.dark .text-amber-700{co
     <nav class="hidden md:flex items-center gap-2 text-[13px] font-medium" style="color:var(--mut)"><a href="/dashboard" class="hover:text-slate-700">Home</a><span>/</span><span class="font-semibold capitalize" style="color:var(--ink)">{{ active or 'overview' }}</span></nav>
     <form action="/dashboard" method="GET" class="hidden sm:block flex-1 max-w-[420px] ml-4">
       <div class="searchbox flex items-center gap-2.5 px-4 py-2.5">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="color:var(--mut)"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        {{ ic.search('w-5 h-5') }}
         <input name="q" value="{{ request.args.get('q','') }}" placeholder="Search reports, patients…" class="bg-transparent outline-none w-full text-[13.5px]"/>
         <kbd class="hidden md:inline text-[10.5px] border rounded-md px-1.5 py-0.5 font-bold" style="background:var(--card2);border-color:var(--line);color:var(--mut)">/</kbd>
       </div>
@@ -191,13 +191,13 @@ html.dark .bg-amber-50{background:#3a2a10!important}html.dark .text-amber-700{co
       <!-- 🌙 Dark mode toggle -->
       <button id="darkToggle" title="Toggle dark mode" aria-label="Toggle dark mode">
         <!-- Sun icon (shown in dark mode) -->
-        <svg class="icon-sun w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="color:var(--brand)"><circle cx="12" cy="12" r="5"/><path stroke-linecap="round" d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+        {{ ic.sun('icon-sun w-5 h-5', 'color:var(--brand)') }}
         <!-- Moon icon (shown in light mode) -->
-        <svg class="icon-moon w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="color:var(--mut)"><path stroke-linecap="round" d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+        {{ ic.moon('icon-moon w-5 h-5', 'color:var(--mut)') }}
       </button>
       <div class="relative">
         <button id="bellBtn" class="w-10 h-10 rounded-xl btn-ghost flex items-center justify-center relative">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" style="color:var(--mut)"><path stroke-linecap="round" stroke-linejoin="round" d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 01-3.4 0"/></svg>
+          {{ ic.bell('w-5 h-5', 'color:var(--mut)') }}
           {% if pending_count %}<span class="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full text-white text-[10px] font-bold flex items-center justify-center" style="background:var(--brand)">{{ pending_count }}</span>{% endif %}
         </button>
         <div id="bellPop" class="hidden absolute right-0 mt-2 w-72 card p-4 text-sm z-50"><p class="font-bold mb-1">Notifications</p><p class="text-[13px]" style="color:var(--mut)">{% if pending_count %}{{ pending_count }} analysis in progress.{% else %}No notifications yet.{% endif %}</p></div>
@@ -206,7 +206,7 @@ html.dark .bg-amber-50{background:#3a2a10!important}html.dark .text-amber-700{co
         <button id="profBtn" class="flex items-center gap-2.5 pl-1.5 pr-2 py-1.5 rounded-xl transition" style="border:1px solid transparent">
           <img src="https://api.dicebear.com/7.x/personas/svg?seed={{ current_user.email }}&backgroundColor=eef4ff" class="w-9 h-9 rounded-full border" alt=""/>
           <span class="text-left hidden sm:block leading-tight"><span class="block font-bold text-[13px] max-w-[140px] truncate" style="color:var(--ink)">{{ current_user.name }}</span><span class="block text-[10.5px] tracking-widest font-bold" style="color:var(--mut)">PATIENT PORTAL</span></span>
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="color:var(--mut)"><path d="M6 9l6 6 6-6"/></svg>
+          {{ ic.chevron_down('w-4 h-4', 'color:var(--mut)') }}
         </button>
         <div id="profPop" class="hidden absolute right-0 mt-2 w-48 card p-2 text-sm z-50">
           <a href="/settings" class="block px-3 py-2 rounded-lg hover:opacity-75" style="color:var(--ink)">Profile settings</a>
