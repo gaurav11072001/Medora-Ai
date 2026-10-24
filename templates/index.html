@@ -30,6 +30,7 @@ tailwind.config = {
     --lp-nav:rgba(255,255,255,.90);--lp-nav-border:#e6e8eb;
     --lp-card:#fff;--lp-card-border:#e6e8eb;--lp-card2:#f7f8f9;
     --lp-section:#f7f8f9;--lp-grid-line:#e8eaed;
+    --lp-am:#f59e0b;--lp-am-ink:#b45309;--lp-am-soft:#fff8eb;--lp-am-line:#fde3ae;
     --lp-orb1:transparent;--lp-orb2:transparent;
   }
   html.dark{
@@ -39,6 +40,7 @@ tailwind.config = {
     --lp-nav:rgba(22,27,34,.86);--lp-nav-border:#30363d;
     --lp-card:#161b22;--lp-card-border:#30363d;--lp-card2:#21262d;
     --lp-section:#11161d;--lp-grid-line:#1b2431;
+    --lp-am:#f0b429;--lp-am-ink:#e3b341;--lp-am-soft:#2a2010;--lp-am-line:#9e6a03;
     --lp-orb1:rgba(37,99,235,.16);--lp-orb2:rgba(30,58,138,.14);
   }
 
@@ -218,6 +220,7 @@ tailwind.config = {
     box-shadow:0 1px 2px rgba(0,0,0,.5),0 28px 56px -28px rgba(0,0,0,.95),0 0 0 1px rgba(88,166,255,.10);
   }
   html.dark .hiw-card .hiw-num{color:#21262d}
+  html.dark .hiw-card .hiw-num-am{color:#3a2a10}
   html.dark .hiw-card .border-slate-100{border-color:#262d36}
   html.dark .hiw-card .hiw-chip{
     background-color:#21262d;border-color:#30363d;color:#9aa4b2;
@@ -225,6 +228,45 @@ tailwind.config = {
   html.dark .hiw-arrow{
     background-color:#1b222b;border-color:#30363d;color:#79c0ff;
   }
+
+  /* ─── Command palette ──────────────────────────────────────────────── */
+  section[id]{scroll-margin-top:104px}
+  .cmdk-trigger{transition:border-color .2s,background-color .2s,box-shadow .2s}
+  .cmdk-trigger:hover{border-color:#bfdbfe;background-color:#fff;box-shadow:0 8px 20px -12px rgba(37,99,235,.45)}
+  .cmdk-trigger:focus-visible{outline:2px solid #2563eb;outline-offset:2px}
+  .cmdk-kbd{
+    display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;
+    padding:0 5px;border-radius:5px;border:1px solid #e2e8f0;background:#f8fafc;
+    color:#64748b;font-size:10px;font-weight:700;line-height:1;font-family:'Inter',sans-serif;
+  }
+  .cmdk-backdrop{background:rgba(15,23,42,.42);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
+  .cmdk-item{
+    display:flex;align-items:center;gap:10px;width:100%;padding:9px 10px;border-radius:10px;
+    font-size:14px;font-weight:500;color:#3e444c;text-align:left;cursor:pointer;
+    transition:background-color .12s,color .12s;
+  }
+  .cmdk-item:hover{background:#f4f7fb}
+  .cmdk-item[aria-selected="true"]{background:#eff5ff;color:#1d4ed8}
+  .cmdk-item[aria-selected="true"] .cmdk-ico{background:#fff;border-color:#dbeafe;color:#2563eb}
+  .cmdk-ico{
+    display:flex;align-items:center;justify-content:center;width:26px;height:26px;flex-shrink:0;
+    border-radius:8px;border:1px solid #e8edf4;background:#f8fafc;color:#64748b;
+  }
+
+  html.dark .cmdk-trigger{border-color:#30363d;background-color:#1b222b}
+  html.dark .cmdk-trigger:hover{border-color:#1f6feb;background-color:#21262d;box-shadow:none}
+  html.dark .cmdk-kbd{background:#21262d;border-color:#30363d;color:#9aa4b2}
+  html.dark .cmdk-panel{background-color:#161b22;border-color:#30363d;box-shadow:0 40px 90px -20px rgba(0,0,0,.92)}
+  html.dark .cmdk-panel .border-slate-100{border-color:#262d36}
+  html.dark .cmdk-panel .bg-slate-50{background-color:#1b222b}
+  html.dark .cmdk-input{color:#e6edf3}
+  html.dark .cmdk-item{color:#c9d1d9}
+  html.dark .cmdk-item:hover{background-color:#1b222b}
+  html.dark .cmdk-item[aria-selected="true"]{background-color:#1b2a3f;color:#79c0ff}
+  html.dark .cmdk-ico{background:#1b222b;border-color:#30363d;color:#9aa4b2}
+  html.dark .cmdk-item[aria-selected="true"] .cmdk-ico{background:#12233c;border-color:#1f4068;color:#79c0ff}
+  .cmdk-ico-am{background:#fff8eb;border-color:#fde3ae;color:#b45309}
+  html.dark .cmdk-ico-am{background:#2a2010;border-color:#5c4405;color:#e3b341}
 </style>
 <link rel="stylesheet" href="{{ url_for('static', filename='css/light-theme.css') }}">
 </head>
@@ -232,32 +274,50 @@ tailwind.config = {
 <!-- Apply dark before paint to avoid flash -->
 <script>(function(){if(localStorage.getItem('mi-dark')==='1')document.getElementById('htmlRoot').classList.add('dark');})();</script>
 
-<!-- NAV — floating rounded pill -->
+<!-- NAV — floating pill with command palette -->
 <div class="fixed top-4 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-7xl z-50">
-<nav class="lp-nav h-16 sm:h-20 bg-white/85 backdrop-blur-md rounded-full border border-slate-100 shadow-[0_8px_32px_-8px_rgba(15,35,90,0.18)] px-4 sm:px-6 lg:px-8 flex items-center justify-between">
-    <a href="/" class="flex items-center gap-2 text-blue-600">
-      <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
-      <span class="font-display text-2xl font-bold text-slate-900 tracking-tight">Medora <span class="text-blue-600">AI</span></span>
-    </a>
-    <div class="hidden md:flex items-center gap-5">
-      <a href="#features" class="text-sm font-medium text-slate-600 hover:text-blue-600 transition-colors">Features</a>
-      <a href="/security" class="text-sm font-medium text-slate-600 hover:text-blue-600 transition-colors">Security</a>
-      <!-- 🌙 Dark mode toggle -->
+<nav class="lp-nav h-16 sm:h-20 bg-white/85 backdrop-blur-md rounded-full border border-slate-100 shadow-[0_8px_32px_-8px_rgba(15,35,90,0.18)] px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-3 md:grid md:grid-cols-[minmax(0,1fr)_minmax(0,20rem)_minmax(0,1fr)] md:gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,18rem)_minmax(0,1fr)] xl:grid-cols-[minmax(0,1fr)_minmax(0,26rem)_minmax(0,1fr)]">
+    <div class="flex items-center gap-3 lg:gap-6 min-w-0">
+      <a href="/" class="flex items-center gap-2 text-blue-600 shrink-0">
+        <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+        <span class="font-display text-2xl font-bold text-slate-900 tracking-tight">Medora <span class="text-blue-600">AI</span></span>
+      </a>
+      <div class="hidden lg:flex items-center gap-4 xl:gap-5">
+        <a href="#features" class="text-sm font-medium text-slate-600 hover:text-blue-600 transition-colors">Features</a>
+        <a href="/security" class="text-sm font-medium text-slate-600 hover:text-blue-600 transition-colors">Security</a>
+      </div>
+    </div>
+
+    <!-- Command palette trigger -->
+    <div class="hidden md:flex justify-center min-w-0">
+      <button id="cmdkTrigger" type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="cmdk"
+              class="cmdk-trigger group flex h-11 w-full items-center gap-2.5 rounded-full border border-slate-200 bg-white/70 px-3.5 text-left shadow-[0_1px_2px_rgba(16,24,40,.04)]">
+        <svg class="h-4 w-4 shrink-0 text-slate-400 transition-colors group-hover:text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <span class="min-w-0 flex-1 truncate text-sm font-medium text-slate-400">Search or jump to…</span>
+        <kbd class="cmdk-kbd shrink-0" data-mod>⌘</kbd><kbd class="cmdk-kbd shrink-0">K</kbd>
+      </button>
+    </div>
+
+    <div class="hidden md:flex items-center justify-end gap-2 shrink-0">
       <button id="dmToggleLanding" class="dm-toggle" title="Toggle dark mode" aria-label="Toggle dark mode">
         <!-- Sun (shown in dark mode) -->
-        <svg class="icon-sun w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="color:#2563eb"><circle cx="12" cy="12" r="5"/><path stroke-linecap="round" d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+        <svg class="icon-sun w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="color:#58a6ff"><circle cx="12" cy="12" r="5"/><path stroke-linecap="round" d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
         <!-- Moon (shown in light mode) -->
         <svg class="icon-moon w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="color:#64748b"><path stroke-linecap="round" d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
       </button>
-      <a href="/login" class="px-8 py-3 rounded-full medical-gradient text-white text-sm font-bold shadow-lg shadow-blue-200 hover:shadow-blue-400 hover:-translate-y-0.5 active:scale-95 transition-all btn-shine">Sign In</a>
+      <a href="/login" class="px-5 py-2.5 rounded-full medical-gradient text-white text-sm font-bold shadow-lg shadow-blue-200 hover:shadow-blue-400 hover:-translate-y-0.5 active:scale-95 transition-all btn-shine whitespace-nowrap">Sign In</a>
     </div>
-    <div class="md:hidden flex items-center gap-2">
-      <!-- Mobile dark toggle -->
+
+    <div class="flex md:hidden items-center gap-1.5">
+      <button id="cmdkTriggerMobile" type="button" aria-label="Search" aria-haspopup="dialog" aria-expanded="false" aria-controls="cmdk"
+              class="dm-toggle" style="width:36px;height:36px;border-radius:9px" title="Search">
+        <svg class="w-[17px] h-[17px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#64748b"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+      </button>
       <button id="dmToggleMobile" class="dm-toggle" style="width:36px;height:36px;border-radius:9px" title="Toggle dark mode" aria-label="Toggle dark mode">
-        <svg class="icon-sun w-[16px] h-[16px]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="color:#2563eb"><circle cx="12" cy="12" r="5"/><path stroke-linecap="round" d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+        <svg class="icon-sun w-[16px] h-[16px]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="color:#58a6ff"><circle cx="12" cy="12" r="5"/><path stroke-linecap="round" d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
         <svg class="icon-moon w-[16px] h-[16px]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="color:#64748b"><path stroke-linecap="round" d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
       </button>
-      <button id="mobileBtn" class="p-2 text-slate-700">
+      <button id="mobileBtn" class="p-2 text-slate-700" aria-label="Menu">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
       </button>
     </div>
@@ -266,6 +326,29 @@ tailwind.config = {
     <a href="#features" class="block text-sm font-medium text-slate-700">Features</a>
     <a href="/security" class="block text-sm font-medium text-slate-700">Security</a>
     <a href="/login" class="block text-center px-4 py-3 rounded-full medical-gradient text-white text-sm font-bold">Sign In</a>
+  </div>
+</div>
+
+<!-- COMMAND PALETTE -->
+<div id="cmdk" class="fixed inset-0 z-[60] hidden" role="dialog" aria-modal="true" aria-labelledby="cmdkLabel">
+  <div class="cmdk-backdrop absolute inset-0" data-cmdk-close></div>
+  <div class="cmdk-panel relative mx-auto mt-[12vh] w-[calc(100%-1.5rem)] max-w-xl overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_40px_80px_-20px_rgba(15,35,90,.35)]">
+    <h2 id="cmdkLabel" class="sr-only">Search Medora AI</h2>
+    <div class="flex items-center gap-3 border-b border-slate-100 px-4 py-3.5">
+      <svg class="h-[18px] w-[18px] shrink-0 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+      <input id="cmdkInput" type="text" role="combobox" aria-expanded="true" aria-controls="cmdkList" aria-autocomplete="list"
+             class="cmdk-input w-full bg-transparent text-[15px] font-medium text-slate-900 placeholder:text-slate-400 outline-none"
+             placeholder="Search pages, sections, or actions…" autocomplete="off" spellcheck="false" />
+      <kbd class="cmdk-kbd shrink-0">Esc</kbd>
+    </div>
+    <div id="cmdkList" class="max-h-[52vh] overflow-y-auto p-2" role="listbox" aria-label="Results"></div>
+    <div class="flex items-center justify-between gap-3 border-t border-slate-100 bg-slate-50 px-4 py-2.5 text-[11px] font-semibold text-slate-400">
+      <span class="flex items-center gap-3">
+        <span class="hidden items-center gap-1 sm:flex"><kbd class="cmdk-kbd">↑</kbd><kbd class="cmdk-kbd">↓</kbd> navigate</span>
+        <span class="flex items-center gap-1"><kbd class="cmdk-kbd">↵</kbd> select</span>
+      </span>
+      <span class="flex items-center gap-1"><kbd class="cmdk-kbd">esc</kbd> close</span>
+    </div>
   </div>
 </div>
 
@@ -412,9 +495,9 @@ tailwind.config = {
         </div>
         <p class="text-sm sm:text-base text-slate-600 leading-relaxed font-medium mt-2 sm:mt-0">Support for PDFs, JPEG, PNG, DICOM, and TIFF. High-fidelity OCR extracts every detail.</p>
       </div>
-      <div class="p-4 sm:p-8 rounded-2xl bg-white border border-slate-100 hover:border-blue-300 hover:shadow-lg transition-all group">
+      <div class="p-4 sm:p-8 rounded-2xl bg-white border border-slate-100 hover:border-amber-300 hover:shadow-lg transition-all group">
         <div class="flex items-center gap-3 sm:block">
-          <div class="w-10 h-10 sm:w-16 sm:h-16 flex-shrink-0 rounded-xl sm:rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center sm:mb-6 group-hover:scale-110 transition-transform"><svg class="w-5 h-5 sm:w-8 sm:h-8" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
+          <div class="w-10 h-10 sm:w-16 sm:h-16 flex-shrink-0 rounded-xl sm:rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center sm:mb-6 group-hover:scale-110 transition-transform"><svg class="w-5 h-5 sm:w-8 sm:h-8" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
           <h3 class="text-base sm:text-xl font-bold text-slate-900 sm:mb-3">Neural Engine</h3>
         </div>
         <p class="text-sm sm:text-base text-slate-600 leading-relaxed font-medium mt-2 sm:mt-0">Utilizes the latest in generative AI to provide reasoning-heavy diagnostic insights.</p>
@@ -433,9 +516,9 @@ tailwind.config = {
         </div>
         <p class="text-sm sm:text-base text-slate-600 leading-relaxed font-medium mt-2 sm:mt-0">Encrypted in transit and at rest. Documents are private to your account.</p>
       </div>
-      <div class="p-4 sm:p-8 rounded-2xl bg-white border border-slate-100 hover:border-blue-300 hover:shadow-lg transition-all group">
+      <div class="p-4 sm:p-8 rounded-2xl bg-white border border-slate-100 hover:border-amber-300 hover:shadow-lg transition-all group">
         <div class="flex items-center gap-3 sm:block">
-          <div class="w-10 h-10 sm:w-16 sm:h-16 flex-shrink-0 rounded-xl sm:rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center sm:mb-6 group-hover:scale-110 transition-transform"><svg class="w-5 h-5 sm:w-8 sm:h-8" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8"/></svg></div>
+          <div class="w-10 h-10 sm:w-16 sm:h-16 flex-shrink-0 rounded-xl sm:rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center sm:mb-6 group-hover:scale-110 transition-transform"><svg class="w-5 h-5 sm:w-8 sm:h-8" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8"/></svg></div>
           <h3 class="text-base sm:text-xl font-bold text-slate-900 sm:mb-3">Specialist Reports</h3>
         </div>
         <p class="text-sm sm:text-base text-slate-600 leading-relaxed font-medium mt-2 sm:mt-0">Full breakdowns including pathophysiology, differential diagnosis, and treatment plans.</p>
@@ -542,17 +625,17 @@ tailwind.config = {
       <li class="hiw-step group relative">
         <div class="hiw-card flex h-full flex-col rounded-2xl border border-slate-200 bg-white p-5 sm:p-6 shadow-[0_1px_2px_rgba(16,24,40,.05),0_12px_28px_-20px_rgba(16,24,40,.18)] transition-all duration-300 group-hover:-translate-y-1 group-hover:border-blue-200 group-hover:shadow-[0_24px_48px_-24px_rgba(37,99,235,.25)]">
           <div class="flex items-start justify-between gap-4">
-            <span class="flex h-12 w-12 items-center justify-center rounded-xl medical-gradient text-white shadow-lg shadow-blue-200/70 ring-1 ring-white/15">
+            <span class="flex h-12 w-12 items-center justify-center rounded-xl am-gradient text-white shadow-lg shadow-amber-200 ring-1 ring-white/15">
               {{ ic.zap('w-6 h-6') }}
             </span>
-            <span aria-hidden="true" class="hiw-num font-display text-4xl font-extrabold leading-none text-slate-100 select-none">02</span>
+            <span aria-hidden="true" class="hiw-num hiw-num-am font-display text-4xl font-extrabold leading-none text-amber-100 select-none">02</span>
           </div>
-          <p class="mt-5 text-[11px] font-bold uppercase tracking-[.14em] text-blue-600">Step 02</p>
+          <p class="mt-5 text-[11px] font-bold uppercase tracking-[.14em] text-amber-600">Step 02</p>
           <h3 class="mt-1.5 text-lg font-bold text-slate-900">AI Engine Analyzes</h3>
           <p class="mt-2 flex-1 text-sm leading-relaxed text-slate-600 font-medium">Our engine, powered by Google Gemini, performs deep clinical reasoning and cross-references medical literature in real time.</p>
           <div class="mt-5 flex flex-wrap gap-1.5 border-t border-slate-100 pt-4">
-            <span class="hiw-chip inline-flex items-center gap-1.5 rounded-md border border-slate-200 bg-slate-50 px-2 py-1 text-[11px] font-semibold text-slate-600"><span class="h-1 w-1 rounded-full bg-blue-500"></span>Clinical reasoning</span>
-            <span class="hiw-chip inline-flex items-center gap-1.5 rounded-md border border-slate-200 bg-slate-50 px-2 py-1 text-[11px] font-semibold text-slate-600"><span class="h-1 w-1 rounded-full bg-blue-500"></span>Literature cross-check</span>
+            <span class="hiw-chip inline-flex items-center gap-1.5 rounded-md border border-slate-200 bg-slate-50 px-2 py-1 text-[11px] font-semibold text-slate-600"><span class="h-1 w-1 rounded-full bg-amber-500"></span>Clinical reasoning</span>
+            <span class="hiw-chip inline-flex items-center gap-1.5 rounded-md border border-slate-200 bg-slate-50 px-2 py-1 text-[11px] font-semibold text-slate-600"><span class="h-1 w-1 rounded-full bg-amber-500"></span>Literature cross-check</span>
           </div>
         </div>
         <span class="hiw-arrow absolute -right-3 top-1/2 z-10 hidden h-6 w-6 -translate-y-1/2 items-center justify-center rounded-full border border-slate-200 bg-white text-blue-600 shadow-sm md:flex" aria-hidden="true">
@@ -583,19 +666,19 @@ tailwind.config = {
 </section>
 
 <!-- STATS -->
-<section class="py-12 sm:py-20 px-4 sm:px-6 bg-blue-50/40">
+<section class="py-12 sm:py-20 px-4 sm:px-6 bg-amber-50/40">
   <div class="max-w-5xl mx-auto">
     <div class="grid grid-cols-2 md:grid-cols-4 gap-y-10">
-      <div class="text-center md:border-r md:border-blue-100"><div class="w-2 h-2 rounded-full bg-blue-400 mx-auto mb-4"></div><div class="text-2xl sm:text-4xl md:text-5xl font-semibold text-blue-600 mb-2 tracking-tight"><span class="counter" data-target="10000">0</span>+</div><div class="text-slate-500 font-medium text-sm">Reports Analyzed</div></div>
-      <div class="text-center md:border-r md:border-blue-100"><div class="w-2 h-2 rounded-full bg-blue-400 mx-auto mb-4"></div><div class="text-2xl sm:text-4xl md:text-5xl font-semibold text-blue-600 mb-2 tracking-tight"><span class="counter" data-target="95">0</span>%</div><div class="text-slate-500 font-medium text-sm">Diagnostic Accuracy</div></div>
-      <div class="text-center md:border-r md:border-blue-100"><div class="w-2 h-2 rounded-full bg-blue-400 mx-auto mb-4"></div><div class="text-2xl sm:text-4xl md:text-5xl font-semibold text-blue-600 mb-2 tracking-tight">&lt;<span class="counter" data-target="30">0</span>s</div><div class="text-slate-500 font-medium text-sm">Avg. Analysis Time</div></div>
-      <div class="text-center"><div class="w-2 h-2 rounded-full bg-blue-400 mx-auto mb-4"></div><div class="text-2xl sm:text-4xl md:text-5xl font-semibold text-blue-600 mb-2 tracking-tight"><span class="counter" data-target="50">0</span>+</div><div class="text-slate-500 font-medium text-sm">Countries Served</div></div>
+      <div class="text-center md:border-r md:border-amber-100"><div class="w-2 h-2 rounded-full bg-amber-500 mx-auto mb-4"></div><div class="text-2xl sm:text-4xl md:text-5xl font-semibold text-blue-600 mb-2 tracking-tight"><span class="counter" data-target="10000">0</span>+</div><div class="text-slate-500 font-medium text-sm">Reports Analyzed</div></div>
+      <div class="text-center md:border-r md:border-amber-100"><div class="w-2 h-2 rounded-full bg-amber-500 mx-auto mb-4"></div><div class="text-2xl sm:text-4xl md:text-5xl font-semibold text-blue-600 mb-2 tracking-tight"><span class="counter" data-target="95">0</span>%</div><div class="text-slate-500 font-medium text-sm">Diagnostic Accuracy</div></div>
+      <div class="text-center md:border-r md:border-amber-100"><div class="w-2 h-2 rounded-full bg-amber-500 mx-auto mb-4"></div><div class="text-2xl sm:text-4xl md:text-5xl font-semibold text-blue-600 mb-2 tracking-tight">&lt;<span class="counter" data-target="30">0</span>s</div><div class="text-slate-500 font-medium text-sm">Avg. Analysis Time</div></div>
+      <div class="text-center"><div class="w-2 h-2 rounded-full bg-amber-500 mx-auto mb-4"></div><div class="text-2xl sm:text-4xl md:text-5xl font-semibold text-blue-600 mb-2 tracking-tight"><span class="counter" data-target="50">0</span>+</div><div class="text-slate-500 font-medium text-sm">Countries Served</div></div>
     </div>
   </div>
 </section>
 
 <!-- TESTIMONIALS -->
-<section class="py-12 sm:py-24 px-4 sm:px-6 bg-slate-50 relative">
+<section id="testimonials" class="py-12 sm:py-24 px-4 sm:px-6 bg-slate-50 relative">
   <div class="max-w-7xl mx-auto">
     <div class="text-center max-w-2xl mx-auto mb-8 sm:mb-16">
       <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-50 text-amber-600 text-xs font-semibold tracking-wide border border-amber-100 mb-6">What People Are Saying</div>
@@ -700,7 +783,7 @@ tailwind.config = {
 </section>
 
 <!-- FAQ -->
-<section class="py-12 sm:py-24 px-4 sm:px-6 bg-slate-50/50">
+<section id="faq" class="py-12 sm:py-24 px-4 sm:px-6 bg-slate-50/50">
   <div class="max-w-7xl mx-auto">
     <div class="text-center mb-8 sm:mb-16">
       <h2 class="text-2xl sm:text-4xl md:text-5xl font-display font-bold text-slate-900 mb-4">Frequently Asked Questions</h2>
@@ -738,7 +821,7 @@ tailwind.config = {
 <!-- FINAL CTA -->
 <section class="cta-section py-12 sm:py-24 px-4 sm:px-6 relative overflow-hidden">
   <div class="max-w-4xl mx-auto text-center relative z-10">
-    <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-100 text-blue-700 text-xs font-semibold tracking-wide mb-8">Your Health Matters</div>
+    <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-50 text-amber-700 border border-amber-100 text-xs font-semibold tracking-wide mb-8">Your Health Matters</div>
     <h2 class="text-2xl sm:text-4xl md:text-5xl font-display font-bold text-slate-900 mb-6 leading-tight">Ready to Understand Your <span class="text-blue-600">Health Better?</span></h2>
     <p class="text-xl text-slate-600 mb-6 sm:mb-12 max-w-2xl mx-auto leading-relaxed">Join thousands of patients and doctors who trust Medora AI for fast, accurate, and secure medical report analysis.</p>
     <div class="flex flex-col sm:flex-row gap-5 justify-center">
@@ -828,7 +911,152 @@ tailwind.config = {
   });
 })();
 
-document.getElementById('mobileBtn').onclick = () => document.getElementById('mobileMenu').classList.toggle('hidden');
+document.getElementById('mobileBtn').onclick = () => {
+  const menu = document.getElementById('mobileMenu');
+  menu.classList.toggle('hidden');
+  document.getElementById('mobileBtn').setAttribute('aria-expanded', String(!menu.classList.contains('hidden')));
+};
+
+// ─── Command palette (⌘K / Ctrl+K) ─────────────────────────────────────────
+(function(){
+  const overlay  = document.getElementById('cmdk');
+  if(!overlay) return;
+  const input    = document.getElementById('cmdkInput');
+  const list     = document.getElementById('cmdkList');
+  const triggers = ['cmdkTrigger','cmdkTriggerMobile'].map(id=>document.getElementById(id)).filter(Boolean);
+  const backdrop = overlay.querySelector('[data-cmdk-close]');
+
+  const isMac = /Mac|iPhone|iPad|iPod/.test(navigator.platform || navigator.userAgent);
+  document.querySelectorAll('[data-mod]').forEach(k => { k.textContent = isMac ? '⌘' : 'Ctrl'; });
+
+  const ICON = {
+    section: '<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h16M4 15h16M10 3 8 21M16 3l-2 18"/></svg>',
+    page:    '<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>',
+    action:  '<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>',
+    upload:  '<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m17 8-5-5-5 5"/><path d="M12 3v12"/></svg>'
+  };
+
+  const COMMANDS = [
+    { group:'Jump to', icon:'section', label:'Features',            hint:'Landing', terms:'capabilities product analysis', run:()=>jump('features') },
+    { group:'Jump to', icon:'section', label:'How it works',        hint:'Landing', terms:'process steps upload analyze', run:()=>jump('how-it-works') },
+    { group:'Jump to', icon:'section', label:'Testimonials',        hint:'Landing', terms:'reviews doctors patients trust', run:()=>jump('testimonials') },
+    { group:'Jump to', icon:'section', label:'FAQ',                 hint:'Landing', terms:'questions answers help', run:()=>jump('faq') },
+    { group:'Pages',   icon:'page',    label:'Security',            hint:'Page',    terms:'privacy encryption hipaa', run:()=>go('/security') },
+    { group:'Pages',   icon:'page',    label:'Privacy policy',      hint:'Page',    terms:'data policy legal', run:()=>go('/privacy') },
+    { group:'Pages',   icon:'page',    label:'Terms of service',    hint:'Page',    terms:'legal agreement', run:()=>go('/terms') },
+    { group:'Pages',   icon:'page',    label:'Sign in',             hint:'Account', terms:'login account access', run:()=>go('/login') },
+    { group:'Pages',   icon:'page',    label:'Create account',      hint:'Account', terms:'register signup new', run:()=>go('/register') },
+    { group:'Actions', icon:'action',  label:'Toggle dark mode',    hint:'Theme',   terms:'appearance light night', run:()=>{ const b=document.getElementById('dmToggleLanding') || document.getElementById('dmToggleMobile'); if(b) b.click(); close(); } },
+    { group:'Actions', icon:'upload',  label:'Start a new analysis', hint:'Upload',  terms:'report scan upload decode', run:()=>go('/upload') }
+  ];
+
+  let visible = [], active = 0, lastFocus = null;
+
+  const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  const norm = s => s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+
+  function setActive(i){
+    if(!visible.length) return;
+    active = (i + visible.length) % visible.length;
+    list.querySelectorAll('.cmdk-item').forEach(el => {
+      el.setAttribute('aria-selected', String(Number(el.dataset.idx) === active));
+    });
+    input.setAttribute('aria-activedescendant', 'cmdk-opt-' + active);
+    const el = list.querySelector('[data-idx="' + active + '"]');
+    if(el) el.scrollIntoView({ block:'nearest' });
+  }
+
+  function render(query){
+    const q = norm(query.trim());
+    visible = COMMANDS.filter(c => !q || norm(c.label + ' ' + c.group + ' ' + (c.terms || '')).includes(q));
+    active = 0;
+
+    if(!visible.length){
+      list.innerHTML = '<div class="px-3 py-10 text-center text-sm font-medium text-slate-400">No results for &ldquo;' + esc(query.trim()) + '&rdquo;</div>';
+      input.removeAttribute('aria-activedescendant');
+      return;
+    }
+
+    let html = '', lastGroup = '';
+    visible.forEach((c, i) => {
+      if(c.group !== lastGroup){
+        html += '<div class="px-2.5 pb-1 pt-3 text-[10px] font-bold uppercase tracking-[.14em] text-slate-400">' + c.group + '</div>';
+        lastGroup = c.group;
+      }
+      html += '<button type="button" role="option" id="cmdk-opt-' + i + '" aria-selected="false" class="cmdk-item" data-idx="' + i + '">'
+            +   '<span class="cmdk-ico' + (c.group === 'Actions' ? ' cmdk-ico-am' : '') + '">' + ICON[c.icon] + '</span>'
+            +   '<span class="min-w-0 flex-1 truncate">' + c.label + '</span>'
+            +   '<span class="shrink-0 text-[11px] font-semibold text-slate-400">' + c.hint + '</span>'
+            + '</button>';
+    });
+    list.innerHTML = html;
+
+    list.querySelectorAll('.cmdk-item').forEach(btn => {
+      const idx = Number(btn.dataset.idx);
+      btn.addEventListener('click', () => run(idx));
+      btn.addEventListener('mousemove', () => { if(idx !== active) setActive(idx); });
+    });
+    setActive(0);
+  }
+
+  function run(i){
+    const cmd = visible[i];
+    if(cmd && cmd.run) cmd.run();
+  }
+
+  function jump(id){
+    const el = document.getElementById(id);
+    close();
+    if(el) setTimeout(() => el.scrollIntoView({ behavior:'smooth', block:'start' }), 60);
+  }
+
+  function go(href){
+    close();
+    setTimeout(() => { window.location.href = href; }, 60);
+  }
+
+  function open(){
+    lastFocus = document.activeElement;
+    overlay.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+    triggers.forEach(t => t.setAttribute('aria-expanded','true'));
+    const menu = document.getElementById('mobileMenu');
+    if(menu) menu.classList.add('hidden');
+    input.value = '';
+    render('');
+    input.focus({ preventScroll: true });
+    requestAnimationFrame(() => input.focus({ preventScroll: true }));
+  }
+
+  function close(){
+    if(overlay.classList.contains('hidden')) return;
+    overlay.classList.add('hidden');
+    document.body.style.overflow = '';
+    triggers.forEach(t => t.setAttribute('aria-expanded','false'));
+    if(lastFocus && typeof lastFocus.focus === 'function') lastFocus.focus();
+  }
+
+  triggers.forEach(t => t.addEventListener('click', open));
+  backdrop.addEventListener('click', close);
+  input.addEventListener('input', () => render(input.value));
+  overlay.addEventListener('keydown', e => {
+    if(e.key === 'Tab'){ e.preventDefault(); input.focus(); }
+  });
+
+  document.addEventListener('keydown', e => {
+    const isOpen = !overlay.classList.contains('hidden');
+    if((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k'){
+      e.preventDefault();
+      isOpen ? close() : open();
+      return;
+    }
+    if(!isOpen) return;
+    if(e.key === 'Escape'){ e.preventDefault(); close(); }
+    else if(e.key === 'ArrowDown'){ e.preventDefault(); setActive(active + 1); }
+    else if(e.key === 'ArrowUp'){ e.preventDefault(); setActive(active - 1); }
+    else if(e.key === 'Enter'){ e.preventDefault(); run(active); }
+  });
+})();
 document.querySelectorAll('.faq-btn').forEach(btn=>{
   btn.onclick = () => {
     const ans = btn.parentElement.querySelector('.faq-answer');

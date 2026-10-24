@@ -22,6 +22,7 @@
   --table-head:#f7f8f9;--table-row2:#fafbfc;
   --drop-bg:#f7f8f9;--drop-border:#d5d8dd;
   --chip-bg:#f1f3f5;--chip-border:#e1e3e6;--chip-fg:#2563eb;
+  --am:#f59e0b;--am-ink:#b45309;--am-soft:#fff8eb;--am-line:#fde3ae;--am-strong:#d97706;--am-tint:#fef3c7;
 }
 html.dark{
   --bg:#0d1117;--card:#161b22;--card2:#21262d;--ink:#e6edf3;--ink2:#cdd9e5;
@@ -37,6 +38,7 @@ html.dark{
   --table-head:#21262d;--table-row2:#1c2128;
   --drop-bg:linear-gradient(180deg,#21262d,#1c2128);--drop-border:#30363d;
   --chip-bg:#1c2d46;--chip-border:#1f4068;--chip-fg:#79c0ff;
+  --am:#f0b429;--am-ink:#e3b341;--am-soft:#33260e;--am-line:#9e6a03;--am-strong:#d97706;--am-tint:#3a2a10;
 }
 
 /* ─── Base ───────────────────────────────────────────────────────────────── */
@@ -71,6 +73,14 @@ table.grid-table tr:hover td{background:var(--card2)}
 .dropzone{border:1.5px dashed var(--drop-border);border-radius:18px;background:var(--drop-bg);transition:.18s}
 .dropzone.drag{border-color:var(--brand);background:var(--brand-bg);transform:scale(1.005)}
 .chip{display:inline-flex;align-items:center;gap:8px;background:var(--chip-bg);border:1px solid var(--chip-border);color:var(--chip-fg);font-size:12.5px;font-weight:600;padding:7px 10px;border-radius:10px}
+/* Secondary accent — amber surfaces (pending states, secondary metrics) */
+.am-chip{display:inline-flex;align-items:center;gap:6px;background:var(--am-soft);border:1px solid var(--am-line);color:var(--am-ink);font-size:11.5px;font-weight:700;padding:4px 9px;border-radius:99px}
+.am-tile{background:var(--am-soft);border:1px solid var(--am-line);color:var(--am-ink)}
+.am-bar{background:var(--am)}
+.am-card{background:linear-gradient(135deg,#f59e0b,#d97706);color:#1f2328}
+html:not(.dark) .am-card{background:#f59e0b!important;background-image:none!important}
+.am-card-btn{display:block;text-align:center;background:#fff!important;color:#b45309!important;font-weight:700;font-size:13.5px;border-radius:12px;padding:12px 0;transition:.18s}
+.am-card-btn:hover{background:#fff8eb!important;transform:translateY(-1px)}
 
 /* ─── Dark mode toggle button ─────────────────────────────────────────── */
 #darkToggle{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;border:1px solid var(--line);background:var(--card);transition:.18s;flex-shrink:0}

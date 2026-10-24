@@ -7,6 +7,8 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <script>tailwind.config={theme:{extend:{fontFamily:{display:['"Plus Jakarta Sans"','Inter','sans-serif'],sans:['Inter','sans-serif']}}}}</script>
 <style>body{font-family:Inter,sans-serif}.font-display{font-family:'Plus Jakarta Sans',sans-serif}
+:root{--am:#f59e0b;--am-ink:#b45309;--am-soft:#fff8eb;--am-line:#fde3ae}
+html.dark{--am:#f0b429;--am-ink:#e3b341;--am-soft:#33260e;--am-line:#9e6a03}
 .anav{display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:12px;color:#94a3b8;font-weight:600;font-size:14px}
 .anav:hover{background:rgba(255,255,255,.06);color:#fff}.anav.on{background:#2563eb;color:#fff}</style>
 <link rel="stylesheet" href="{{ url_for('static', filename='css/light-theme.css') }}">

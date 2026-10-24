@@ -24,6 +24,6 @@
 function setTab(w){document.getElementById('paneC').classList.toggle('hidden',w!=='c');document.getElementById('paneT').classList.toggle('hidden',w!=='t');
 document.getElementById('tabC').classList.toggle('on',w==='c');document.getElementById('tabT').classList.toggle('on',w==='t');}
 {% if points %}
-new Chart(document.getElementById('c'),{type:'line',data:{labels:{{ points|map(attribute='date')|list|tojson }},datasets:[{label:'Confidence %',data:{{ points|map(attribute='confidence')|list|tojson }},borderColor:'#2563eb',backgroundColor:'rgba(37,99,235,.12)',fill:true,tension:.45,pointRadius:4}]},options:{plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.parsed.y+'%'}}},scales:{y:{min:0,max:100}}}});
+new Chart(document.getElementById('c'),{type:'line',data:{labels:{{ points|map(attribute='date')|list|tojson }},datasets:[{label:'Confidence %',data:{{ points|map(attribute='confidence')|list|tojson }},borderColor:'#2563eb',backgroundColor:'rgba(37,99,235,.12)',fill:true,tension:.45,pointRadius:4,pointBackgroundColor:'#f59e0b',pointBorderColor:'#f59e0b'}]},options:{plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.parsed.y+'%'}}},scales:{y:{min:0,max:100}}}});
 {% endif %}
 </script>{% endblock %}

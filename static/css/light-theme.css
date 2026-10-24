@@ -64,21 +64,55 @@ html:not(.dark) .bg-slate-950 .text-slate-500,
 html:not(.dark) .bg-\[\#111418\] .text-slate-400,
 html:not(.dark) .bg-\[\#111418\] .text-slate-500 { color: #9aa4b2 !important; }
 
-/* Marketing pages: collapse every decorative accent to the same two colours */
+/* Marketing pages: emerald/purple accents collapse into the primary blue */
 html:not(.dark) .mk .text-emerald-600,
 html:not(.dark) .mk .text-emerald-700,
-html:not(.dark) .mk .text-emerald-500,
-html:not(.dark) .mk .text-amber-600,
-html:not(.dark) .mk .text-amber-500,
-html:not(.dark) .mk .text-amber-400 { color: #2563eb !important; }
+html:not(.dark) .mk .text-emerald-500 { color: #2563eb !important; }
 html:not(.dark) .mk .bg-emerald-50,
-html:not(.dark) .mk .bg-emerald-100,
-html:not(.dark) .mk .bg-amber-50,
-html:not(.dark) .mk .bg-amber-100 { background-color: #eff1f4 !important; }
+html:not(.dark) .mk .bg-emerald-100 { background-color: #eff1f4 !important; }
 html:not(.dark) .mk .bg-emerald-500,
 html:not(.dark) .mk .bg-emerald-600,
-html:not(.dark) .mk .bg-purple-600,
-html:not(.dark) .mk .bg-amber-500 { background-color: #2563eb !important; }
+html:not(.dark) .mk .bg-purple-600 { background-color: #2563eb !important; }
 html:not(.dark) .mk .border-emerald-200,
-html:not(.dark) .mk .border-amber-100,
 html:not(.dark) .mk .border-emerald-100 { border-color: #e3e5e8 !important; }
+
+/* ─── Secondary accent — amber #F59E0B ──────────────────────────────────────
+   60-30-10: blue stays the primary voice, amber carries the supporting
+   accents, highlight surfaces, ratings and pending states across the app. */
+html:not(.dark) .text-amber-400 { color: #f59e0b !important; }
+html:not(.dark) .text-amber-500 { color: #d97706 !important; }
+html:not(.dark) .text-amber-600,
+html:not(.dark) .text-amber-700 { color: #b45309 !important; }
+html:not(.dark) .bg-amber-50 { background-color: #fff8eb !important; }
+html:not(.dark) .bg-amber-50\/40 { background-color: #fdf7ec !important; }
+html:not(.dark) .bg-amber-100 { background-color: #fef3c7 !important; }
+html:not(.dark) .bg-amber-500 { background-color: #f59e0b !important; }
+html:not(.dark) .border-amber-100 { border-color: #fde3ae !important; }
+html:not(.dark) .border-amber-200 { border-color: #fbd38d !important; }
+html:not(.dark) .hover\:border-amber-300:hover { border-color: #f59e0b !important; }
+html:not(.dark) .shadow-amber-200 { --tw-shadow-color: rgba(245, 158, 11, .34) !important; }
+
+/* Amber utilities shared by the dashboard, auth and admin shells */
+.am-text { color: #b45309; }
+.am-soft { background: #fff8eb; border: 1px solid #fde3ae; color: #b45309; }
+.am-gradient { background: linear-gradient(135deg, #f59e0b, #d97706); }
+html:not(.dark) .am-gradient {
+  background: #f59e0b !important;
+  background-image: none !important;
+  box-shadow: 0 10px 24px -16px rgba(180, 83, 9, .55) !important;
+}
+
+/* Amber, dark theme */
+html.dark .am-text { color: #e3b341; }
+html.dark .am-soft { background: #33260e; border-color: #9e6a03; color: #e3b341; }
+html.dark .am-gradient { background: linear-gradient(135deg, #f0b429, #d97706); }
+html.dark .text-amber-400 { color: #f0b429 !important; }
+html.dark .text-amber-500 { color: #e3b341 !important; }
+html.dark .text-amber-600,
+html.dark .text-amber-700 { color: #e3b341 !important; }
+html.dark .bg-amber-50 { background-color: #2a2010 !important; }
+html.dark .bg-amber-50\/40 { background-color: #1b1610 !important; }
+html.dark .bg-amber-100 { background-color: #3a2a10 !important; }
+html.dark .bg-amber-500 { background-color: #f0b429 !important; }
+html.dark .border-amber-100,
+html.dark .border-amber-200 { border-color: #9e6a03 !important; }

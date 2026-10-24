@@ -1,6 +1,6 @@
 {% extends "layout.html" %}{% set active='dashboard' %}{% block title %}Dashboard — Medora AI{% endblock %}{% block content %}
 {% if awaiting %}
-<a href="/history" class="block mb-5 p-4 rounded-2xl bg-blue-50 border border-blue-200 text-[13.5px]"><b>Analysis in progress — {{ awaiting }} file{{ 's' if awaiting!=1 else '' }} being analysed.</b><span class="text-slate-500"> Track from Medical History →</span></a>
+<a href="/history" class="block mb-5 p-4 rounded-2xl bg-amber-50 border border-amber-200 text-[13.5px]"><b>Analysis in progress — {{ awaiting }} file{{ 's' if awaiting!=1 else '' }} being analysed.</b><span class="text-slate-500"> Track from Medical History →</span></a>
 {% endif %}
 <!-- Header -->
 <div class="flex flex-wrap items-end justify-between gap-4 mb-6">
@@ -14,10 +14,10 @@
 <!-- Stats -->
 <div class="grid grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
   {% set cards = [
-    ('Total Reports', total, 'All files in your vault', '#2563eb', '#f1f3f5', 'M7 3h10a2 2 0 012 2v14a2 2 0 01-2 2H7a2 2 0 01-2-2V5a2 2 0 012-2z M9 9h6M9 13h6'),
-    ('Awaiting Analysis', awaiting, 'Files being analysed', '#2563eb', '#f1f3f5', 'M12 7v5l3 3 M12 21a9 9 0 100-18 9 9 0 000 18z'),
-    ('Analyses Complete', done, 'Has been analysed', '#2563eb', '#f1f3f5', 'M20 6L9 17l-5-5'),
-    ('People Tracked', people, 'Patient profiles monitored', '#2563eb', '#f1f3f5', 'M16 19v-1a4 4 0 00-8 0v1 M12 11a4 4 0 100-8 4 4 0 000 8z')
+    ('Total Reports', total, 'All files in your vault', 'var(--brand)', 'var(--brand-bg)', 'M7 3h10a2 2 0 012 2v14a2 2 0 01-2 2H7a2 2 0 01-2-2V5a2 2 0 012-2z M9 9h6M9 13h6'),
+    ('Awaiting Analysis', awaiting, 'Files being analysed', 'var(--am-ink)', 'var(--am-tint)', 'M12 7v5l3 3 M12 21a9 9 0 100-18 9 9 0 000 18z'),
+    ('Analyses Complete', done, 'Has been analysed', 'var(--brand)', 'var(--brand-bg)', 'M20 6L9 17l-5-5'),
+    ('People Tracked', people, 'Patient profiles monitored', 'var(--brand)', 'var(--brand-bg)', 'M16 19v-1a4 4 0 00-8 0v1 M12 11a4 4 0 100-8 4 4 0 000 8z')
   ] %}
   {% for label,val,sub,color,bg,path in cards %}
   <div class="card hoverable reveal p-5 flex flex-col min-h-[150px]">
@@ -67,12 +67,12 @@
     {% endfor %}</div>
     {% else %}<p class="text-[13px] text-slate-400">No activity yet.</p>{% endif %}
   </div>
-  <div class="rounded-[18px] p-6 text-white relative overflow-hidden" style="background:#2563eb">
-    <div class="absolute -right-8 -bottom-10 w-44 h-44 rounded-full bg-white/10"></div>
-    <p class="eyebrow !text-blue-200">Consultation</p>
+  <div class="am-card rounded-[18px] p-6 relative overflow-hidden">
+    <div class="absolute -right-8 -bottom-10 w-44 h-44 rounded-full bg-white/20"></div>
+    <p class="eyebrow" style="color:rgba(31,35,40,.72)">Consultation</p>
     <h3 class="font-display font-extrabold text-[20px] mt-1.5 leading-snug">Book Appointment</h3>
-    <p class="text-blue-100/90 text-[13px] mt-2 leading-relaxed">Review your diagnostic reports with clinical experts.</p>
-    <a href="/history" class="mt-4 block text-center bg-white text-blue-700 font-bold text-[13.5px] rounded-xl py-3 hover:bg-blue-50 transition">Schedule Consultation</a>
+    <p class="text-[13px] mt-2 leading-relaxed" style="color:rgba(31,35,40,.78)">Review your diagnostic reports with clinical experts.</p>
+    <a href="/history" class="am-card-btn mt-4">Schedule Consultation</a>
   </div>
 </div>
 </div>
