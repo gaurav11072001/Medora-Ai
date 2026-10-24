@@ -16,7 +16,7 @@
   {% set cards = [
     ('Total Reports', total, 'All files in your vault', 'var(--brand)', 'var(--brand-bg)', 'M7 3h10a2 2 0 012 2v14a2 2 0 01-2 2H7a2 2 0 01-2-2V5a2 2 0 012-2z M9 9h6M9 13h6'),
     ('Awaiting Analysis', awaiting, 'Files being analysed', 'var(--am-ink)', 'var(--am-tint)', 'M12 7v5l3 3 M12 21a9 9 0 100-18 9 9 0 000 18z'),
-    ('Analyses Complete', done, 'Has been analysed', 'var(--brand)', 'var(--brand-bg)', 'M20 6L9 17l-5-5'),
+    ('Analyses Complete', done, 'Has been analysed', 'var(--tl-ink)', 'var(--tl-tint)', 'M20 6L9 17l-5-5'),
     ('People Tracked', people, 'Patient profiles monitored', 'var(--brand)', 'var(--brand-bg)', 'M16 19v-1a4 4 0 00-8 0v1 M12 11a4 4 0 100-8 4 4 0 000 8z')
   ] %}
   {% for label,val,sub,color,bg,path in cards %}
@@ -62,7 +62,7 @@
   <div class="card p-5">
     <p class="eyebrow mb-3">Recent Activity</p>
     {% if reports %}<div class="space-y-3">{% for r in reports[:3] %}
-      <div class="flex gap-3"><span class="timeline-dot" style="background:{% if r.status=='completed' %}#10b981{% elif r.status=='failed' %}#ef4444{% else %}#f59e0b{% endif %}"></span>
+      <div class="flex gap-3"><span class="timeline-dot" style="background:{% if r.status=='completed' %}#14b8a6{% elif r.status=='failed' %}#ef4444{% else %}#f59e0b{% endif %}"></span>
       <div class="min-w-0"><p class="text-[13px] font-semibold truncate">{{ r.file_name }} {{ 'analysed' if r.status=='completed' else 'awaiting analysis' }}</p><p class="text-[11.5px] text-slate-400">{{ r.created_at.strftime('%b %d') }}</p></div></div>
     {% endfor %}</div>
     {% else %}<p class="text-[13px] text-slate-400">No activity yet.</p>{% endif %}

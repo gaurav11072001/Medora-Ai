@@ -16,13 +16,14 @@
   --nav-shadow:0 8px 28px -18px rgba(31,35,40,.35);
   --sidebar-bg:#fff;--sidebar-border:rgba(229,231,234,.85);
   --search-bg:#f1f2f4;--search-border:transparent;
-  --badge-ok-bg:#e9f9f0;--badge-ok-fg:#0e9f6e;--badge-ok-border:#b8e6cd;
+  --badge-ok-bg:#ecfdf9;--badge-ok-fg:#0f766e;--badge-ok-border:#99f6e4;
   --badge-warn-bg:#fff7e6;--badge-warn-fg:#b7791f;--badge-warn-border:#f5d98b;
   --badge-fail-bg:#fdecec;--badge-fail-fg:#e02424;--badge-fail-border:#f5b5b5;
   --table-head:#f7f8f9;--table-row2:#fafbfc;
   --drop-bg:#f7f8f9;--drop-border:#d5d8dd;
   --chip-bg:#f1f3f5;--chip-border:#e1e3e6;--chip-fg:#2563eb;
   --am:#f59e0b;--am-ink:#b45309;--am-soft:#fff8eb;--am-line:#fde3ae;--am-strong:#d97706;--am-tint:#fef3c7;
+  --tl:#14b8a6;--tl-ink:#0f766e;--tl-soft:#f0fdfa;--tl-line:#99f6e4;--tl-tint:#ccfbf1;
 }
 html.dark{
   --bg:#0d1117;--card:#161b22;--card2:#21262d;--ink:#e6edf3;--ink2:#cdd9e5;
@@ -32,13 +33,14 @@ html.dark{
   --nav-shadow:0 8px 28px -10px rgba(0,0,0,.45);
   --sidebar-bg:#161b22;--sidebar-border:rgba(48,54,61,.8);
   --search-bg:#21262d;--search-border:transparent;
-  --badge-ok-bg:#1a3a2a;--badge-ok-fg:#3fb950;--badge-ok-border:#2ea043;
+  --badge-ok-bg:#0d2a29;--badge-ok-fg:#2dd4bf;--badge-ok-border:#115e59;
   --badge-warn-bg:#3a2a10;--badge-warn-fg:#e3b341;--badge-warn-border:#9e6a03;
   --badge-fail-bg:#3a1010;--badge-fail-fg:#f85149;--badge-fail-border:#da3633;
   --table-head:#21262d;--table-row2:#1c2128;
   --drop-bg:linear-gradient(180deg,#21262d,#1c2128);--drop-border:#30363d;
   --chip-bg:#1c2d46;--chip-border:#1f4068;--chip-fg:#79c0ff;
   --am:#f0b429;--am-ink:#e3b341;--am-soft:#33260e;--am-line:#9e6a03;--am-strong:#d97706;--am-tint:#3a2a10;
+  --tl:#2dd4bf;--tl-ink:#5eead4;--tl-soft:#0d2a29;--tl-line:#115e59;--tl-tint:#134e4a;
 }
 
 /* ─── Base ───────────────────────────────────────────────────────────────── */
@@ -77,6 +79,10 @@ table.grid-table tr:hover td{background:var(--card2)}
 .am-chip{display:inline-flex;align-items:center;gap:6px;background:var(--am-soft);border:1px solid var(--am-line);color:var(--am-ink);font-size:11.5px;font-weight:700;padding:4px 9px;border-radius:99px}
 .am-tile{background:var(--am-soft);border:1px solid var(--am-line);color:var(--am-ink)}
 .am-bar{background:var(--am)}
+/* Tertiary accent — teal surfaces (complete, verified, healthy) */
+.tl-chip{display:inline-flex;align-items:center;gap:6px;background:var(--tl-soft);border:1px solid var(--tl-line);color:var(--tl-ink);font-size:11.5px;font-weight:700;padding:4px 9px;border-radius:99px}
+.tl-tile{background:var(--tl-soft);border:1px solid var(--tl-line);color:var(--tl-ink)}
+.tl-bar{background:var(--tl)}
 .am-card{background:linear-gradient(135deg,#f59e0b,#d97706);color:#1f2328}
 html:not(.dark) .am-card{background:#f59e0b!important;background-image:none!important}
 .am-card-btn{display:block;text-align:center;background:#fff!important;color:#b45309!important;font-weight:700;font-size:13.5px;border-radius:12px;padding:12px 0;transition:.18s}
@@ -126,7 +132,7 @@ html.dark .border-slate-200,html.dark .border-slate-100{border-color:var(--line)
 html.dark .shadow-lg{box-shadow:0 8px 32px rgba(0,0,0,.5)!important}
 html.dark kbd{background:var(--card2)!important;border-color:var(--line)!important;color:var(--mut)!important}
 html.dark select,html.dark input,html.dark textarea{background:var(--card2)!important;color:var(--ink)!important;border-color:var(--line)!important}
-html.dark .bg-emerald-50{background:#1a3a2a!important}html.dark .text-emerald-700{color:#3fb950!important}
+html.dark .bg-emerald-50{background:#0d2a29!important}html.dark .text-emerald-700{color:#2dd4bf!important}
 html.dark .bg-rose-50{background:#3a1010!important}html.dark .text-rose-700{color:#f85149!important}
 html.dark .bg-amber-50{background:#3a2a10!important}html.dark .text-amber-700{color:#e3b341!important}
 </style>

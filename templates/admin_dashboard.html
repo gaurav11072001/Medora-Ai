@@ -5,18 +5,18 @@
 </div>
 <div class="grid grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
   {% for label,val in [('Total Cases',reports),('Accounts With Records',users),('Analyses Complete',recent|selectattr('status','equalto','completed')|list|length),('Critical Flags',0)] %}
-  <div class="bg-white rounded-2xl border border-slate-200 p-5" style="border-top:3px solid {{ 'var(--am)' if label=='Critical Flags' else '#2563eb' }}"><p class="text-[11px] font-bold tracking-widest text-slate-400 uppercase">{{ label }}</p><p class="font-display font-extrabold text-3xl mt-1">{{ val }}</p></div>
+  <div class="bg-white rounded-2xl border border-slate-200 p-5" style="border-top:3px solid {{ 'var(--am)' if label=='Critical Flags' else ('var(--tl)' if label=='Analyses Complete' else '#2563eb') }}"><p class="text-[11px] font-bold tracking-widest text-slate-400 uppercase">{{ label }}</p><p class="font-display font-extrabold text-3xl mt-1">{{ val }}</p></div>
   {% endfor %}
 </div>
 <div class="grid lg:grid-cols-3 gap-4">
   <div class="lg:col-span-2 bg-white rounded-2xl border border-slate-200 p-5">
     <div class="flex items-center justify-between mb-4"><h3 class="font-bold">Diagnostic Throughput</h3><span class="text-[12px] text-slate-400 font-semibold">Last 7 Days</span></div>
-    <div class="flex items-end gap-1.5 h-36">{% for r in recent[:12] %}<div class="flex-1 rounded-t {{ 'bg-amber-500' if r.status!='completed' else 'bg-blue-500/80' }} hover:opacity-80" title="{{ r.file_name }} — {{ r.status }}" style="height:{{ [12, (loop.index*37)%100+8]|max }}%"></div>{% else %}<p class="text-sm text-slate-400">No activity.</p>{% endfor %}</div>
+    <div class="flex items-end gap-1.5 h-36">{% for r in recent[:12] %}<div class="flex-1 rounded-t {{ 'bg-amber-500' if r.status!='completed' else 'bg-teal-500/80' }} hover:opacity-80" title="{{ r.file_name }} — {{ r.status }}" style="height:{{ [12, (loop.index*37)%100+8]|max }}%"></div>{% else %}<p class="text-sm text-slate-400">No activity.</p>{% endfor %}</div>
     <div class="flex justify-between text-[10.5px] text-slate-400 mt-1"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>
   </div>
   <div class="bg-white rounded-2xl border border-slate-200 p-5">
     <h3 class="font-bold mb-3">Live Activity Log</h3>
-    <div class="space-y-3">{% for r in recent[:6] %}<div class="flex gap-2.5 text-[12.5px]"><span class="w-2 h-2 rounded-full mt-1.5 shrink-0" style="background:{% if r.status=='completed' %}#10b981{% else %}#f59e0b{% endif %}"></span><p><b>{{ r.file_name[:28] }}</b> — {{ r.status }}<br/><span class="text-slate-400">{{ r.created_at.strftime('%m-%d %H:%M') }}</span></p></div>{% else %}<p class="text-sm text-slate-400">No activity.</p>{% endfor %}</div>
+    <div class="space-y-3">{% for r in recent[:6] %}<div class="flex gap-2.5 text-[12.5px]"><span class="w-2 h-2 rounded-full mt-1.5 shrink-0" style="background:{% if r.status=='completed' %}#14b8a6{% else %}#f59e0b{% endif %}"></span><p><b>{{ r.file_name[:28] }}</b> — {{ r.status }}<br/><span class="text-slate-400">{{ r.created_at.strftime('%m-%d %H:%M') }}</span></p></div>{% else %}<p class="text-sm text-slate-400">No activity.</p>{% endfor %}</div>
     <div class="mt-4 pt-3 border-t border-slate-100"><div class="flex justify-between text-[12px] font-bold mb-1"><span>Server Load</span><span>34%</span></div><div class="h-2 bg-slate-100 rounded-full"><div class="h-full w-[34%] bg-blue-600 rounded-full"></div></div></div>
   </div>
 </div>

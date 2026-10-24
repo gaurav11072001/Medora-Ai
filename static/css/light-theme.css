@@ -64,21 +64,55 @@ html:not(.dark) .bg-slate-950 .text-slate-500,
 html:not(.dark) .bg-\[\#111418\] .text-slate-400,
 html:not(.dark) .bg-\[\#111418\] .text-slate-500 { color: #9aa4b2 !important; }
 
-/* Marketing pages: emerald/purple accents collapse into the primary blue */
-html:not(.dark) .mk .text-emerald-600,
-html:not(.dark) .mk .text-emerald-700,
-html:not(.dark) .mk .text-emerald-500 { color: #2563eb !important; }
-html:not(.dark) .mk .bg-emerald-50,
-html:not(.dark) .mk .bg-emerald-100 { background-color: #eff1f4 !important; }
-html:not(.dark) .mk .bg-emerald-500,
-html:not(.dark) .mk .bg-emerald-600,
+/* Marketing pages: purple collapses into the primary blue */
 html:not(.dark) .mk .bg-purple-600 { background-color: #2563eb !important; }
-html:not(.dark) .mk .border-emerald-200,
-html:not(.dark) .mk .border-emerald-100 { border-color: #e3e5e8 !important; }
+
+/* ─── Tertiary accent — teal #14B8A6 ──────────────────────────────────────
+   Success, completion, verification and "all clear". Emerald in the markup
+   resolves to teal, so a normal result reads clinical rather than festive.
+   Blue (primary) ~50% · amber (secondary) ~30% · teal (tertiary) ~20%. */
+html:not(.dark) .text-emerald-400,
+html:not(.dark) .text-emerald-500 { color: #14b8a6 !important; }
+html:not(.dark) .text-emerald-600,
+html:not(.dark) .text-emerald-700 { color: #0f766e !important; }
+html:not(.dark) .bg-emerald-50,
+html:not(.dark) .bg-emerald-50\/70 { background-color: #f0fdfa !important; }
+html:not(.dark) .bg-emerald-100 { background-color: #ccfbf1 !important; }
+html:not(.dark) .bg-emerald-500,
+html:not(.dark) .bg-emerald-600 { background-color: #14b8a6 !important; }
+html:not(.dark) .border-emerald-100,
+html:not(.dark) .border-emerald-200 { border-color: #99f6e4 !important; }
+
+html:not(.dark) .text-teal-400,
+html:not(.dark) .text-teal-500 { color: #14b8a6 !important; }
+html:not(.dark) .text-teal-600,
+html:not(.dark) .text-teal-700 { color: #0f766e !important; }
+html:not(.dark) .text-teal-100 { color: #ccfbf1 !important; }
+html:not(.dark) .bg-teal-50 { background-color: #f0fdfa !important; }
+html:not(.dark) .bg-teal-100 { background-color: #ccfbf1 !important; }
+html:not(.dark) .bg-teal-400,
+html:not(.dark) .bg-teal-500 { background-color: #14b8a6 !important; }
+html:not(.dark) .border-teal-100 { border-color: #99f6e4 !important; }
+html:not(.dark) .border-teal-200 { border-color: #5eead4 !important; }
+html:not(.dark) .hover\:border-teal-300:hover { border-color: #14b8a6 !important; }
+html:not(.dark) .shadow-teal-200 { --tw-shadow-color: rgba(20, 184, 166, .34) !important; }
+
+/* Teal utilities shared by the dashboard, auth and admin shells */
+.tl-text { color: #0f766e; }
+.tl-soft { background: #f0fdfa; border: 1px solid #99f6e4; color: #0f766e; }
+.tl-gradient { background: linear-gradient(135deg, #14b8a6, #0d9488); }
+.tl-solid { background: #0f766e; }
+html.dark .tl-solid { background: #115e59; }
+html:not(.dark) .tl-gradient {
+  background: #14b8a6 !important;
+  background-image: none !important;
+  box-shadow: 0 10px 24px -16px rgba(15, 118, 110, .55) !important;
+}
 
 /* ─── Secondary accent — amber #F59E0B ──────────────────────────────────────
-   60-30-10: blue stays the primary voice, amber carries the supporting
-   accents, highlight surfaces, ratings and pending states across the app. */
+   Blue stays the primary voice (~50%), amber carries the supporting accents,
+   highlight surfaces, ratings and pending states (~30%). Teal above is the
+   tertiary trust/complete accent (~20%). */
 html:not(.dark) .text-amber-400 { color: #f59e0b !important; }
 html:not(.dark) .text-amber-500 { color: #d97706 !important; }
 html:not(.dark) .text-amber-600,
@@ -116,3 +150,30 @@ html.dark .bg-amber-100 { background-color: #3a2a10 !important; }
 html.dark .bg-amber-500 { background-color: #f0b429 !important; }
 html.dark .border-amber-100,
 html.dark .border-amber-200 { border-color: #9e6a03 !important; }
+
+/* Teal, dark theme */
+html.dark .tl-text { color: #5eead4; }
+html.dark .tl-soft { background: #0d2a29; border-color: #115e59; color: #5eead4; }
+html.dark .tl-gradient { background: linear-gradient(135deg, #2dd4bf, #0d9488); }
+html.dark .text-emerald-400,
+html.dark .text-emerald-500,
+html.dark .text-emerald-600,
+html.dark .text-emerald-700 { color: #2dd4bf !important; }
+html.dark .bg-emerald-50,
+html.dark .bg-emerald-50\/70 { background-color: #0d2a29 !important; }
+html.dark .bg-emerald-100 { background-color: #134e4a !important; }
+html.dark .bg-emerald-500,
+html.dark .bg-emerald-600 { background-color: #14b8a6 !important; }
+html.dark .border-emerald-100,
+html.dark .border-emerald-200 { border-color: #115e59 !important; }
+html.dark .text-teal-400,
+html.dark .text-teal-500,
+html.dark .text-teal-600,
+html.dark .text-teal-700 { color: #2dd4bf !important; }
+html.dark .text-teal-100 { color: #134e4a !important; }
+html.dark .bg-teal-50 { background-color: #0d2a29 !important; }
+html.dark .bg-teal-100 { background-color: #134e4a !important; }
+html.dark .bg-teal-400,
+html.dark .bg-teal-500 { background-color: #2dd4bf !important; }
+html.dark .border-teal-100,
+html.dark .border-teal-200 { border-color: #115e59 !important; }

@@ -31,6 +31,7 @@ tailwind.config = {
     --lp-card:#fff;--lp-card-border:#e6e8eb;--lp-card2:#f7f8f9;
     --lp-section:#f7f8f9;--lp-grid-line:#e8eaed;
     --lp-am:#f59e0b;--lp-am-ink:#b45309;--lp-am-soft:#fff8eb;--lp-am-line:#fde3ae;
+    --lp-tl:#14b8a6;--lp-tl-ink:#0f766e;--lp-tl-soft:#f0fdfa;--lp-tl-line:#99f6e4;
     --lp-orb1:transparent;--lp-orb2:transparent;
   }
   html.dark{
@@ -41,6 +42,7 @@ tailwind.config = {
     --lp-card:#161b22;--lp-card-border:#30363d;--lp-card2:#21262d;
     --lp-section:#11161d;--lp-grid-line:#1b2431;
     --lp-am:#f0b429;--lp-am-ink:#e3b341;--lp-am-soft:#2a2010;--lp-am-line:#9e6a03;
+    --lp-tl:#2dd4bf;--lp-tl-ink:#5eead4;--lp-tl-soft:#0d2a29;--lp-tl-line:#115e59;
     --lp-orb1:rgba(37,99,235,.16);--lp-orb2:rgba(30,58,138,.14);
   }
 
@@ -105,8 +107,8 @@ tailwind.config = {
   html.dark .bg-blue-50\/60{background-color:rgba(18,35,60,.55)}
   html.dark .bg-blue-100{background-color:#16304f}
   html.dark .bg-blue-100\/30{background-color:rgba(22,48,79,.35)}
-  html.dark .bg-emerald-50{background-color:#10281d}
-  html.dark .bg-emerald-100{background-color:#123326}
+  html.dark .bg-emerald-50{background-color:#0d2a29}
+  html.dark .bg-emerald-100{background-color:#134e4a}
   html.dark .bg-amber-50{background-color:#2a2010}
 
   html.dark .text-slate-900,
@@ -118,7 +120,7 @@ tailwind.config = {
   html.dark .text-blue-600,
   html.dark .text-blue-700,
   html.dark .text-blue-500{color:#58a6ff}
-  html.dark .text-emerald-600{color:#3fb950}
+  html.dark .text-emerald-600{color:#2dd4bf}
   html.dark .text-amber-600{color:#d29922}
 
   html.dark .border-slate-50,
@@ -142,6 +144,7 @@ tailwind.config = {
   html.dark .shadow-blue-100,
   html.dark .shadow-blue-200,
   html.dark .shadow-emerald-100{--tw-shadow-color:rgba(0,0,0,.55)}
+  html.dark .shadow-teal-200{--tw-shadow-color:rgba(45,212,191,.26)}
 
   /* ─── Clinical sheet (hero card) ───────────────────────────────────── */
   .clinical-sheet{transition:background-color .3s,border-color .3s,box-shadow .3s}
@@ -160,12 +163,12 @@ tailwind.config = {
     box-shadow:0 0 0 1px rgba(88,166,255,.35),0 10px 24px -10px rgba(31,111,235,.9);
   }
   html.dark .clinical-sheet .clinical-live{
-    background-color:rgba(88,166,255,.12);
-    border-color:rgba(88,166,255,.32);
-    color:#79c0ff;
+    background-color:rgba(45,212,191,.12);
+    border-color:rgba(45,212,191,.32);
+    color:#5eead4;
   }
   html.dark .clinical-sheet .clinical-live .clinical-dot{
-    background-color:#58a6ff;box-shadow:0 0 0 3px rgba(88,166,255,.18);
+    background-color:#2dd4bf;box-shadow:0 0 0 3px rgba(45,212,191,.18);
   }
 
   /* score + progress */
@@ -203,9 +206,9 @@ tailwind.config = {
   html.dark .ts-card .border-slate-100{border-color:#262d36}
   html.dark .ts-card blockquote p{color:#c9d1d9}
   html.dark .ts-card .ts-verified{
-    background-color:rgba(88,166,255,.12);
-    border-color:rgba(88,166,255,.30);
-    color:#79c0ff;
+    background-color:rgba(45,212,191,.12);
+    border-color:rgba(45,212,191,.30);
+    color:#5eead4;
   }
   html.dark .ts-card .ring-white{--tw-ring-color:#30363d}
   html.dark .ts-card img{background-color:#21262d}
@@ -221,6 +224,7 @@ tailwind.config = {
   }
   html.dark .hiw-card .hiw-num{color:#21262d}
   html.dark .hiw-card .hiw-num-am{color:#3a2a10}
+  html.dark .hiw-card .hiw-num-tl{color:#0d2a29}
   html.dark .hiw-card .border-slate-100{border-color:#262d36}
   html.dark .hiw-card .hiw-chip{
     background-color:#21262d;border-color:#30363d;color:#9aa4b2;
@@ -403,8 +407,8 @@ tailwind.config = {
               <p class="text-sm font-semibold text-slate-900 truncate">MRI_SCAN_772.pdf</p>
             </div>
           </div>
-          <span class="clinical-live inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-blue-600 bg-blue-50 border border-blue-100 rounded-full px-2.5 py-1 shrink-0">
-            <span class="clinical-dot w-1.5 h-1.5 rounded-full bg-blue-600"></span> Live
+          <span class="clinical-live inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-teal-700 bg-teal-50 border border-teal-100 rounded-full px-2.5 py-1 shrink-0">
+            <span class="clinical-dot w-1.5 h-1.5 rounded-full bg-teal-500"></span> Live
           </span>
         </div>
 
@@ -509,9 +513,9 @@ tailwind.config = {
         </div>
         <p class="text-sm sm:text-base text-slate-600 leading-relaxed font-medium mt-2 sm:mt-0">Securely share reports with doctors, family, or insurance providers with encrypted links.</p>
       </div>
-      <div class="p-4 sm:p-8 rounded-2xl bg-white border border-slate-100 hover:border-blue-300 hover:shadow-lg transition-all group">
+      <div class="p-4 sm:p-8 rounded-2xl bg-white border border-slate-100 hover:border-teal-300 hover:shadow-lg transition-all group">
         <div class="flex items-center gap-3 sm:block">
-          <div class="w-10 h-10 sm:w-16 sm:h-16 flex-shrink-0 rounded-xl sm:rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center sm:mb-6 group-hover:scale-110 transition-transform"><svg class="w-5 h-5 sm:w-8 sm:h-8" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></div>
+          <div class="w-10 h-10 sm:w-16 sm:h-16 flex-shrink-0 rounded-xl sm:rounded-2xl bg-teal-50 text-teal-600 flex items-center justify-center sm:mb-6 group-hover:scale-110 transition-transform"><svg class="w-5 h-5 sm:w-8 sm:h-8" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></div>
           <h3 class="text-base sm:text-xl font-bold text-slate-900 sm:mb-3">Private & Secure</h3>
         </div>
         <p class="text-sm sm:text-base text-slate-600 leading-relaxed font-medium mt-2 sm:mt-0">Encrypted in transit and at rest. Documents are private to your account.</p>
@@ -523,9 +527,9 @@ tailwind.config = {
         </div>
         <p class="text-sm sm:text-base text-slate-600 leading-relaxed font-medium mt-2 sm:mt-0">Full breakdowns including pathophysiology, differential diagnosis, and treatment plans.</p>
       </div>
-      <div class="p-4 sm:p-8 rounded-2xl bg-white border border-slate-100 hover:border-blue-300 hover:shadow-lg transition-all group">
+      <div class="p-4 sm:p-8 rounded-2xl bg-white border border-slate-100 hover:border-teal-300 hover:shadow-lg transition-all group">
         <div class="flex items-center gap-3 sm:block">
-          <div class="w-10 h-10 sm:w-16 sm:h-16 flex-shrink-0 rounded-xl sm:rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center sm:mb-6 group-hover:scale-110 transition-transform"><svg class="w-5 h-5 sm:w-8 sm:h-8" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
+          <div class="w-10 h-10 sm:w-16 sm:h-16 flex-shrink-0 rounded-xl sm:rounded-2xl bg-teal-50 text-teal-600 flex items-center justify-center sm:mb-6 group-hover:scale-110 transition-transform"><svg class="w-5 h-5 sm:w-8 sm:h-8" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
           <h3 class="text-base sm:text-xl font-bold text-slate-900 sm:mb-3">Long-term Tracking</h3>
         </div>
         <p class="text-sm sm:text-base text-slate-600 leading-relaxed font-medium mt-2 sm:mt-0">Visualize your health trends over time with our intelligent health timeline.</p>
@@ -644,20 +648,20 @@ tailwind.config = {
       </li>
 
       <li class="hiw-step group relative">
-        <div class="hiw-card flex h-full flex-col rounded-2xl border border-slate-200 bg-white p-5 sm:p-6 shadow-[0_1px_2px_rgba(16,24,40,.05),0_12px_28px_-20px_rgba(16,24,40,.18)] transition-all duration-300 group-hover:-translate-y-1 group-hover:border-blue-200 group-hover:shadow-[0_24px_48px_-24px_rgba(37,99,235,.25)]">
+        <div class="hiw-card flex h-full flex-col rounded-2xl border border-slate-200 bg-white p-5 sm:p-6 shadow-[0_1px_2px_rgba(16,24,40,.05),0_12px_28px_-20px_rgba(16,24,40,.18)] transition-all duration-300 group-hover:-translate-y-1 group-hover:border-teal-200 group-hover:shadow-[0_24px_48px_-24px_rgba(20,184,166,.25)]">
           <div class="flex items-start justify-between gap-4">
-            <span class="flex h-12 w-12 items-center justify-center rounded-xl medical-gradient text-white shadow-lg shadow-blue-200/70 ring-1 ring-white/15">
+            <span class="flex h-12 w-12 items-center justify-center rounded-xl tl-gradient text-white shadow-lg shadow-teal-200 ring-1 ring-white/15">
               {{ ic.check_circle('w-6 h-6') }}
             </span>
-            <span aria-hidden="true" class="hiw-num font-display text-4xl font-extrabold leading-none text-slate-100 select-none">03</span>
+            <span aria-hidden="true" class="hiw-num hiw-num-tl font-display text-4xl font-extrabold leading-none text-teal-100 select-none">03</span>
           </div>
-          <p class="mt-5 text-[11px] font-bold uppercase tracking-[.14em] text-blue-600">Step 03</p>
+          <p class="mt-5 text-[11px] font-bold uppercase tracking-[.14em] text-teal-700">Step 03</p>
           <h3 class="mt-1.5 text-lg font-bold text-slate-900">Get Your Insights</h3>
           <p class="mt-2 flex-1 text-sm leading-relaxed text-slate-600 font-medium">Get a comprehensive diagnosis with treatment plans, risk factors, and specialist recommendations — in seconds.</p>
           <div class="mt-5 flex flex-wrap gap-1.5 border-t border-slate-100 pt-4">
-            <span class="hiw-chip inline-flex items-center gap-1.5 rounded-md border border-slate-200 bg-slate-50 px-2 py-1 text-[11px] font-semibold text-slate-600"><span class="h-1 w-1 rounded-full bg-blue-500"></span>Treatment plans</span>
-            <span class="hiw-chip inline-flex items-center gap-1.5 rounded-md border border-slate-200 bg-slate-50 px-2 py-1 text-[11px] font-semibold text-slate-600"><span class="h-1 w-1 rounded-full bg-blue-500"></span>Risk factors</span>
-            <span class="hiw-chip inline-flex items-center gap-1.5 rounded-md border border-slate-200 bg-slate-50 px-2 py-1 text-[11px] font-semibold text-slate-600"><span class="h-1 w-1 rounded-full bg-blue-500"></span>Referrals</span>
+            <span class="hiw-chip inline-flex items-center gap-1.5 rounded-md border border-slate-200 bg-slate-50 px-2 py-1 text-[11px] font-semibold text-slate-600"><span class="h-1 w-1 rounded-full bg-teal-500"></span>Treatment plans</span>
+            <span class="hiw-chip inline-flex items-center gap-1.5 rounded-md border border-slate-200 bg-slate-50 px-2 py-1 text-[11px] font-semibold text-slate-600"><span class="h-1 w-1 rounded-full bg-teal-500"></span>Risk factors</span>
+            <span class="hiw-chip inline-flex items-center gap-1.5 rounded-md border border-slate-200 bg-slate-50 px-2 py-1 text-[11px] font-semibold text-slate-600"><span class="h-1 w-1 rounded-full bg-teal-500"></span>Referrals</span>
           </div>
         </div>
       </li>
@@ -694,7 +698,7 @@ tailwind.config = {
             </div>
             <span class="text-xs font-bold text-slate-700">5.0</span>
           </div>
-          <span class="ts-verified inline-flex items-center gap-1 rounded-full border border-blue-100 bg-blue-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-[.08em] text-blue-600">
+          <span class="ts-verified inline-flex items-center gap-1 rounded-full border border-teal-100 bg-teal-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-[.08em] text-teal-700">
             {{ ic.check('w-3 h-3') }} Verified
           </span>
         </div>
@@ -725,7 +729,7 @@ tailwind.config = {
             </div>
             <span class="text-xs font-bold text-slate-700">5.0</span>
           </div>
-          <span class="ts-verified inline-flex items-center gap-1 rounded-full border border-blue-100 bg-blue-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-[.08em] text-blue-600">
+          <span class="ts-verified inline-flex items-center gap-1 rounded-full border border-teal-100 bg-teal-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-[.08em] text-teal-700">
             {{ ic.check('w-3 h-3') }} Verified
           </span>
         </div>
@@ -756,7 +760,7 @@ tailwind.config = {
             </div>
             <span class="text-xs font-bold text-slate-700">5.0</span>
           </div>
-          <span class="ts-verified inline-flex items-center gap-1 rounded-full border border-blue-100 bg-blue-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-[.08em] text-blue-600">
+          <span class="ts-verified inline-flex items-center gap-1 rounded-full border border-teal-100 bg-teal-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-[.08em] text-teal-700">
             {{ ic.check('w-3 h-3') }} Verified
           </span>
         </div>
